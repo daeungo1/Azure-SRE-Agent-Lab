@@ -1,0 +1,148 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 700" font-family="Segoe UI, Malgun Gothic, 맑은 고딕, -apple-system, sans-serif">
+  <defs>
+    <filter id="p1" x="-4%" y="-8%" width="108%" height="120%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+
+  <rect width="1040" height="700" rx="12" fill="#f7f9fb"/>
+  <text x="520" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#12314e">Azure SRE Agent 포털 — 기능 지도</text>
+  <text x="520" y="56" text-anchor="middle" font-size="12" fill="#5a6b7b">sre.azure.com 좌측 메뉴 · 데이터 소스 · 권한 계층을 한 장으로</text>
+
+  <!-- ================= Row 1 : 좌측 메뉴 3분류 ================= -->
+  <!-- P1 운영 -->
+  <rect x="10" y="76" width="330" height="196" rx="10" fill="#ffffff" stroke="#0078d4" stroke-width="1.4" filter="url(#p1)"/>
+  <rect x="10" y="76" width="330" height="28" rx="10" fill="#e5f1fb"/>
+  <rect x="10" y="94" width="330" height="10" fill="#e5f1fb"/>
+  <text x="175" y="95" text-anchor="middle" font-size="12" font-weight="700" fill="#005a9e">운영 — 무슨 일이 일어나고 있나</text>
+
+  <rect x="24" y="112" width="302" height="28" rx="5" fill="#f3f9fe" stroke="#0078d4" stroke-width="0.7"/>
+  <text x="34" y="130" font-size="10" font-weight="700" fill="#1b4f7e">Operations Hub</text>
+  <text x="150" y="130" font-size="9" fill="#5a7fa3">Overview · Incident Analytics · Automation</text>
+
+  <rect x="24" y="144" width="302" height="28" rx="5" fill="#f3f9fe" stroke="#0078d4" stroke-width="0.7"/>
+  <text x="34" y="162" font-size="10" font-weight="700" fill="#1b4f7e">Incidents</text>
+  <text x="150" y="162" font-size="9" fill="#5a7fa3">진행 중 인시던트 그리드 · 조사 스레드</text>
+
+  <rect x="24" y="176" width="302" height="28" rx="5" fill="#f3f9fe" stroke="#0078d4" stroke-width="0.7"/>
+  <text x="34" y="194" font-size="10" font-weight="700" fill="#1b4f7e">Live Reports</text>
+  <text x="150" y="194" font-size="9" fill="#5a7fa3">일일 리포트 — 보안·헬스·권장 조치</text>
+
+  <rect x="24" y="208" width="302" height="28" rx="5" fill="#f3f9fe" stroke="#0078d4" stroke-width="0.7"/>
+  <text x="34" y="226" font-size="10" font-weight="700" fill="#1b4f7e">Automation</text>
+  <text x="150" y="226" font-size="9" fill="#5a7fa3">예약 작업 · HTTP 트리거 실행 현황</text>
+
+  <rect x="24" y="240" width="302" height="24" rx="5" fill="#f3f9fe" stroke="#0078d4" stroke-width="0.7"/>
+  <text x="34" y="256" font-size="10" font-weight="700" fill="#1b4f7e">Monitor</text>
+  <text x="150" y="256" font-size="9" fill="#5a7fa3">에이전트 메트릭 · 인시던트 지표</text>
+
+  <!-- P2 구성 -->
+  <rect x="356" y="76" width="330" height="196" rx="10" fill="#ffffff" stroke="#5c2d91" stroke-width="1.4" filter="url(#p1)"/>
+  <rect x="356" y="76" width="330" height="28" rx="10" fill="#f3ecfb"/>
+  <rect x="356" y="94" width="330" height="10" fill="#f3ecfb"/>
+  <text x="521" y="95" text-anchor="middle" font-size="12" font-weight="700" fill="#4a2378">구성 — 에이전트를 내 환경에 맞추기</text>
+
+  <rect x="370" y="112" width="302" height="46" rx="5" fill="#faf7ff" stroke="#5c2d91" stroke-width="0.7"/>
+  <text x="380" y="128" font-size="10" font-weight="700" fill="#4a2378">Builder</text>
+  <text x="380" y="142" font-size="8.7" fill="#6b4a94">Agent Canvas · Custom agents · Knowledge base</text>
+  <text x="380" y="153" font-size="8.7" fill="#6b4a94">Incident response plans · Connectors · Custom tools</text>
+
+  <rect x="370" y="162" width="302" height="46" rx="5" fill="#faf7ff" stroke="#5c2d91" stroke-width="0.7"/>
+  <text x="380" y="178" font-size="10" font-weight="700" fill="#4a2378">Capabilities</text>
+  <text x="380" y="192" font-size="8.7" fill="#6b4a94">Built-in · MCP · 코드 실행 · 지식 · 알림 도구</text>
+  <text x="380" y="203" font-size="8.7" fill="#6b4a94">Skills(런북형 절차) · Agent hooks</text>
+
+  <rect x="370" y="212" width="302" height="52" rx="5" fill="#faf7ff" stroke="#5c2d91" stroke-width="0.7"/>
+  <text x="380" y="228" font-size="10" font-weight="700" fill="#4a2378">Settings</text>
+  <text x="380" y="242" font-size="8.7" fill="#6b4a94">Managed resources(범위) · 권한 수준</text>
+  <text x="380" y="253" font-size="8.7" fill="#6b4a94">Incident platform · Knowledge Base · 사용량(AAU)</text>
+
+  <!-- P3 대화 -->
+  <rect x="702" y="76" width="328" height="196" rx="10" fill="#ffffff" stroke="#008272" stroke-width="1.4" filter="url(#p1)"/>
+  <rect x="702" y="76" width="328" height="28" rx="10" fill="#e6f4f1"/>
+  <rect x="702" y="94" width="328" height="10" fill="#e6f4f1"/>
+  <text x="866" y="95" text-anchor="middle" font-size="12" font-weight="700" fill="#006b5d">대화 — 직접 물어보기</text>
+
+  <rect x="716" y="112" width="300" height="28" rx="5" fill="#f2fbf9" stroke="#008272" stroke-width="0.7"/>
+  <text x="726" y="130" font-size="10" font-weight="700" fill="#00594d">New Chat Thread</text>
+  <text x="850" y="130" font-size="9" fill="#4a6b66">자연어 질문 · 조사 요청</text>
+
+  <rect x="716" y="144" width="300" height="28" rx="5" fill="#f2fbf9" stroke="#008272" stroke-width="0.7"/>
+  <text x="726" y="162" font-size="10" font-weight="700" fill="#00594d">Search Threads</text>
+  <text x="850" y="162" font-size="9" fill="#4a6b66">과거 조사 스레드 검색</text>
+
+  <rect x="716" y="176" width="300" height="28" rx="5" fill="#f2fbf9" stroke="#008272" stroke-width="0.7"/>
+  <text x="726" y="194" font-size="10" font-weight="700" fill="#00594d">/agent</text>
+  <text x="850" y="194" font-size="9" fill="#4a6b66">특정 Custom Agent 직접 호출</text>
+
+  <rect x="716" y="208" width="300" height="28" rx="5" fill="#f2fbf9" stroke="#008272" stroke-width="0.7"/>
+  <text x="726" y="226" font-size="10" font-weight="700" fill="#00594d">/learn</text>
+  <text x="850" y="226" font-size="9" fill="#4a6b66">팀 온보딩 인터뷰 재시작</text>
+
+  <rect x="716" y="240" width="300" height="24" rx="5" fill="#f2fbf9" stroke="#008272" stroke-width="0.7"/>
+  <text x="726" y="256" font-size="10" font-weight="700" fill="#00594d">Copy link to thread</text>
+  <text x="880" y="256" font-size="9" fill="#4a6b66">Teams/Slack 공유</text>
+
+  <!-- ================= Row 2 : 데이터 소스 ================= -->
+  <rect x="10" y="290" width="1020" height="182" rx="10" fill="#ffffff" stroke="#c19c00" stroke-width="1.4" filter="url(#p1)"/>
+  <rect x="10" y="290" width="1020" height="28" rx="10" fill="#fff8e6"/>
+  <rect x="10" y="308" width="1020" height="10" fill="#fff8e6"/>
+  <text x="520" y="309" text-anchor="middle" font-size="12" font-weight="700" fill="#8a6d00">설정 — “더 많은 컨텍스트, 더 나은 조사” · 데이터 소스 6종 (많이 연결할수록 조사 품질↑)</text>
+
+  <text x="30" y="338" font-size="10" font-weight="700" fill="#a08400">빠른 시작 (Quickstart)</text>
+  <rect x="26" y="346" width="238" height="56" rx="6" fill="#fffdf5" stroke="#c19c00" stroke-width="1"/>
+  <text x="145" y="365" text-anchor="middle" font-size="10.5" font-weight="700" fill="#8a6d00">코드 (권장)</text>
+  <text x="145" y="381" text-anchor="middle" font-size="8.7" fill="#7a6200">GitHub · Azure DevOps</text>
+  <text x="145" y="394" text-anchor="middle" font-size="8.7" fill="#7a6200">파일:라인 추적 · 변경 상관분석</text>
+
+  <rect x="274" y="346" width="238" height="56" rx="6" fill="#fffdf5" stroke="#c19c00" stroke-width="1"/>
+  <text x="393" y="365" text-anchor="middle" font-size="10.5" font-weight="700" fill="#8a6d00">로그 (권장)</text>
+  <text x="393" y="381" text-anchor="middle" font-size="8.7" fill="#7a6200">Kusto · Datadog · Splunk</text>
+  <text x="393" y="394" text-anchor="middle" font-size="8.7" fill="#7a6200">Elasticsearch · Dynatrace · New Relic</text>
+
+  <rect x="522" y="346" width="238" height="56" rx="6" fill="#fffdf5" stroke="#c19c00" stroke-width="1"/>
+  <text x="641" y="365" text-anchor="middle" font-size="10.5" font-weight="700" fill="#8a6d00">배포</text>
+  <text x="641" y="381" text-anchor="middle" font-size="8.7" fill="#7a6200">배포 파이프라인 연결</text>
+  <text x="641" y="394" text-anchor="middle" font-size="8.7" fill="#7a6200">“직전 배포가 원인인가?” 판별</text>
+
+  <rect x="770" y="346" width="240" height="56" rx="6" fill="#fffdf5" stroke="#c19c00" stroke-width="1"/>
+  <text x="890" y="365" text-anchor="middle" font-size="10.5" font-weight="700" fill="#8a6d00">인시던트</text>
+  <text x="890" y="381" text-anchor="middle" font-size="8.7" fill="#7a6200">Azure Monitor · PagerDuty</text>
+  <text x="890" y="394" text-anchor="middle" font-size="8.7" fill="#7a6200">ServiceNow · 알림 자동 수신</text>
+
+  <text x="30" y="422" font-size="10" font-weight="700" fill="#a08400">전체 설정 (Full setup) — 위 4종 + 아래 2종</text>
+  <rect x="26" y="430" width="486" height="34" rx="6" fill="#fff5d6" stroke="#c19c00" stroke-width="1.2"/>
+  <text x="40" y="451" font-size="10.5" font-weight="700" fill="#8a6d00">Azure 리소스</text>
+  <text x="160" y="451" font-size="8.7" fill="#7a6200">구독 / 리소스 그룹 범위 지정 → 메트릭·헬스 조회, Azure CLI 실행</text>
+
+  <rect x="522" y="430" width="488" height="34" rx="6" fill="#fff5d6" stroke="#c19c00" stroke-width="1.2"/>
+  <text x="536" y="451" font-size="10.5" font-weight="700" fill="#8a6d00">기술 자료 파일</text>
+  <text x="656" y="451" font-size="8.7" fill="#7a6200">런북 · 아키텍처 문서 · 포스트모템 (.md/.txt, 최대 50MB, 1,000개)</text>
+
+  <!-- ================= Row 3 : 권한 ================= -->
+  <rect x="10" y="490" width="1020" height="96" rx="10" fill="#fdecea" stroke="#d13438" stroke-width="1.5" filter="url(#p1)"/>
+  <text x="520" y="514" text-anchor="middle" font-size="12.5" font-weight="700" fill="#a4262c">모든 도구 호출은 실행 전에 Permission Gate 를 통과합니다</text>
+  <rect x="30" y="524" width="316" height="48" rx="6" fill="#ffffff" stroke="#d13438" stroke-width="1"/>
+  <text x="188" y="542" text-anchor="middle" font-size="10" font-weight="700" fill="#a4262c">① 관리 ID 의 Azure RBAC</text>
+  <text x="188" y="559" text-anchor="middle" font-size="8.7" fill="#a4262c">Reader(읽기 전용) vs Privileged(쓰기 가능)</text>
+
+  <rect x="362" y="524" width="316" height="48" rx="6" fill="#ffffff" stroke="#d13438" stroke-width="1"/>
+  <text x="520" y="542" text-anchor="middle" font-size="10" font-weight="700" fill="#a4262c">② 실행 모드</text>
+  <text x="520" y="559" text-anchor="middle" font-size="8.7" fill="#a4262c">Review(승인 후 실행) vs Autonomous(직접 실행)</text>
+
+  <rect x="694" y="524" width="316" height="48" rx="6" fill="#ffffff" stroke="#d13438" stroke-width="1"/>
+  <text x="852" y="542" text-anchor="middle" font-size="10" font-weight="700" fill="#a4262c">③ 사용자 역할</text>
+  <text x="852" y="559" text-anchor="middle" font-size="8.7" fill="#a4262c">Reader / Standard User / Administrator</text>
+
+  <!-- ================= Row 4 : 가치 측정 ================= -->
+  <rect x="10" y="604" width="1020" height="82" rx="10" fill="#ffffff" stroke="#008272" stroke-width="1.4" filter="url(#p1)"/>
+  <text x="520" y="628" text-anchor="middle" font-size="12" font-weight="700" fill="#006b5d">가치 측정 — Operations Hub ▸ Incident Analytics</text>
+  <text x="145" y="654" text-anchor="middle" font-size="9.5" fill="#4a6b66">절감된 엔지니어링 시간</text>
+  <text x="145" y="670" text-anchor="middle" font-size="8.5" fill="#7a9a95">일자별 드릴다운</text>
+  <text x="395" y="654" text-anchor="middle" font-size="9.5" fill="#4a6b66">에이전트 지원 해결률</text>
+  <text x="395" y="670" text-anchor="middle" font-size="8.5" fill="#7a9a95">자동 완화 / 지원 / 수동 구분</text>
+  <text x="645" y="654" text-anchor="middle" font-size="9.5" fill="#4a6b66">완화까지 중앙값 (P50)</text>
+  <text x="645" y="670" text-anchor="middle" font-size="8.5" fill="#7a9a95">에이전트 vs 사람 비교</text>
+  <text x="895" y="654" text-anchor="middle" font-size="9.5" fill="#4a6b66">IntentMet 품질 점수</text>
+  <text x="895" y="670" text-anchor="middle" font-size="8.5" fill="#7a9a95">1~5점 자동 평가</text>
+</svg>

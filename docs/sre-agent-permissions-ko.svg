@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 620" font-family="Segoe UI, Malgun Gothic, 맑은 고딕, -apple-system, sans-serif">
+  <defs>
+    <filter id="q1" x="-4%" y="-8%" width="108%" height="120%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.10"/>
+    </filter>
+    <marker id="qa" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#d13438"/></marker>
+  </defs>
+
+  <rect width="1040" height="620" rx="12" fill="#f7f9fb"/>
+  <text x="520" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#12314e">Azure SRE Agent — 권한 모델</text>
+  <text x="520" y="56" text-anchor="middle" font-size="12" fill="#5a6b7b">“조사만” 할 것인가, “조치까지” 할 것인가 — 두 축(권한 × 실행 모드)으로 결정됩니다</text>
+
+  <!-- 항상 부여되는 역할 -->
+  <rect x="10" y="76" width="1020" height="86" rx="10" fill="#ffffff" stroke="#0078d4" stroke-width="1.4" filter="url(#q1)"/>
+  <text x="520" y="99" text-anchor="middle" font-size="12" font-weight="700" fill="#005a9e">권한 수준과 무관하게 항상 부여되는 기본 역할</text>
+  <rect x="26" y="110" width="238" height="40" rx="6" fill="#f3f9fe" stroke="#0078d4" stroke-width="0.8"/>
+  <text x="145" y="127" text-anchor="middle" font-size="10" font-weight="700" fill="#1b4f7e">Reader</text>
+  <text x="145" y="142" text-anchor="middle" font-size="8.7" fill="#5a7fa3">리소스 구성·속성 조회</text>
+
+  <rect x="274" y="110" width="238" height="40" rx="6" fill="#f3f9fe" stroke="#0078d4" stroke-width="0.8"/>
+  <text x="393" y="127" text-anchor="middle" font-size="10" font-weight="700" fill="#1b4f7e">Log Analytics Reader</text>
+  <text x="393" y="142" text-anchor="middle" font-size="8.7" fill="#5a7fa3">KQL 로그 쿼리</text>
+
+  <rect x="522" y="110" width="238" height="40" rx="6" fill="#f3f9fe" stroke="#0078d4" stroke-width="0.8"/>
+  <text x="641" y="127" text-anchor="middle" font-size="10" font-weight="700" fill="#1b4f7e">Monitoring Reader</text>
+  <text x="641" y="142" text-anchor="middle" font-size="8.7" fill="#5a7fa3">메트릭·모니터링 데이터</text>
+
+  <rect x="770" y="110" width="240" height="40" rx="6" fill="#fff8e6" stroke="#c19c00" stroke-width="1.1"/>
+  <text x="890" y="127" text-anchor="middle" font-size="10" font-weight="700" fill="#8a6d00">Monitoring Contributor</text>
+  <text x="890" y="142" text-anchor="middle" font-size="8.7" fill="#7a6200">경고 확인·종료 (구독 범위)</text>
+
+  <!-- 권한 수준 2종 -->
+  <rect x="10" y="180" width="505" height="176" rx="10" fill="#ffffff" stroke="#008272" stroke-width="1.6" filter="url(#q1)"/>
+  <rect x="10" y="180" width="505" height="30" rx="10" fill="#e6f4f1"/>
+  <rect x="10" y="200" width="505" height="10" fill="#e6f4f1"/>
+  <text x="262" y="201" text-anchor="middle" font-size="13" font-weight="700" fill="#006b5d">Reader — 읽기 전용 (기본값)</text>
+  <text x="262" y="230" text-anchor="middle" font-size="10.5" fill="#00594d">기본 역할 + 리소스 종류별 <tspan font-weight="700">Reader</tspan> 역할</text>
+  <rect x="28" y="242" width="469" height="30" rx="5" fill="#f2fbf9" stroke="#008272" stroke-width="0.8"/>
+  <text x="42" y="261" font-size="9.5" fill="#4a6b66">✅ 로그·메트릭 조회, 근본 원인 분석, 리포트 작성 — 모두 가능</text>
+  <rect x="28" y="276" width="469" height="30" rx="5" fill="#f2fbf9" stroke="#008272" stroke-width="0.8"/>
+  <text x="42" y="295" font-size="9.5" fill="#4a6b66">⛔ 재시작·스케일·설정 변경은 <tspan font-weight="700">직접 불가</tspan></text>
+  <rect x="28" y="310" width="469" height="34" rx="5" fill="#fff8e6" stroke="#c19c00" stroke-width="1"/>
+  <text x="42" y="325" font-size="9.5" font-weight="700" fill="#8a6d00">→ 조치가 필요하면 OBO 승인 요청</text>
+  <text x="42" y="338" font-size="8.7" fill="#7a6200">관리자(Administrator)가 자신의 자격 증명으로 승인해야 실행 (자격 증명은 보관되지 않음)</text>
+
+  <rect x="525" y="180" width="505" height="176" rx="10" fill="#ffffff" stroke="#d13438" stroke-width="1.6" filter="url(#q1)"/>
+  <rect x="525" y="180" width="505" height="30" rx="10" fill="#fdecea"/>
+  <rect x="525" y="200" width="505" height="10" fill="#fdecea"/>
+  <text x="777" y="201" text-anchor="middle" font-size="13" font-weight="700" fill="#a4262c">Privileged — 쓰기 가능</text>
+  <text x="777" y="230" text-anchor="middle" font-size="10.5" fill="#a4262c">기본 역할 + 리소스 종류별 <tspan font-weight="700">Contributor</tspan> 역할</text>
+  <rect x="543" y="242" width="469" height="30" rx="5" fill="#fff5f5" stroke="#d13438" stroke-width="0.8"/>
+  <text x="557" y="261" font-size="9.5" fill="#a4262c">✅ 읽기 + <tspan font-weight="700">재시작 · 스케일 · 설정 변경 직접 실행</tspan></text>
+  <rect x="543" y="276" width="469" height="30" rx="5" fill="#fff5f5" stroke="#d13438" stroke-width="0.8"/>
+  <text x="557" y="295" font-size="9.5" fill="#a4262c">예: 리소스 그룹에 Container Apps 가 있으면 Container Apps Contributor 자동 부여</text>
+  <rect x="543" y="310" width="469" height="34" rx="5" fill="#fff5f5" stroke="#d13438" stroke-width="1"/>
+  <text x="557" y="325" font-size="9.5" font-weight="700" fill="#a4262c">→ 이 Lab 이 사용하는 수준</text>
+  <text x="557" y="338" font-size="8.7" fill="#c05055">에이전트가 사람 개입 없이 완화까지 수행하는 데모를 위해 선택</text>
+
+  <!-- 매트릭스 -->
+  <rect x="10" y="374" width="1020" height="176" rx="10" fill="#ffffff" stroke="#5c2d91" stroke-width="1.4" filter="url(#q1)"/>
+  <rect x="10" y="374" width="1020" height="28" rx="10" fill="#f3ecfb"/>
+  <rect x="10" y="392" width="1020" height="10" fill="#f3ecfb"/>
+  <text x="520" y="393" text-anchor="middle" font-size="12" font-weight="700" fill="#4a2378">쓰기 작업이 필요할 때 — 권한 × 실행 모드 조합별 실제 동작</text>
+
+  <line x1="270" y1="414" x2="270" y2="538" stroke="#d9d0e8" stroke-width="1"/>
+  <line x1="650" y1="414" x2="650" y2="538" stroke="#d9d0e8" stroke-width="1"/>
+  <line x1="30" y1="440" x2="1010" y2="440" stroke="#d9d0e8" stroke-width="1"/>
+  <line x1="30" y1="490" x2="1010" y2="490" stroke="#d9d0e8" stroke-width="1"/>
+
+  <text x="150" y="431" text-anchor="middle" font-size="10.5" font-weight="700" fill="#4a2378">권한 수준</text>
+  <text x="460" y="431" text-anchor="middle" font-size="10.5" font-weight="700" fill="#4a2378">Review 모드</text>
+  <text x="830" y="431" text-anchor="middle" font-size="10.5" font-weight="700" fill="#4a2378">Autonomous 모드</text>
+
+  <text x="150" y="466" text-anchor="middle" font-size="11" font-weight="700" fill="#006b5d">Reader</text>
+  <text x="460" y="461" text-anchor="middle" font-size="9.5" fill="#6b4a94">관리자에게 OBO 승인 요청</text>
+  <text x="460" y="476" text-anchor="middle" font-size="8.7" fill="#8a6db0">승인 전까지 조치 보류</text>
+  <text x="830" y="461" text-anchor="middle" font-size="9.5" fill="#6b4a94">자율 모드여도 OBO 승인 요청</text>
+  <text x="830" y="476" text-anchor="middle" font-size="8.7" fill="#8a6db0">권한이 없으면 자율 실행 불가</text>
+
+  <text x="150" y="516" text-anchor="middle" font-size="11" font-weight="700" fill="#a4262c">Privileged</text>
+  <text x="460" y="511" text-anchor="middle" font-size="9.5" fill="#6b4a94">조치 전 사용자 동의(Consent) 요청</text>
+  <text x="460" y="526" text-anchor="middle" font-size="8.7" fill="#8a6db0">동의 후 자체 권한으로 실행</text>
+  <text x="830" y="511" text-anchor="middle" font-size="9.5" font-weight="700" fill="#a4262c">승인 없이 즉시 실행</text>
+  <text x="830" y="526" text-anchor="middle" font-size="8.7" fill="#c05055">← 이 Lab 의 E2E 가 이 경로로 동작</text>
+
+  <text x="520" y="580" text-anchor="middle" font-size="10" fill="#5a6b7b">읽기 작업은 권한만 있으면 두 모드 모두 즉시 수행합니다 · 권한이 없으면 읽기라도 OBO 승인이 필요합니다</text>
+  <text x="520" y="600" text-anchor="middle" font-size="10" font-weight="600" fill="#a4262c">운영 환경 권장: 신규 Response Plan 은 Review 로 시작 → 동작 검증 후 Autonomous 전환 · 권한은 리소스 그룹 범위로 최소화</text>
+</svg>

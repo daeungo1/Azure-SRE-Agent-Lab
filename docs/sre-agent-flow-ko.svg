@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 520" font-family="Segoe UI, Malgun Gothic, 맑은 고딕, -apple-system, sans-serif">
+  <defs>
+    <filter id="f1" x="-4%" y="-8%" width="108%" height="120%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.10"/>
+    </filter>
+    <marker id="a1" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#0078d4"/></marker>
+    <marker id="a2" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#008272"/></marker>
+    <marker id="a3" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#5c2d91"/></marker>
+  </defs>
+
+  <rect width="1020" height="520" rx="12" fill="#f7f9fb"/>
+  <text x="510" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#12314e">Azure SRE Agent — 동작 흐름</text>
+  <text x="510" y="56" text-anchor="middle" font-size="12" fill="#5a6b7b">알림 하나가 들어오면, 조사·근본 원인·완화까지 한 스레드에서 끝납니다</text>
+
+  <!-- 파이프라인 -->
+  <g>
+    <rect x="10" y="80" width="176" height="72" rx="9" fill="#ffffff" stroke="#0078d4" stroke-width="1.5" filter="url(#f1)"/>
+    <text x="98" y="104" text-anchor="middle" font-size="12.5" font-weight="700" fill="#005a9e">① 신호 수신</text>
+    <text x="98" y="122" text-anchor="middle" font-size="9.5" fill="#5a7fa3">Azure Monitor · PagerDuty</text>
+    <text x="98" y="137" text-anchor="middle" font-size="9.5" fill="#5a7fa3">ServiceNow 경고 수신</text>
+
+    <rect x="216" y="80" width="176" height="72" rx="9" fill="#ffffff" stroke="#0078d4" stroke-width="1.5" filter="url(#f1)"/>
+    <text x="304" y="104" text-anchor="middle" font-size="12.5" font-weight="700" fill="#005a9e">② Response Plan</text>
+    <text x="304" y="122" text-anchor="middle" font-size="9.5" fill="#5a7fa3">심각도 · 서비스 · 키워드</text>
+    <text x="304" y="137" text-anchor="middle" font-size="9.5" fill="#5a7fa3">필터로 담당 에이전트 라우팅</text>
+
+    <rect x="422" y="80" width="176" height="72" rx="9" fill="#e5f1fb" stroke="#0078d4" stroke-width="1.8" filter="url(#f1)"/>
+    <text x="510" y="104" text-anchor="middle" font-size="12.5" font-weight="700" fill="#005a9e">③ Custom Agent 조사</text>
+    <text x="510" y="122" text-anchor="middle" font-size="9.5" fill="#33689e">도구를 병렬 실행하며</text>
+    <text x="510" y="137" text-anchor="middle" font-size="9.5" fill="#33689e">증거 수집</text>
+
+    <rect x="628" y="80" width="176" height="72" rx="9" fill="#ffffff" stroke="#0078d4" stroke-width="1.5" filter="url(#f1)"/>
+    <text x="716" y="104" text-anchor="middle" font-size="12.5" font-weight="700" fill="#005a9e">④ RCA + 완화안</text>
+    <text x="716" y="122" text-anchor="middle" font-size="9.5" fill="#5a7fa3">근본 원인 가설 도출</text>
+    <text x="716" y="137" text-anchor="middle" font-size="9.5" fill="#5a7fa3">+ 조치 방안 제시</text>
+
+    <rect x="834" y="80" width="176" height="72" rx="9" fill="#ffffff" stroke="#0078d4" stroke-width="1.5" filter="url(#f1)"/>
+    <text x="922" y="104" text-anchor="middle" font-size="12.5" font-weight="700" fill="#005a9e">⑤ 조치 &amp; 기록</text>
+    <text x="922" y="122" text-anchor="middle" font-size="9.5" fill="#5a7fa3">완화 실행 · 경고 종료</text>
+    <text x="922" y="137" text-anchor="middle" font-size="9.5" fill="#5a7fa3">리포트 · 메모리 저장</text>
+
+    <line x1="188" y1="116" x2="212" y2="116" stroke="#0078d4" stroke-width="1.8" marker-end="url(#a1)"/>
+    <line x1="394" y1="116" x2="418" y2="116" stroke="#0078d4" stroke-width="1.8" marker-end="url(#a1)"/>
+    <line x1="600" y1="116" x2="624" y2="116" stroke="#0078d4" stroke-width="1.8" marker-end="url(#a1)"/>
+    <line x1="806" y1="116" x2="830" y2="116" stroke="#0078d4" stroke-width="1.8" marker-end="url(#a1)"/>
+  </g>
+
+  <!-- 패널 A: 참조 소스 -->
+  <rect x="10" y="182" width="590" height="140" rx="10" fill="#ffffff" stroke="#008272" stroke-width="1.4"/>
+  <rect x="10" y="182" width="590" height="28" rx="10" fill="#e6f4f1"/>
+  <rect x="10" y="200" width="590" height="10" fill="#e6f4f1"/>
+  <text x="305" y="201" text-anchor="middle" font-size="12" font-weight="700" fill="#006b5d">③ 조사에 사용하는 3가지 소스</text>
+
+  <rect x="25" y="222" width="180" height="86" rx="7" fill="#f2fbf9" stroke="#008272" stroke-width="1"/>
+  <text x="115" y="243" text-anchor="middle" font-size="11" font-weight="700" fill="#006b5d">관측 데이터</text>
+  <text x="115" y="261" text-anchor="middle" font-size="9" fill="#4a6b66">Application Insights</text>
+  <text x="115" y="276" text-anchor="middle" font-size="9" fill="#4a6b66">Log Analytics · KQL</text>
+  <text x="115" y="291" text-anchor="middle" font-size="9" fill="#4a6b66">메트릭 · Grafana</text>
+
+  <rect x="220" y="222" width="180" height="86" rx="7" fill="#f2fbf9" stroke="#008272" stroke-width="1"/>
+  <text x="310" y="243" text-anchor="middle" font-size="11" font-weight="700" fill="#006b5d">Knowledge Base</text>
+  <text x="310" y="261" text-anchor="middle" font-size="9" fill="#4a6b66">런북 · 트러블슈팅 가이드</text>
+  <text x="310" y="276" text-anchor="middle" font-size="9" fill="#4a6b66">아키텍처 문서</text>
+  <text x="310" y="291" text-anchor="middle" font-size="9" fill="#4a6b66">과거 인시던트 · 포스트모템</text>
+
+  <rect x="415" y="222" width="180" height="86" rx="7" fill="#f2fbf9" stroke="#008272" stroke-width="1"/>
+  <text x="505" y="243" text-anchor="middle" font-size="11" font-weight="700" fill="#006b5d">코드 &amp; 배포 이력</text>
+  <text x="505" y="261" text-anchor="middle" font-size="9" fill="#4a6b66">GitHub · Azure DevOps</text>
+  <text x="505" y="276" text-anchor="middle" font-size="9" fill="#4a6b66">커밋 · 배포 시각 상관분석</text>
+  <text x="505" y="291" text-anchor="middle" font-size="9" fill="#4a6b66">파일:라인 단위 원인 특정</text>
+
+  <line x1="510" y1="178" x2="510" y2="160" stroke="#008272" stroke-width="1.6" marker-end="url(#a2)" transform="rotate(180 510 169)"/>
+
+  <!-- 패널 B: 자율성 분기 -->
+  <rect x="628" y="182" width="382" height="140" rx="10" fill="#ffffff" stroke="#c19c00" stroke-width="1.4"/>
+  <rect x="628" y="182" width="382" height="28" rx="10" fill="#fff8e6"/>
+  <rect x="628" y="200" width="382" height="10" fill="#fff8e6"/>
+  <text x="819" y="201" text-anchor="middle" font-size="12" font-weight="700" fill="#8a6d00">④ 이후 — 자율성 수준에 따라 분기</text>
+
+  <rect x="643" y="222" width="172" height="86" rx="7" fill="#fffdf5" stroke="#c19c00" stroke-width="1"/>
+  <text x="729" y="243" text-anchor="middle" font-size="11" font-weight="700" fill="#8a6d00">Review</text>
+  <text x="729" y="262" text-anchor="middle" font-size="9" fill="#7a6200">조치를 제안하고</text>
+  <text x="729" y="277" text-anchor="middle" font-size="9" fill="#7a6200">사람 승인을 기다림</text>
+  <text x="729" y="294" text-anchor="middle" font-size="8.5" fill="#a08400">신규 플랜 권장</text>
+
+  <rect x="828" y="222" width="170" height="86" rx="7" fill="#fdecea" stroke="#d13438" stroke-width="1.2"/>
+  <text x="913" y="243" text-anchor="middle" font-size="11" font-weight="700" fill="#a4262c">Autonomous</text>
+  <text x="913" y="262" text-anchor="middle" font-size="9" fill="#a4262c">승인 없이 직접</text>
+  <text x="913" y="277" text-anchor="middle" font-size="9" fill="#a4262c">조사 · 완화 수행</text>
+  <text x="913" y="294" text-anchor="middle" font-size="8.5" fill="#c05055">쓰기 권한 필요</text>
+
+  <!-- 산출물 -->
+  <rect x="10" y="352" width="1000" height="118" rx="10" fill="#ffffff" stroke="#5c2d91" stroke-width="1.4"/>
+  <rect x="10" y="352" width="1000" height="28" rx="10" fill="#f3ecfb"/>
+  <rect x="10" y="370" width="1000" height="10" fill="#f3ecfb"/>
+  <text x="510" y="371" text-anchor="middle" font-size="12" font-weight="700" fill="#4a2378">⑤ 남는 것 — 조사 1회로 세 가지가 축적됩니다</text>
+
+  <rect x="25" y="392" width="320" height="64" rx="7" fill="#faf7ff" stroke="#5c2d91" stroke-width="1"/>
+  <text x="185" y="413" text-anchor="middle" font-size="11" font-weight="700" fill="#4a2378">인시던트 리포트</text>
+  <text x="185" y="432" text-anchor="middle" font-size="9" fill="#6b4a94">근거(로그·차트·KQL 결과) 포함</text>
+  <text x="185" y="447" text-anchor="middle" font-size="9" fill="#6b4a94">템플릿에 맞춘 구조화 문서</text>
+
+  <rect x="355" y="392" width="320" height="64" rx="7" fill="#faf7ff" stroke="#5c2d91" stroke-width="1"/>
+  <text x="515" y="413" text-anchor="middle" font-size="11" font-weight="700" fill="#4a2378">티켓 · GitHub 이슈</text>
+  <text x="515" y="432" text-anchor="middle" font-size="9" fill="#6b4a94">ServiceNow · PagerDuty · GitHub</text>
+  <text x="515" y="447" text-anchor="middle" font-size="9" fill="#6b4a94">코드 참조 + 수정 제안</text>
+
+  <rect x="685" y="392" width="320" height="64" rx="7" fill="#faf7ff" stroke="#5c2d91" stroke-width="1"/>
+  <text x="845" y="413" text-anchor="middle" font-size="11" font-weight="700" fill="#4a2378">Team Memory</text>
+  <text x="845" y="432" text-anchor="middle" font-size="9" fill="#6b4a94">근본 원인 · 해결 절차 · 운영 패턴</text>
+  <text x="845" y="447" text-anchor="middle" font-size="9" fill="#6b4a94">다음 조사에서 자동 재사용</text>
+
+  <line x1="510" y1="330" x2="510" y2="348" stroke="#5c2d91" stroke-width="1.6" marker-end="url(#a3)"/>
+
+  <text x="510" y="496" text-anchor="middle" font-size="10" fill="#5a6b7b">모든 도구 호출은 실행 전에 Permission Gate 의 평가를 거칩니다 · 감사 로그는 자체 Application Insights 로 전송</text>
+</svg>
