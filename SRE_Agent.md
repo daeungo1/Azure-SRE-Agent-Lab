@@ -425,7 +425,7 @@
 | Response plans | 조회 | 조회 | 생성·편집·삭제 |
 | Managed resources / Settings | 조회 | 조회 | 변경, 에이전트 중지/삭제 |
 
-```azurecli
+```bash
 az role assignment create \
   --assignee user@company.com \
   --role "SRE Agent Administrator" \

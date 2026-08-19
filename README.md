@@ -145,7 +145,7 @@ az role assignment delete --assignee "$PRINCIPAL_ID" \
 
 > **Windows 주의 (중요):** Python 설치 후 **설정 → 앱 → 앱 실행 별칭**에서 `python.exe`, `python3.exe` 를 **끄세요.**
 > 켜져 있으면 `python3` 가 Microsoft Store 스텁으로 잡혀 구성 스크립트가 조용히 실패합니다.
-> (이 저장소의 스크립트는 스텁을 자동 감지해 우회하도록 수정했습니다 — [6.4 발견·수정한 이슈](#64-실습-중-발견하고-수정한-이슈) 참고)
+> (이 저장소의 스크립트는 스텕을 자동 감지해 우회하도록 수정했습니다 — [6.7 발견·수정한 이슈](#67-실습-중-발견하고-수정한-이슈) 참고)
 >
 > Bash 스크립트는 **Git Bash** 로 실행합니다: `& "C:\Program Files\Git\bin\bash.exe" scripts/...`
 
@@ -533,7 +533,7 @@ GET  frontend /                  → HTTP 200 (700ms)
 
 환경을 삭제하지 않고 **여러 번 시연**할 때만 필요한 내용입니다.
 
-### 7.1 ⚠️ 데모 재현을 위한 필수 리셋
+### 7.1 데모 재현을 위한 필수 리셋
 
 에이전트가 장애를 완화하면서 **컨테너 리소스를 확장**합니다.
 따라서 시연 직후의 상태 그대로는 **동일한 OOM 장애가 재현되지 않습니다.**
@@ -565,7 +565,7 @@ az containerapp update --name "$(azd env get-value CONTAINER_APP_NAME)" \
 
 | # | 항목 | 확인 방법 |
 |:--:|---|---|
-| 1 | 컨테너 사양이 `0.5 CPU / 1Gi` 로 리셋됨 | [7.1](#71-️-데모-재현을-위한-필수-리셋) |
+| 1 | 컨테너 사양이 `0.5 CPU / 1Gi` 로 리셋됨 | [7.1](#71-데모-재현을-위한-필수-리셋) |
 | 2 | 앱이 정상 응답 | `POST /api/cart/demo-user/items` → 200 |
 | 3 | Response Plan 이 On 상태 | `bash scripts/post-provision.sh --status` 또는 Builder ▸ Incident response plans |
 | 4 | 직전 경고가 `Resolved` 상태 | Azure Portal ▸ Monitor ▸ Alerts |
@@ -637,7 +637,7 @@ azd down --purge
 | `azd up` 리전 오류 | `azd env set AZURE_LOCATION eastus2` 후 재실행 |
 | Container App 이 `Waiting` 상태 | ACR 이미지 빌드 대기 — `post-provision.sh` 를 먼저 실행했는지 확인 |
 | 경고가 발화하지 않음 | 5xx 가 5분 창에서 5건을 넘어야 함. `break-app.sh` 요청 수를 늘리세요 |
-| 두 번째 시연에서 장애가 재현되지 않음 | 에이전트가 메모리를 확장해 둔 상태 — [7.1 데모 리셋](#71-️-데모-재현을-위한-필수-리셋) 수행 |
+| 두 번째 시연에서 장애가 재현되지 않음 | 에이전트가 메모리를 확장해 둔 상태 — [7.1 데모 리셋](#71-데모-재현을-위한-필수-리셋) 수행 |
 | 경고는 떴는데 새 조사가 안 생김 | 재조사 쿼다운(기본 3시간)으로 기존 스레드에 병합됨 — [7.2](#72-시연-전-체크리스트) 참고 |
 | 포털이 응답 없음 / 채팅 불가 | 방화벽·프록시가 `*.azuresre.ai` 를 차단했는지 확인 (허용 목록 추가) |
 | 에이전트가 조치를 못하고 승인만 요청 | 권한 수준이 Reader 일 수 있음 — [SRE_Agent.md §6](SRE_Agent.md#6-권한-모델-permission-model) 참고 |
