@@ -3,6 +3,7 @@
 > Azure SRE Agent 를 배포하고, 샘플 앱을 의도적으로 망가뜨린 뒤,
 > 에이전트가 **스스로 진단하고 완화**하는 과정을 확인하는 실습 저장소입니다.
 >
+> - 📖 **문서 사이트: [daeungo1.github.io/Azure-SRE-Agent-Lab](https://daeungo1.github.io/Azure-SRE-Agent-Lab/)** — 탭·목차·검색이 있는 읽기 편한 버전
 > - 기능 설명: **[SRE_Agent.md](SRE_Agent.md)**
 > - 원본 Lab: [microsoft/sre-agent — labs/starter-lab](https://github.com/microsoft/sre-agent/tree/main/labs/starter-lab) ([영문 README](docs/README.en.md))
 > - **이 저장소의 모든 절차는 실제 Azure 구독에서 E2E 검증을 마쳤습니다.** → [6. E2E 실행 결과](#6-e2e-실행-결과)
@@ -651,6 +652,8 @@ azd down --purge
 ├── README.md                        # 이 문서 (실습 가이드 + E2E 결과 + 워크숍 운영)
 ├── SRE_Agent.md                     # Azure SRE Agent 기능 소개 (포털·기능·권한 전반)
 ├── azure.yaml                       # azd 템플릿 정의
+├── mkdocs.base.yml                  # 문서 사이트 테마·확장 설정 (nav 는 빌드 시 생성)
+├── .github/workflows/pages.yml      # 문서 사이트 자동 배포 (GitHub Pages)
 ├── docs/
 │   ├── architecture-ko.svg          # Lab 아키텍처 (한국어)
 │   ├── architecture.svg             # Lab 아키텍처 (원본)
@@ -671,7 +674,7 @@ azd down --purge
 │   └── modules/                     # monitoring · identity · container-app · sre-agent · alert-rules · rbac
 ├── knowledge-base/                  # SRE Agent 에 업로드되는 런북 · 문서
 ├── lab/                             # Skillable 랩 진행용 지침
-├── scripts/                         # setup · post-provision · break-app · 샘플 이슈 생성
+├── scripts/                         # setup · post-provision · break-app · build-site
 └── sre-config/                      # Custom Agent(YAML) · 커넥터 정의
 ```
 
@@ -681,8 +684,33 @@ azd down --purge
 
 | 항목 | 링크 |
 |---|---|
+| **이 저장소의 문서 사이트** | [daeungo1.github.io/Azure-SRE-Agent-Lab](https://daeungo1.github.io/Azure-SRE-Agent-Lab/) |
 | SRE Agent 포털 | [sre.azure.com](https://sre.azure.com) |
 | 공식 문서 | [learn.microsoft.com/azure/sre-agent](https://learn.microsoft.com/azure/sre-agent/overview) |
 | 블로그 | [aka.ms/sreagent/blog](https://aka.ms/sreagent/blog) |
 | 가격 | [aka.ms/sreagent/pricing](https://aka.ms/sreagent/pricing) |
 | 원본 Lab | [microsoft/sre-agent](https://github.com/microsoft/sre-agent) |
+
+### 문서 사이트에 대하여
+
+`README.md` · `SRE_Agent.md` · `features-sre/README.md` **원본은 그대로 두고**,
+[scripts/build-site.py](scripts/build-site.py) 가 빌드 시점에만 장 단위로 분할해
+[MkDocs Material](https://squidfunk.github.io/mkdocs-material/) 사이트를 만듭니다.
+분할본은 저장소에 커밋되지 않으므로 **문서는 항상 한 벌만 관리**하면 됩니다.
+
+로컬에서 미리 보려면:
+
+```bash
+pip install "mkdocs-material>=9.5,<10"
+python scripts/build-site.py
+mkdocs serve -f .site/mkdocs.yml
+```
+
+#### 알려진 제약
+
+| 제약 | 내용 | 대응 |
+|---|---|---|
+| **한국어 검색 정확도** | 사이트 검색은 lunr 기반인데 **lunr 에는 한국어 형태소 분석기가 없습니다.** 색인이 어절(띄어쓰기) 단위로만 만들어져, `권한` 으로 `권한을`·`권한이` 같은 조사 결합형은 잘 찾지 못합니다. | 구분자를 넓게 조정해 두었습니다. 정확히 찾으려면 **띄어쓰기 기준의 온전한 단어**로 검색하거나, 브라우저 페이지 내 검색(`Ctrl+F`)을 함께 쓰세요. |
+| 소스 파일 링크 | 사이트는 문서만 배포하므로 `infra/` · `scripts/` 같은 코드 링크는 **GitHub 로 이동**합니다. | 의도된 동작입니다. |
+| 문서 외 변경은 미배포 | 워크플로는 `README.md` · `SRE_Agent.md` · `features-sre/README.md` · `docs/` · 사이트 설정 변경에만 반응합니다. | 그 외 변경 후 갱신이 필요하면 Actions 에서 **Run workflow** 로 수동 실행하세요. |
+| 채팅은 영어만 | 이 제약은 사이트가 아니라 **SRE Agent 제품** 자체의 것입니다. | [SRE_Agent.md — 9. 고려사항](SRE_Agent.md#9-고려사항) 참고 |
