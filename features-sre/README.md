@@ -83,6 +83,10 @@ Verification — what the portal will now show
 
 에이전트가 필요할 때 꺼내 쓰는 **절차서**입니다. 각 스킬은 메타데이터 `.json` + 본문 `.md` 한 쌍입니다.
 
+[![Skill 생성 화면](https://learn.microsoft.com/azure/sre-agent/media/skills/portal-create-skill.png)](https://learn.microsoft.com/azure/sre-agent/skills)
+<sup>이 페이지의 화면은 **Microsoft Learn 문서의 예시 화면**이며 이 Lab 환경이 아닙니다.
+본인 환경 화면은 적용 후 [sre.azure.com](https://sre.azure.com) 에서 확인하세요. — 출처: [Skills in Azure SRE Agent](https://learn.microsoft.com/azure/sre-agent/skills)</sup>
+
 | 스킬 | 하는 일 |
 |---|---|
 | `grubify-oom-triage` | OOM 진단 — 5xx 와 메모리 압박 상관 분석, 실패 컨트롤러 특정, 근거 기반 사이징 제안 |
@@ -93,6 +97,10 @@ Verification — what the portal will now show
 ### Hooks — Builder ▸ Hooks (4개, 이벤트 타입 전체 커버)
 
 에이전트 실행 흐름의 특정 시점에 **자동으로 주입되는 지시**입니다.
+
+[![Stop 훅이 응답을 반려하고 재시도시키는 화면](https://learn.microsoft.com/azure/sre-agent/media/agent-hooks/hooks-stop-hook-working.png)](https://learn.microsoft.com/azure/sre-agent/agent-hooks)
+<sup>훅이 실제로 개입하는 장면 — 응답이 조건을 충족하지 않아 반려되고, 에이전트가 보완해 다시 답합니다.
+출처: [Agent Hooks in Azure SRE Agent](https://learn.microsoft.com/azure/sre-agent/agent-hooks)</sup>
 
 | 훅 | eventType | 하는 일 |
 |---|---|---|
@@ -109,12 +117,20 @@ Verification — what the portal will now show
 
 기본 `incident-handler` 외에, **GitHub 연동 없이도 동작하는** Azure 전용 에이전트입니다.
 
+[![Agent Canvas](https://learn.microsoft.com/azure/sre-agent/media/sub-agents/portal-sub-agent-canvas-full.png)](https://learn.microsoft.com/azure/sre-agent/sub-agents)
+<sup>적용 후 이 캠버스에 `incident-handler` · `cost-analyzer` · `reliability-reviewer` 3개가 표시됩니다.
+출처: [Custom agents in Azure SRE Agent](https://learn.microsoft.com/azure/sre-agent/sub-agents)</sup>
+
 | 에이전트 | 역할 | 권한 |
 |---|---|---|
 | `cost-analyzer` | FinOps 분석 — 우선순위가 매겨진 절감안 제시 | 읽기 전용 |
 | `reliability-reviewer` | 사전 안정성 점검 — 다음 장애의 선행 지표 탐지, RAG 상태 산출 | 읽기 전용 |
 
 ### Automation — 스케줄 작업 (3개)
+
+[![Operations Hub — Automation 탭](https://learn.microsoft.com/azure/sre-agent/media/operations-hub/operations-hub-automation-tab.png)](https://learn.microsoft.com/azure/sre-agent/operations-hub)
+<sup>스케줄 작업의 실행 수 · 성공률 · 소요 시간을 이 화면에서 확인합니다.
+출처: [Operations Hub](https://learn.microsoft.com/azure/sre-agent/operations-hub)</sup>
 
 | 작업 | 주기 (cron, UTC) | 담당 |
 |---|---|---|
