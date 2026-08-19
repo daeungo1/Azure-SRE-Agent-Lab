@@ -17,6 +17,7 @@ Response Plans** 가 실제 내용으로 채워져, 워크숍에서 SRE Agent �
 5. [Lab 시나리오와의 연계](#5-lab-시나리오와의-연계)
 6. [항목 추가·수정하기](#6-항목추가수정하기)
 7. [정리](#7-정리)
+8. [적용 기록 & API 레퍼런스](#8-적용-기록--api-레퍼런스)
 
 ---
 
@@ -267,3 +268,102 @@ Invoke-WebRequest "$ep/api/v1/incidentPlayground/filters/grubify-latency-review"
 `DELETE /api/v1/scheduledtasks/{id}`.
 
 환경 전체를 삭제하려면 [README — 8. 정리](../README.md#8-정리-cleanup) 를 따르세요.
+
+---
+
+## 8. 적용 기록 & API 레퍼런스
+
+이 폴더는 **추측이 아니라 실제 에이전트에 적용·검증한 결과**로 만들어졌습니다.
+아래는 그 과정과, 재현에 필요한 스키마 정보입니다.
+
+### 8.1 적용 대상
+
+| 항목 | 값 |
+|---|---|
+| 에이전트 | `sre-agent-huvqg3bjooyw6` (리소스 그룹 `rg-sre-lab`, eastus2) |
+| 엔드포인트 | `https://<agent>--<id>.<region>.azuresre.ai` |
+| 토큰 대상(resource) | `https://azuresre.dev` |
+| 적용 스크립트 | [scripts/apply-features.ps1](scripts/apply-features.ps1) |
+
+### 8.2 적용 전 → 후
+
+적용 전 포털은 **인시던트 대응 관련 3개 섹션만** 채워져 있고 나머지는 비어 있었습니다.
+
+| 포털 섹션 | 적용 전 | 적용 후 |
+|---|:--:|---|
+| Knowledge Sources | 4 | **6** — `grubify-slo.md`, `escalation-policy.md` 추가 |
+| Response Plans | 1 | **2** — Review 모드 계획 추가 |
+| Agent Canvas | 1 | **3** — `cost-analyzer`, `reliability-reviewer` 추가 |
+| Skill Builder | **0** | **4** |
+| Hooks | **0** | **4** (Start / PreToolUse / PostToolUse / Stop 각 1) |
+| Automation | **0** | **3** |
+| Connectors | 0 | 0 → *opt-in, 아래 8.5 참고* |
+| Code Access | 0 | 0 → *GitHub 인증 후 가능* |
+| Plugins | 0 | 0 → *marketplace 등록 필요* |
+
+### 8.3 검증된 데이터플레인 스키마
+
+포털 API 는 preview 이며 공개 문서가 없습니다. 아래 값은 **실제 요청/응답으로 확인**한 것입니다.
+직접 항목을 추가할 때 이 값을 벗어나면 `ValidationFailure` 또는 `InvalidObjectType` 이 반환됩니다.
+
+| 리소스 | 메서드 · 경로 | `type` | 필수 / 유효값 |
+|---|---|---|---|
+| Skill | `PUT /api/v2/extendedAgent/skills/{name}` | `Skill` | `properties.description`, `skillContent`, `tools[]` |
+| Hook | `PUT /api/v2/extendedAgent/hooks/{name}` | `GlobalHook` | `eventType`: `Start` · `Stop` · `PreToolUse` · `PostToolUse`<br>`activationMode`: `always` · `onDemand`<br>`hook.type`: `prompt` · `command` (prompt 면 `hook.prompt` 필수) |
+| Subagent | `PUT /api/v2/extendedAgent/agents/{name}` | `ExtendedAgent` | `instructions`, `handoffDescription`, `tools[]` |
+| Scheduled task | `POST /api/v1/scheduledtasks` | — | `name`, `description`, `cronExpression`, `agentPrompt`, `agent` (모두 필수) |
+| Response plan | `PUT` 신규 · `POST` 갱신 `/api/v1/incidentPlayground/filters/{id}` | — | `id`, `name`, `priorities[]`, `titleContains`, `handlingAgent`, `agentMode` |
+| Knowledge file | `POST /api/v1/AgentMemory/upload` (multipart) | — | `files=@...`, `triggerIndexing=true` |
+| Connector | `PUT /api/v2/extendedAgent/connectors/{name}` | `AgentConnector` | `dataConnectorType`, `dataSource` |
+
+동작상 주의점 두 가지:
+
+- **Skill / Hook / Subagent 의 PUT 은 비동기(202)** 입니다. 생성 직후 다른 리소스가 이를 참조하면
+  실패할 수 있어, 적용 스크립트는 서브에이전트 생성 후 스케줄 작업 생성 전에 잠시 대기합니다.
+- **Response plan 은 이미 존재하면 PUT 이 409** 를 반환하며 `Use POST to update` 를 안내합니다.
+  스크립트는 409 를 받으면 자동으로 POST 로 재시도하므로 재실행해도 안전합니다.
+
+### 8.4 적용 확인 방법
+
+스크립트 실행 없이 현재 상태만 보려면:
+
+```powershell
+$ep = azd env get-value SRE_AGENT_ENDPOINT
+$h  = @{ Authorization = "Bearer $(az account get-access-token --resource https://azuresre.dev --query accessToken -o tsv)" }
+
+'/api/v1/AgentMemory/files',
+'/api/v2/extendedAgent/skills',
+'/api/v2/extendedAgent/hooks',
+'/api/v2/extendedAgent/agents',
+'/api/v1/scheduledtasks',
+'/api/v1/incidentPlayground/filters' | ForEach-Object {
+  $r = Invoke-RestMethod "$ep$_" -Headers $h
+  $n = if ($r.value) { @($r.value).Count } elseif ($r.files) { @($r.files).Count } else { @($r).Count }
+  "{0,-42} {1} item(s)" -f $_, $n
+}
+```
+
+`apply-features.ps1` 도 마지막에 동일한 검증 결과를 출력합니다.
+
+### 8.5 남은 수동 단계 (포털에서 직접)
+
+스크립트로 끝낼 수 없는 항목입니다. **아래 3개는 포털에서 진행해야 합니다.**
+
+- [ ] **GitHub 커넥터 인증** — `apply-features.ps1 -EnableGitHubConnector` 로 커넥터를 만든 뒤,
+      포털 **Builder ▸ Connectors** 에서 **Authorize** 클릭
+- [ ] **Code Access** — 위 인증 완료 후 저장소 연결 (`azd env set GITHUB_USER <id>` → `bash scripts/post-provision.sh --retry`)
+- [ ] **Plugins** — **Builder ▸ Plugins ▸ Add marketplace** 로 플러그인 저장소 등록.
+      등록 전 `No plugins available` 이 표시되는 것은 정상입니다.
+
+### 8.6 Operations Hub · Live Reports 는 왜 스크립트로 못 채우나
+
+이 두 화면은 **설정이 아니라 누적된 실행 결과**를 보여줍니다.
+따라서 채우는 방법은 하나뿐입니다 — **인시던트를 한 번 발생시키는 것**입니다.
+
+```bash
+bash scripts/break-app.sh "<Grubify API URL>" 200 0.5
+```
+
+이 Lab 의 E2E 실행 이력이 이미 남아 있으므로 Operations Hub 에는 인시던트 1건과 관련 지표가
+표시됩니다. 워크숍 전에 한 번 더 실행하면 최신 데이터로 갱신됩니다 →
+[README — 7. 워크숍 운영 가이드](../README.md#7-워크숍-운영-가이드-반복-시연)
