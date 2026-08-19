@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 415" width="980" height="415" role="img" aria-label="새벽 2시 47분 장애 대응 타임라인 — 사람 대응과 Azure SRE Agent 자율 대응 비교">
+  <defs>
+    <style>
+      .f { font-family: 'Segoe UI', 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif; }
+      .title { font-size: 21px; font-weight: 700; fill: #111827; }
+      .sub { font-size: 13px; fill: #6b7280; }
+      .lane { font-size: 14px; font-weight: 700; fill: #111827; }
+      .lane2 { font-size: 11px; fill: #9ca3af; }
+      .seg { font-size: 13px; fill: #1f2937; }
+      .segdur { font-size: 15px; font-weight: 700; fill: #111827; }
+      .agdur { font-size: 15px; font-weight: 700; fill: #ffffff; }
+      .num { font-size: 13px; font-weight: 700; }
+      .axis { font-size: 11px; fill: #9ca3af; }
+      .win { font-size: 17px; font-weight: 700; fill: #047857; }
+      .win2 { font-size: 12px; fill: #4b5563; }
+      .badge { font-size: 13px; font-weight: 700; fill: #ffffff; }
+      .note { font-size: 11px; fill: #9ca3af; }
+    </style>
+    <marker id="ah" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 z" fill="#d1d5db"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="980" height="415" fill="#ffffff"/>
+
+  <!-- header -->
+  <rect x="15" y="18" width="112" height="26" rx="13" fill="#fef2f2" stroke="#fca5a5"/>
+  <circle cx="33" cy="31" r="4.5" fill="#ef4444"/>
+  <text class="f" x="45" y="36" font-size="13" font-weight="700" fill="#b91c1c">02:47 알람</text>
+  <text class="f title" x="140" y="36">“결제 API 5xx 급증” — 그다음 벌어지는 일</text>
+  <text class="f sub" x="15" y="66">같은 장애, 같은 알람. 대응 주체만 다릅니다.</text>
+  <line x1="15" y1="82" x2="965" y2="82" stroke="#e5e7eb"/>
+
+  <!-- alarm origin line -->
+  <line x1="150" y1="96" x2="150" y2="282" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4 4"/>
+
+  <!-- ============ HUMAN LANE ============ -->
+  <text class="f lane" x="15" y="138">사람</text>
+  <text class="f lane2" x="15" y="155">야간 당직 대응</text>
+
+  <!-- (1) 원인 파악 -->
+  <rect x="150" y="118" width="330" height="50" rx="6" fill="#eff6ff" stroke="#93c5fd" stroke-dasharray="5 3"/>
+  <text class="f num" x="163" y="136" fill="#2563eb">①</text>
+  <text class="f seg" x="182" y="136">원인 파악 — 관제 통보 · 호출 · VPN · 시스템별 조회</text>
+  <text class="f segdur" x="182" y="157">약 1시간</text>
+
+  <!-- (2) 완화 조치 -->
+  <rect x="482" y="118" width="146" height="50" rx="6" fill="#fffbeb" stroke="#fcd34d" stroke-dasharray="5 3"/>
+  <text class="f num" x="495" y="136" fill="#d97706">②</text>
+  <text class="f seg" x="514" y="136">완화 조치</text>
+  <text class="f segdur" x="514" y="157">30분+</text>
+
+  <!-- (3) 보고 -->
+  <rect x="630" y="118" width="315" height="50" rx="6" fill="#f5f3ff" stroke="#c4b5fd" stroke-dasharray="5 3"/>
+  <text class="f num" x="643" y="136" fill="#7c3aed">③</text>
+  <text class="f seg" x="662" y="136">타임라인 재구성 · 장애 보고서 · 재발 방지 대책</text>
+  <text class="f segdur" x="662" y="157">반나절</text>
+
+  <!-- ============ AGENT LANE ============ -->
+  <text class="f lane" x="15" y="226">Azure SRE Agent</text>
+  <text class="f lane2" x="15" y="243">Autonomous 모드</text>
+
+  <rect x="150" y="205" width="90" height="50" rx="6" fill="#2563eb"/>
+  <text class="f num" x="161" y="223" fill="#ffffff">①</text>
+  <text class="f agdur" x="180" y="236">3분</text>
+
+  <rect x="243" y="205" width="80" height="50" rx="6" fill="#d97706"/>
+  <text class="f num" x="253" y="223" fill="#ffffff">②</text>
+  <text class="f agdur" x="271" y="236">5분</text>
+
+  <rect x="326" y="205" width="82" height="50" rx="6" fill="#7c3aed"/>
+  <text class="f num" x="336" y="223" fill="#ffffff">③</text>
+  <text class="f agdur" x="354" y="236">자동</text>
+
+  <!-- end-of-incident marker -->
+  <line x1="408" y1="196" x2="408" y2="282" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <text class="f win" x="424" y="228">✔ 여기서 상황 종료 — 사람 개입 0회</text>
+  <text class="f win2" x="424" y="248">① 탐지 · 로그/메트릭 상관 분석   ② 재시작 · 메모리 확장   ③ 인시던트 리포트 · 팀 메모리 저장</text>
+
+  <!-- ============ AXIS ============ -->
+  <line x1="150" y1="282" x2="958" y2="282" stroke="#d1d5db" marker-end="url(#ah)"/>
+  <text class="f axis" x="150" y="298">0</text>
+  <text class="f axis" x="398" y="298">14분</text>
+  <text class="f axis" x="470" y="298">1시간</text>
+  <text class="f axis" x="618" y="298">1시간 30분</text>
+  <text class="f axis" x="893" y="298">반나절 이후</text>
+
+  <line x1="15" y1="316" x2="965" y2="316" stroke="#e5e7eb"/>
+
+  <!-- ============ BADGES ============ -->
+  <rect x="15" y="332" width="150" height="34" rx="17" fill="#2563eb"/>
+  <text class="f badge" x="90" y="354" text-anchor="middle">MTTD 3분</text>
+
+  <rect x="177" y="332" width="150" height="34" rx="17" fill="#d97706"/>
+  <text class="f badge" x="252" y="354" text-anchor="middle">MTTR 5분</text>
+
+  <rect x="339" y="332" width="150" height="34" rx="17" fill="#7c3aed"/>
+  <text class="f badge" x="414" y="354" text-anchor="middle">총 14분</text>
+
+  <rect x="501" y="332" width="180" height="34" rx="17" fill="#047857"/>
+  <text class="f badge" x="591" y="354" text-anchor="middle">사람 개입 0회</text>
+
+  <text class="f note" x="15" y="390">※ Agent 수치는 이 Lab 의 실제 E2E 측정값입니다 (README — 6. E2E 실행 결과). 사람 대응 구간은 일반적인 Enterprise 야간 대응 기준이며, 시간축은 비교를 위해 압축 표시했습니다.</text>
+</svg>
