@@ -84,16 +84,16 @@
 ### 방법 A — 원커맨드 스크립트
 
 ```bash
-git clone https://github.com/daeungo1/SRE-Agent.git
-cd SRE-Agent
+git clone https://github.com/daeungo1/Azure-SRE-Agent-Lab.git
+cd Azure-SRE-Agent-Lab
 bash scripts/setup.sh
 ```
 
 Windows(PowerShell):
 
 ```powershell
-git clone https://github.com/daeungo1/SRE-Agent.git
-cd SRE-Agent
+git clone https://github.com/daeungo1/Azure-SRE-Agent-Lab.git
+cd Azure-SRE-Agent-Lab
 & "C:\Program Files\Git\bin\bash.exe" scripts/setup.sh
 ```
 

@@ -3,7 +3,7 @@
 Welcome, @lab.User.FirstName! Deploy an **Azure SRE Agent**, break a sample app, and watch it diagnose and fix the issue - all in under 60 minutes.
 
 > [!Knowledge] **Full documentation, architecture diagram, and detailed walkthrough:**
-> [Lab README on GitHub](https://github.com/daeungo1/SRE-Agent#readme)
+> [Lab README on GitHub](https://github.com/daeungo1/Azure-SRE-Agent-Lab#readme)
 
 ## Log in to the Lab VM
 
@@ -27,13 +27,13 @@ Welcome, @lab.User.FirstName! Deploy an **Azure SRE Agent**, break a sample app,
 1. [] Clone the repo:
 
     ```
-    git clone https://github.com/daeungo1/SRE-Agent.git
+    git clone https://github.com/daeungo1/Azure-SRE-Agent-Lab.git
     ```
 
 1. [] Navigate to the lab:
 
     ```
-    cd SRE-Agent
+    cd Azure-SRE-Agent-Lab
     ```
 
 1. [] Run the setup script — it handles everything (login, deploy, configure):
