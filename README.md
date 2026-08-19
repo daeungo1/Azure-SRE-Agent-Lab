@@ -39,28 +39,86 @@
 | **Container Registry (ACR)** | Grubify 컨테이너 이미지 빌드/저장 |
 | **Managed Identity** | 에이전트가 Azure 를 조작할 때 쓰는 ID (권한은 아래 표 참고) |
 
-### ⚠️ 이 Lab 의 권한 수준 — **Privileged (쓰기 가능)**
+### 권한 수준 선택 — Reader(기본값) vs Privileged
 
-에이전트가 장애를 **직접 완화**하는 데모가 목표이므로, 읽기 전용이 아닌 **Contributor 권한을 포함**합니다.
-[infra/modules/subscription-rbac.bicep](infra/modules/subscription-rbac.bicep) 에서 **구독 범위**로 다음 5개 역할을 할당합니다.
+SRE Agent 는 생성 시 **권한 수준을 고릅니다.** Azure 기본값은 **Reader(읽기 전용)** 이며,
+읽기 전용 상태에서도 조사·근본 원인 분석·리포트 작성은 **모두 그대로 동작**합니다.
 
-| 할당되는 역할 | 종류 | 에이전트가 할 수 있는 일 |
-|---|:--:|---|
-| `Reader` | 읽기 | 리소스 구성·속성 조회 |
-| `Monitoring Reader` | 읽기 | 메트릭 · 모니터링 데이터 조회 |
-| `Log Analytics Reader` | 읽기 | KQL 로그 쿼리 |
-| `Monitoring Contributor` | **쓰기** | Azure Monitor 경고 **확인(Acknowledge) · 종료(Close)** |
-| `Container Apps Contributor` | **쓰기** | Container App **재시작 · 스케일 · 설정 변경** |
+> **이 Lab 은 의도적으로 `Privileged` 를 선택했습니다.**
+> "에이전트가 조사만 하고 끝나는 것"이 아니라 **조치(완화)까지 스스로 수행하는 장면**을
+> 재현해 보여주는 것이 데모 목표이기 때문입니다.
+> 조사만 시연해도 충분하다면 **Reader 로도 이 Lab 의 대부분을 진행할 수 있습니다.**
 
-> 이 조합이 있었기 에 [6. E2E 결과](#6-e2e-실행-결과)에서 에이전트가 **사람 승인 없이**
-> 리비전 재시작 → 메모리 1Gi→2Gi 확장 → 경고 종료까지 수행할 수 있었습니다.
->
-> **Reader 권한만 있었다면?** 에이전트는 조사는 끝내되, 완화 단계에서
-> **OBO(On-Behalf-Of) 승인 프롬프트**를 띄우고 사람을 기다렸을 것입니다.
-> 자세한 비교는 **[SRE_Agent.md — 권한 모델](SRE_Agent.md#6-권한-모델-permission-model)** 참고.
+#### 단계별로 — 어디까지 되고, 어디서 사람을 기다리나
 
-> 🔐 운영 환경에서는 **구독 범위 Contributor 부여를 피하고**, 대상 리소스 그룹 범위로만
-> 필요한 역할을 줍니다. 이 Lab 은 실습 편의를 위해 구독 범위를 사용합니다.
+| 인시던트 처리 단계 | Reader (기본값) | Privileged (이 Lab) |
+|---|:--:|:--:|
+| 경고 수신 · Acknowledge | ✅ | ✅ |
+| Knowledge Base(런북·아키텍처) 검색 | ✅ | ✅ |
+| 메트릭 · KQL 로그 질의 | ✅ | ✅ |
+| 리비전 · 배포 이력 · 리소스 구성 조회 | ✅ | ✅ |
+| 소스 코드에서 `파일:라인` 근본 원인 특정 *(코드 연결 시)* | ✅ | ✅ |
+| 차트 생성 · 인시던트 리포트 작성 | ✅ | ✅ |
+| Team Memory 에 학습 내용 저장 | ✅ | ✅ |
+| GitHub 이슈/PR 생성 *(GitHub 연동 시)* | ✅ | ✅ |
+| Azure Monitor 경고 **종료(Close)** | ✅ ※ | ✅ |
+| 컨테이너 **재시작** | ⛔ → **OBO 승인 요청** | ✅ 직접 실행 |
+| 메모리·CPU **스케일 변경** | ⛔ → **OBO 승인 요청** | ✅ 직접 실행 |
+| 리소스 **설정 변경** | ⛔ → **OBO 승인 요청** | ✅ 직접 실행 |
+
+> ※ `Monitoring Contributor` 는 **권한 수준과 무관하게 항상 부여**되는 기본 역할이라,
+> Reader 를 선택해도 경고 확인·종료는 가능합니다. **차이가 생기는 지점은 "리소스 자체를 바꾸는" 조치입니다.**
+
+#### Reader 만 선택했을 때 사용자가 보게 되는 것
+
+1. 에이전트가 조사를 **끝까지 수행**하고 근본 원인과 완화 방안을 제시합니다.
+2. 완화를 실행하려는 순간 **`Approve action` (OBO) 프롬프트**가 뜨고 멈춥니다.
+3. **SRE Agent Administrator** 역할을 가진 사람이 승인하면, **그 사람의 자격 증명으로** 실행됩니다.
+   (자격 증명은 저장되지 않으며, 작업 후 다시 관리 ID 로 돌아갑니다.)
+4. Standard User·개인 Microsoft 계정은 승인할 수 없습니다. 직장/학교 계정만 가능합니다.
+
+즉 Reader 는 **"진단은 완전 자동, 실행은 사람이 버튼 한 번"** 모델이고,
+Privileged 는 **"진단부터 완화까지 무인"** 모델입니다.
+
+#### 이 Lab 이 실제로 부여하는 역할
+
+[infra/modules/subscription-rbac.bicep](infra/modules/subscription-rbac.bicep) 에서 **구독 범위**로 5개 역할을 할당합니다.
+
+| 할당되는 역할 | 종류 | 부여 기준 | 에이전트가 할 수 있는 일 |
+|---|:--:|---|---|
+| `Reader` | 읽기 | 항상 | 리소스 구성·속성 조회 |
+| `Monitoring Reader` | 읽기 | 항상 | 메트릭 · 모니터링 데이터 조회 |
+| `Log Analytics Reader` | 읽기 | 항상 | KQL 로그 쿼리 |
+| `Monitoring Contributor` | **쓰기** | 항상 | 경고 **확인 · 종료** |
+| `Container Apps Contributor` | **쓰기** | **Privileged 선택 시** | Container App **재시작 · 스케일 · 설정 변경** |
+
+> 마지막 한 줄이 이 Lab 을 Privileged 로 만듭니다. [6. E2E 결과](#6-e2e-실행-결과)에서 에이전트가
+> **사람 승인 없이** 리비전 재시작 → 메모리 1Gi→2Gi 확장까지 수행할 수 있었던 근거입니다.
+
+#### Reader 모드로 시연하려면 (선택)
+
+OBO 승인 흐름을 보여주고 싶거나, 쓰기 권한을 부여할 수 없는 환경이라면
+`Container Apps Contributor` 만 제거하면 됩니다.
+
+```bash
+# 배포 후 해당 역할만 회수 → Reader 상당으로 전환
+PRINCIPAL_ID=$(az identity show -g rg-sre-lab \
+  --name "$(az identity list -g rg-sre-lab --query '[0].name' -o tsv)" \
+  --query principalId -o tsv)
+
+az role assignment delete --assignee "$PRINCIPAL_ID" \
+  --role "Container Apps Contributor" \
+  --scope "/subscriptions/$(az account show --query id -o tsv)"
+```
+
+이 상태로 `break-app.sh` 를 실행하면 에이전트가 조사를 마친 뒤
+**완화 단계에서 승인 프롬프트를 띄우고 대기**하는 것을 시연할 수 있습니다.
+
+> 🔐 **운영 환경 권장:** 구독 범위 Contributor 부여를 피하고 **대상 리소스 그룹 범위**로만
+> 필요한 역할을 주세요. 또한 신규 Response Plan 은 **Review 모드로 시작**해 동작을 검증한 뒤
+> Autonomous 로 전환하는 것이 안전합니다.
+> 전체 권한 모델(3계층 · 실행 모드 매트릭스 · OBO)은
+> **[SRE_Agent.md — 권한 모델](SRE_Agent.md#6-권한-모델-permission-model)** 참고.
 
 ### SRE Agent 구성 요소
 

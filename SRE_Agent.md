@@ -335,17 +335,41 @@
 >
 > 리소스 그룹을 지정하지 않으면 관리 ID 는 **아무 권한도 없습니다.**
 
-### 6.2 이 Lab 이 사용하는 권한 (Privileged 상당)
+**Reader 만 선택해도 그대로 동작하는 것 — 조사는 전부 됩니다**
 
+| 작업 | Reader | 비고 |
+|---|:--:|---|
+| 경고 수신 · Acknowledge | ✅ | |
+| Knowledge Base 검색 (런북·아키텍처·과거 인시던트) | ✅ | |
+| 메트릭 · KQL 로그 질의 | ✅ | |
+| 리비전 · 배포 이력 · 리소스 구성 조회 | ✅ | |
+| 근본 원인 분석 · `파일:라인` 특정 | ✅ | 코드 연결 시 |
+| 차트 생성 · 인시던트 리포트 작성 | ✅ | |
+| Team Memory 저장 | ✅ | |
+| GitHub 이슈/PR 생성 | ✅ | GitHub 커넥터 연결 시 |
+| Azure Monitor 경고 **종료(Close)** | ✅ | `Monitoring Contributor` 가 항상 부여되기 때문 |
+| 리소스 **재시작 · 스케일 · 설정 변경** | ⛔ | → **OBO 승인 요청** 후 사람이 승인해야 실행 |
+
+즉 **Reader = "진단은 완전 자동, 실행은 사람이 버튼 한 번"**,
+**Privileged = "진단부터 완화까지 무인"** 모델입니다.
+
+### 6.2 이 Lab 이 사용하는 권한 — **Privileged (의도적 선택)**
+
+기본값은 Reader 이지만, **에이전트가 조치까지 수행하는 장면을 재현**하기 위해
+이 Lab 은 Privileged 상당으로 구성했습니다.
 [infra/modules/subscription-rbac.bicep](infra/modules/subscription-rbac.bicep) 에서 **구독 범위**로 5개 역할을 할당합니다.
 
-| 역할 | 종류 | 이 Lab 에서 실제로 쓰인 곳 |
-|---|:--:|---|
-| `Reader` | 읽기 | Container App 구성·리비전 조회 |
-| `Monitoring Reader` | 읽기 | 요청/CPU/메모리 메트릭 조회 |
-| `Log Analytics Reader` | 읽기 | `ContainerAppConsoleLogs_CL` KQL 질의 |
-| `Monitoring Contributor` | **쓰기** | 경고 `alert-http-5xx-sre-lab` **종료** |
-| `Container Apps Contributor` | **쓰기** | 리비전 **재시작**, 메모리 **1Gi→2Gi 확장** |
+| 역할 | 종류 | 부여 기준 | 이 Lab 에서 실제로 쓰인 곳 |
+|---|:--:|---|---|
+| `Reader` | 읽기 | 항상 | Container App 구성·리비전 조회 |
+| `Monitoring Reader` | 읽기 | 항상 | 요청/CPU/메모리 메트릭 조회 |
+| `Log Analytics Reader` | 읽기 | 항상 | `ContainerAppConsoleLogs_CL` KQL 질의 |
+| `Monitoring Contributor` | **쓰기** | 항상 | 경고 `alert-http-5xx-sre-lab` **종료** |
+| `Container Apps Contributor` | **쓰기** | **Privileged 선택 시** | 리비전 **재시작**, 메모리 **1Gi→2Gi 확장** |
+
+> 마지막 한 줄이 이 Lab 을 Privileged 로 만듭니다. 이것만 제거하면 Reader 상당으로 돌아가며,
+> 에이전트는 조사를 마친 뒤 완화 단계에서 OBO 승인을 요청하며 대기합니다.
+> (전환 방법은 [README — 권한 수준 선택](README.md#권한-수준-선택--reader기본값-vs-privileged) 참고)
 
 > 🔐 운영 환경에서는 **구독 범위 Contributor 부여를 피하고**, 대상 리소스 그룹 범위로만 최소 권한을 부여하세요.
 > 이 Lab 은 실습 편의를 위해 구독 범위를 사용합니다.
