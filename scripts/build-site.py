@@ -28,7 +28,7 @@ GH = "https://github.com/daeungo1/Azure-SRE-Agent-Lab"
 TAB_LAB = "Lab 실습"
 TAB_E2E = "E2E 결과"
 TAB_PORTAL = "Portal 기능"
-TAB_OPS = "참고자료 · 워크숍 운영"
+TAB_OPS = "워크숍 운영"
 
 # README.md section number -> (tab, output directory, url slug)
 SECTION_SLUGS = {
