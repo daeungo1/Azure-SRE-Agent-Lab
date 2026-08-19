@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 660" font-family="Segoe UI, Malgun Gothic, 맑은 고딕, -apple-system, sans-serif">
+  <defs>
+    <filter id="sh" x="-4%" y="-8%" width="108%" height="120%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.10"/>
+    </filter>
+    <marker id="arrBlue" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#0078d4"/>
+    </marker>
+    <marker id="arrTeal" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#008272"/>
+    </marker>
+    <marker id="arrRed" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <path d="M0,0 L9,3.5 L0,7 Z" fill="#d13438"/>
+    </marker>
+  </defs>
+
+  <rect width="980" height="660" rx="12" fill="#f7f9fb"/>
+  <text x="490" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#12314e">Azure SRE Agent — Starter Lab 아키텍처</text>
+  <text x="490" y="55" text-anchor="middle" font-size="12" fill="#5a6b7b">장애 주입 → 신호 수집 → 자동 조사 → 완화 · 리포트</text>
+
+  <!-- ================= ① 장애 주입 ================= -->
+  <rect x="20" y="78" width="280" height="330" rx="10" fill="#ffffff" stroke="#d13438" stroke-width="1.4" filter="url(#sh)"/>
+  <rect x="20" y="78" width="280" height="30" rx="10" fill="#fdecea"/>
+  <rect x="20" y="98" width="280" height="10" fill="#fdecea"/>
+  <text x="160" y="98" text-anchor="middle" font-size="13" font-weight="700" fill="#a4262c">① 장애 주입 (Fault Injection)</text>
+
+  <rect x="40" y="124" width="240" height="42" rx="6" fill="#fafafa" stroke="#8a8886" stroke-width="1"/>
+  <text x="160" y="142" text-anchor="middle" font-size="11" font-weight="600" fill="#323130">실습자 (Lab User)</text>
+  <text x="160" y="157" text-anchor="middle" font-size="10" fill="#605e5c">scripts/break-app.sh 실행</text>
+
+  <line x1="160" y1="168" x2="160" y2="190" stroke="#d13438" stroke-width="1.6" marker-end="url(#arrRed)"/>
+  <text x="172" y="184" font-size="9" fill="#a4262c">200회 POST</text>
+
+  <rect x="40" y="194" width="240" height="196" rx="8" fill="#ffffff" stroke="#5c2d91" stroke-width="1.4"/>
+  <text x="160" y="215" text-anchor="middle" font-size="12" font-weight="700" fill="#5c2d91">Grubify 샘플 앱</text>
+  <text x="160" y="230" text-anchor="middle" font-size="9" fill="#7a5aa8">Azure Container Apps</text>
+
+  <rect x="54" y="240" width="212" height="30" rx="5" fill="#f5efff" stroke="#5c2d91" stroke-width="0.8"/>
+  <text x="160" y="253" text-anchor="middle" font-size="10" font-weight="600" fill="#5c2d91">Frontend (React)</text>
+  <text x="160" y="265" text-anchor="middle" font-size="8.5" fill="#7a5aa8">주문 UI · 장바구니</text>
+
+  <rect x="54" y="276" width="212" height="30" rx="5" fill="#f5efff" stroke="#5c2d91" stroke-width="0.8"/>
+  <text x="160" y="289" text-anchor="middle" font-size="10" font-weight="600" fill="#5c2d91">API (.NET)</text>
+  <text x="160" y="301" text-anchor="middle" font-size="8.5" fill="#7a5aa8">/api/menu · /api/cart</text>
+
+  <rect x="54" y="312" width="212" height="34" rx="5" fill="#fdecea" stroke="#d13438" stroke-width="1"/>
+  <text x="160" y="326" text-anchor="middle" font-size="10" font-weight="700" fill="#a4262c">Cart API — 메모리 누수 지점</text>
+  <text x="160" y="339" text-anchor="middle" font-size="8.5" fill="#a4262c">in-memory 장바구니, eviction 없음</text>
+
+  <rect x="54" y="352" width="212" height="26" rx="5" fill="#fafafa" stroke="#8a8886" stroke-width="0.8"/>
+  <text x="160" y="369" text-anchor="middle" font-size="9" fill="#605e5c">Container Registry (ACR) — 이미지 빌드</text>
+
+  <!-- ================= ② 신호 수집 ================= -->
+  <rect x="330" y="78" width="280" height="330" rx="10" fill="#ffffff" stroke="#008272" stroke-width="1.4" filter="url(#sh)"/>
+  <rect x="330" y="78" width="280" height="30" rx="10" fill="#e6f4f1"/>
+  <rect x="330" y="98" width="280" height="10" fill="#e6f4f1"/>
+  <text x="470" y="98" text-anchor="middle" font-size="13" font-weight="700" fill="#006b5d">② 신호 수집 (Observability)</text>
+
+  <rect x="350" y="124" width="240" height="72" rx="7" fill="#f2fbf9" stroke="#008272" stroke-width="1.1"/>
+  <text x="470" y="144" text-anchor="middle" font-size="11" font-weight="700" fill="#006b5d">Log Analytics Workspace</text>
+  <text x="470" y="160" text-anchor="middle" font-size="9" fill="#4a6b66">ContainerAppConsoleLogs_CL</text>
+  <text x="470" y="174" text-anchor="middle" font-size="9" fill="#4a6b66">ContainerAppSystemLogs_CL</text>
+  <text x="470" y="188" text-anchor="middle" font-size="9" fill="#4a6b66">KQL 질의 대상</text>
+
+  <rect x="350" y="206" width="240" height="58" rx="7" fill="#f2fbf9" stroke="#008272" stroke-width="1.1"/>
+  <text x="470" y="226" text-anchor="middle" font-size="11" font-weight="700" fill="#006b5d">Application Insights</text>
+  <text x="470" y="242" text-anchor="middle" font-size="9" fill="#4a6b66">요청 · 예외 · 의존성 추적</text>
+  <text x="470" y="256" text-anchor="middle" font-size="9" fill="#4a6b66">메모리 / CPU 트렌드</text>
+
+  <line x1="470" y1="266" x2="470" y2="290" stroke="#008272" stroke-width="1.6" marker-end="url(#arrTeal)"/>
+
+  <rect x="350" y="294" width="240" height="96" rx="7" fill="#fff8e6" stroke="#c19c00" stroke-width="1.3"/>
+  <text x="470" y="315" text-anchor="middle" font-size="11" font-weight="700" fill="#8a6d00">Azure Monitor 경고 규칙</text>
+  <text x="470" y="333" text-anchor="middle" font-size="9.5" fill="#7a6200">alert-http-5xx-sre-lab</text>
+  <text x="470" y="349" text-anchor="middle" font-size="9.5" fill="#7a6200">Requests(5xx) &gt; 5, 5분 윈도우</text>
+  <text x="470" y="365" text-anchor="middle" font-size="9.5" fill="#7a6200">평가 주기 1분 · Severity 3</text>
+  <text x="470" y="381" text-anchor="middle" font-size="9.5" fill="#7a6200">→ Action Group → SRE Agent</text>
+
+  <!-- 연결: ① → ② -->
+  <line x1="302" y1="240" x2="328" y2="240" stroke="#008272" stroke-width="1.6" marker-end="url(#arrTeal)"/>
+  <text x="315" y="232" text-anchor="middle" font-size="8" fill="#006b5d">로그·메트릭</text>
+
+  <!-- ================= ③ 자동 조사 ================= -->
+  <rect x="640" y="78" width="320" height="330" rx="10" fill="#ffffff" stroke="#0078d4" stroke-width="1.6" filter="url(#sh)"/>
+  <rect x="640" y="78" width="320" height="30" rx="10" fill="#e5f1fb"/>
+  <rect x="640" y="98" width="320" height="10" fill="#e5f1fb"/>
+  <text x="800" y="98" text-anchor="middle" font-size="13" font-weight="700" fill="#005a9e">③ Azure SRE Agent</text>
+
+  <rect x="658" y="122" width="284" height="46" rx="6" fill="#e5f1fb" stroke="#0078d4" stroke-width="1"/>
+  <text x="800" y="139" text-anchor="middle" font-size="10.5" font-weight="700" fill="#005a9e">Response Plan — grubify-http-errors</text>
+  <text x="800" y="155" text-anchor="middle" font-size="9" fill="#33689e">Sev0~Sev4 → incident-handler (Autonomous)</text>
+
+  <line x1="800" y1="170" x2="800" y2="190" stroke="#0078d4" stroke-width="1.6" marker-end="url(#arrBlue)"/>
+
+  <rect x="658" y="194" width="284" height="86" rx="6" fill="#ffffff" stroke="#0078d4" stroke-width="1"/>
+  <text x="800" y="212" text-anchor="middle" font-size="10.5" font-weight="700" fill="#005a9e">Custom Agents</text>
+  <rect x="670" y="220" width="260" height="18" rx="3" fill="#f3f9fe" stroke="#0078d4" stroke-width="0.6"/>
+  <text x="800" y="233" text-anchor="middle" font-size="9" fill="#1b4f7e">incident-handler — 로그 · KQL · 런북 조사</text>
+  <rect x="670" y="240" width="260" height="18" rx="3" fill="#f3f9fe" stroke="#0078d4" stroke-width="0.6"/>
+  <text x="800" y="253" text-anchor="middle" font-size="9" fill="#1b4f7e">code-analyzer — 소스 코드 근본 원인 분석</text>
+  <rect x="670" y="260" width="260" height="18" rx="3" fill="#f3f9fe" stroke="#0078d4" stroke-width="0.6"/>
+  <text x="800" y="273" text-anchor="middle" font-size="9" fill="#1b4f7e">issue-triager — 고객 이슈 분류 · 라벨링</text>
+
+  <rect x="658" y="288" width="284" height="66" rx="6" fill="#ffffff" stroke="#0078d4" stroke-width="1"/>
+  <text x="800" y="306" text-anchor="middle" font-size="10.5" font-weight="700" fill="#005a9e">Knowledge Base</text>
+  <text x="800" y="322" text-anchor="middle" font-size="9" fill="#1b4f7e">http-500-errors.md · grubify-architecture.md</text>
+  <text x="800" y="336" text-anchor="middle" font-size="9" fill="#1b4f7e">incident-report-template.md · github-issue-triage.md</text>
+  <text x="800" y="349" text-anchor="middle" font-size="8.5" fill="#5a7fa3">업로드 시 자동 색인 → 조사 중 검색</text>
+
+  <rect x="658" y="362" width="284" height="30" rx="6" fill="#ffffff" stroke="#0078d4" stroke-width="1"/>
+  <text x="800" y="381" text-anchor="middle" font-size="9.5" fill="#1b4f7e">Managed Identity — Reader · Monitoring Reader</text>
+
+  <!-- 연결: ② → ③ -->
+  <line x1="612" y1="340" x2="638" y2="340" stroke="#0078d4" stroke-width="1.8" marker-end="url(#arrBlue)"/>
+  <text x="625" y="332" text-anchor="middle" font-size="8" fill="#005a9e">알림</text>
+
+  <!-- ================= ④ 결과 ================= -->
+  <rect x="20" y="430" width="940" height="130" rx="10" fill="#ffffff" stroke="#5c2d91" stroke-width="1.4" filter="url(#sh)"/>
+  <rect x="20" y="430" width="940" height="30" rx="10" fill="#f3ecfb"/>
+  <rect x="20" y="450" width="940" height="10" fill="#f3ecfb"/>
+  <text x="490" y="450" text-anchor="middle" font-size="13" font-weight="700" fill="#4a2378">④ 조사 결과 &amp; 완화 (Investigation Output)</text>
+
+  <rect x="40" y="476" width="215" height="70" rx="7" fill="#faf7ff" stroke="#5c2d91" stroke-width="1"/>
+  <text x="147" y="496" text-anchor="middle" font-size="10.5" font-weight="700" fill="#4a2378">근본 원인 가설 (RCA)</text>
+  <text x="147" y="513" text-anchor="middle" font-size="9" fill="#6b4a94">메모리 누수 · Cart 항목 누적</text>
+  <text x="147" y="528" text-anchor="middle" font-size="9" fill="#6b4a94">KQL 결과 · 로그 근거 포함</text>
+
+  <rect x="273" y="476" width="215" height="70" rx="7" fill="#faf7ff" stroke="#5c2d91" stroke-width="1"/>
+  <text x="380" y="496" text-anchor="middle" font-size="10.5" font-weight="700" fill="#4a2378">완화 방안 제안</text>
+  <text x="380" y="513" text-anchor="middle" font-size="9" fill="#6b4a94">리비전 재시작 · 스케일 조정</text>
+  <text x="380" y="528" text-anchor="middle" font-size="9" fill="#6b4a94">Review / Autonomous 선택</text>
+
+  <rect x="506" y="476" width="215" height="70" rx="7" fill="#faf7ff" stroke="#5c2d91" stroke-width="1"/>
+  <text x="613" y="496" text-anchor="middle" font-size="10.5" font-weight="700" fill="#4a2378">GitHub 이슈 / PR</text>
+  <text x="613" y="513" text-anchor="middle" font-size="9" fill="#6b4a94">파일:라인 단위 코드 참조</text>
+  <text x="613" y="528" text-anchor="middle" font-size="9" fill="#6b4a94">Scenario 2 · 3 (OAuth 필요)</text>
+
+  <rect x="739" y="476" width="201" height="70" rx="7" fill="#faf7ff" stroke="#5c2d91" stroke-width="1"/>
+  <text x="839" y="496" text-anchor="middle" font-size="10.5" font-weight="700" fill="#4a2378">Team Memory</text>
+  <text x="839" y="513" text-anchor="middle" font-size="9" fill="#6b4a94">조사 결과 · 운영 패턴 축적</text>
+  <text x="839" y="528" text-anchor="middle" font-size="9" fill="#6b4a94">세션을 넘어 유지</text>
+
+  <line x1="800" y1="410" x2="800" y2="428" stroke="#5c2d91" stroke-width="1.6" marker-end="url(#arrBlue)"/>
+
+  <!-- 하단 노트 -->
+  <text x="30" y="592" font-size="10" fill="#5a6b7b">배포: azd up (Bicep, subscription scope) · 구성: scripts/post-provision.sh (Knowledge Base 업로드, Custom Agent · Response Plan 생성)</text>
+  <text x="30" y="610" font-size="10" fill="#5a6b7b">리전: eastus2 / swedencentral / australiaeast · 정리: azd down --purge</text>
+  <text x="30" y="634" font-size="10" fill="#a4262c" font-weight="600">⚠ SRE Agent 는 사용량 기반 과금 리소스입니다. 실습 후 반드시 삭제하세요.</text>
+</svg>

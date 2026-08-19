@@ -1,0 +1,7 @@
+.tmp/
+scripts/.tmp/
+.azure/
+.azd-up.log
+*.log
+__pycache__/
+
