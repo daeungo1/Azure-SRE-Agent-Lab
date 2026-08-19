@@ -1,0 +1,16 @@
+{
+  "name": "grubify-oom-triage",
+  "type": "Skill",
+  "properties": {
+    "description": "Diagnose out-of-memory failures in the Grubify Container App: correlate 5xx spikes with memory pressure, pinpoint the failing controller, and propose a sized remediation.",
+    "skillContentFile": "grubify-oom-triage.md",
+    "tools": [
+      "SearchMemory",
+      "RunAzCliReadCommands",
+      "QueryLogAnalyticsByWorkspaceId",
+      "QueryAppInsightsByResourceId",
+      "ExecutePythonCode",
+      "PlotAreaChartWithCorrelation"
+    ]
+  }
+}

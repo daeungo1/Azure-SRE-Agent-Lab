@@ -1,0 +1,14 @@
+{
+  "name": "cost-guardrail-review",
+  "type": "Skill",
+  "properties": {
+    "description": "Review the lab resource group for cost waste: oversized Container Apps, idle replicas, and Log Analytics ingestion growth. Produces a prioritised savings list without changing anything.",
+    "skillContentFile": "cost-guardrail-review.md",
+    "tools": [
+      "RunAzCliReadCommands",
+      "QueryLogAnalyticsByWorkspaceId",
+      "ExecutePythonCode",
+      "PlotPieChart"
+    ]
+  }
+}

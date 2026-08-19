@@ -197,6 +197,18 @@ bash scripts/post-provision.sh
 > SRE Agent 구성(Knowledge Base 업로드, Custom Agent · Response Plan 생성)은
 > `scripts/post-provision.sh` 가 담당합니다. **두 단계 모두 실행해야 합니다.**
 
+### 3단계 (선택) — 포털 기능 전체 채우기
+
+기본 Lab 은 인시던트 자동 대응 하나만 구성합니다. 워크숍에서 SRE Agent 를 **제품 전체**로
+소개하려면 [features-sre](features-sre) 를 적용해 포털의 빈 섹션을 채우세요.
+
+```powershell
+pwsh -File features-sre/scripts/apply-features.ps1
+```
+
+Skill Builder · Hooks · Agent Canvas · Automation · Knowledge Sources · Response Plans 가
+실제 내용으로 채워집니다. 자세한 내용은 **[features-sre/README.md](features-sre/README.md)** 참고.
+
 ---
 
 ## 4. 배포 확인
@@ -642,10 +654,17 @@ azd down --purge
 ├── docs/
 │   ├── architecture-ko.svg          # Lab 아키텍처 (한국어)
 │   ├── architecture.svg             # Lab 아키텍처 (원본)
+│   ├── sre-agent-hook-timeline-ko.svg # 사람 대응 vs 에이전트 대응 타임라인
 │   ├── sre-agent-flow-ko.svg        # 에이전트 동작 흐름
 │   ├── sre-agent-portal-map-ko.svg  # 포털 기능 지도
 │   ├── sre-agent-permissions-ko.svg # 권한 모델
 │   └── README.en.md                 # 원본(영문) starter-lab README
+├── features-sre/                    # 포털 기능 채우기 — Skill · Hook · Agent · Automation
+│   ├── README.md                    # 포털 섹션 ↔ 파일 매핑 · 적용 방법
+│   ├── skills/ hooks/ agents/       # Skill Builder · Hooks · Agent Canvas
+│   ├── automation/ response-plans/  # 스케줄 작업 · 응답 계획
+│   ├── knowledge/ connectors/       # 지식 문서 · 커넥터
+│   └── scripts/apply-features.ps1   # 일괄 적용 (재실행 안전)
 ├── infra/                           # Bicep IaC (subscription scope)
 │   ├── main.bicep
 │   ├── resources.bicep

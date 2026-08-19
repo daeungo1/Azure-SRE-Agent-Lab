@@ -1,0 +1,14 @@
+{
+  "name": "incident-report-writer",
+  "type": "Skill",
+  "properties": {
+    "description": "Turn an investigation into a complete, auditable incident report: summary, impact, timeline in UTC, evidence with queries, root cause, remediation, action items, and references.",
+    "skillContentFile": "incident-report-writer.md",
+    "tools": [
+      "SearchMemory",
+      "RunAzCliReadCommands",
+      "QueryLogAnalyticsByWorkspaceId",
+      "QueryAppInsightsByResourceId"
+    ]
+  }
+}

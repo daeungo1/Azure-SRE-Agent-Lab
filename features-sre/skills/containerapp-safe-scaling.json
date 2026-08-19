@@ -1,0 +1,14 @@
+{
+  "name": "containerapp-safe-scaling",
+  "type": "Skill",
+  "properties": {
+    "description": "Safely change CPU/memory or replica counts on an Azure Container App: validate allowed CPU-to-memory ratios, apply the change, and verify the new revision before declaring success.",
+    "skillContentFile": "containerapp-safe-scaling.md",
+    "tools": [
+      "RunAzCliReadCommands",
+      "RunAzCliWriteCommands",
+      "GetAzCliHelp",
+      "QueryAppInsightsByResourceId"
+    ]
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "id": "grubify-latency-review",
+  "name": "Grubify Latency Degradation (Review mode)",
+  "priorities": ["Sev2", "Sev3", "Sev4"],
+  "titleContains": "latency",
+  "handlingAgent": "reliability-reviewer",
+  "agentMode": "review"
+}

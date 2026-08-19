@@ -1,0 +1,16 @@
+{
+  "name": "pre-write-evidence-gate",
+  "type": "GlobalHook",
+  "properties": {
+    "eventType": "PreToolUse",
+    "activationMode": "always",
+    "description": "Before any write action against Azure, require that the change is justified by evidence, correctly sized, and reversible. Blocks blind remediation.",
+    "hook": {
+      "type": "prompt",
+      "matcher": "RunAzCliWriteCommands",
+      "prompt": "You are about to change a live Azure resource. Before running the command, confirm all four points in one short block:\n\n1. EVIDENCE — which query or log line justifies this specific change? Cite it.\n2. SIZING — if this changes CPU or memory, is the CPU-to-memory pair valid for Azure Container Apps (0.25/0.5Gi, 0.5/1Gi, 1.0/2Gi, 2.0/4Gi)? State the pair.\n3. BLAST RADIUS — what else is affected if this is wrong?\n4. ROLLBACK — the exact command that undoes this.\n\nIf you cannot answer point 1 with a concrete observation, do not run the command. Investigate further instead.",
+      "timeout": 60,
+      "failMode": "allow"
+    }
+  }
+}

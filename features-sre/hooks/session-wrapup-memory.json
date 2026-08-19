@@ -1,0 +1,14 @@
+{
+  "name": "session-wrapup-memory",
+  "type": "GlobalHook",
+  "properties": {
+    "eventType": "Stop",
+    "activationMode": "always",
+    "description": "At the end of an investigation, capture the reusable lesson into team memory so the next on-call engineer does not start from zero.",
+    "hook": {
+      "type": "prompt",
+      "prompt": "Before you finish, write a short handover note and save it to team memory. Keep it under 10 lines and include only what would help someone facing this again:\n\n- SYMPTOM — what was observed, in the words an alert would use.\n- ROOT CAUSE — the actual cause, with file and line if code-level.\n- WHAT WORKED — the remediation that restored service.\n- WHAT DID NOT — any dead end, so it is not repeated.\n- FOLLOW-UP — the one change that would prevent recurrence.\n\nIf this session did not reach a conclusion, record what was ruled out and what to try next. A note that says 'inconclusive, ruled out X and Y' is still valuable.",
+      "timeout": 90
+    }
+  }
+}

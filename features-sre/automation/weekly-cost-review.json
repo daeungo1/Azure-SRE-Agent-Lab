@@ -1,0 +1,7 @@
+{
+  "name": "weekly-cost-review",
+  "description": "Weekly FinOps review every Monday 10:00 KST (01:00 UTC) - prioritised savings for the lab resource group, read-only",
+  "cronExpression": "0 1 * * 1",
+  "agent": "cost-analyzer",
+  "agentPrompt": "Run the weekly cost review for resource group rg-sre-lab using the cost-guardrail-review skill.\n\nFocus on:\n1. Container Apps whose peak usage over the last 7 days is below 40% of the configured limit.\n2. Container Apps with minReplicas of 1 or more that were idle for most of the week.\n3. Log Analytics ingestion broken down by table, flagging any table above 20% of total volume.\n4. Resources with no activity at all this week.\n\nBefore recommending any downsize, search memory for a recent incident involving that resource. The Grubify API was deliberately scaled to 1.0 CPU / 2.0Gi during an out-of-memory incident - if you recommend reverting it, say explicitly that this would undo an incident remediation and state the risk.\n\nOutput a table sorted by estimated monthly saving with columns: Resource, Finding, Suggested action, Estimated saving, Confidence, Risk. Make no changes. End with the single highest-value action."
+}

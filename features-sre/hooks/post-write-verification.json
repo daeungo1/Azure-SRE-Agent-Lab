@@ -1,0 +1,16 @@
+{
+  "name": "post-write-verification",
+  "type": "GlobalHook",
+  "properties": {
+    "eventType": "PostToolUse",
+    "activationMode": "always",
+    "description": "After a write action, force verification against reality: confirm the new revision is healthy and that a real request now succeeds before claiming the incident is mitigated.",
+    "hook": {
+      "type": "prompt",
+      "matcher": "RunAzCliWriteCommands",
+      "prompt": "A write action just completed. A successful command is not the same as a fixed service. Before you report progress, verify and record:\n\n1. The resulting state read back from Azure (new revision name, health state, running state, applied CPU/memory).\n2. A functional check — issue a request against the endpoint that was failing and report the actual status code.\n3. The current error rate compared to the pre-incident baseline.\n\nIf any of the three is not yet confirmed, say the change is APPLIED BUT UNVERIFIED. Only use the word 'mitigated' once all three pass.",
+      "timeout": 90,
+      "failMode": "allow"
+    }
+  }
+}

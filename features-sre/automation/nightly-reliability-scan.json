@@ -1,0 +1,7 @@
+{
+  "name": "nightly-reliability-scan",
+  "description": "Nightly reliability scan at 03:00 KST (18:00 UTC) - looks for leading indicators of the next outage before anyone is paged",
+  "cronExpression": "0 18 * * *",
+  "agent": "reliability-reviewer",
+  "agentPrompt": "Run a proactive reliability scan of resource group rg-sre-lab. The goal is to find what will break next, not to report what already broke.\n\nLook specifically for leading indicators:\n1. Memory working set trending upward across the day without returning to baseline - this is the signature of a leak and precedes an out-of-memory failure.\n2. Replica restart churn, even where requests still succeed.\n3. Error rate creeping up slowly - compare hourly buckets, not a single 24-hour average.\n4. Latency p95 degrading while volume is flat.\n5. Failure modes visible in telemetry that have no corresponding alert rule.\n\nFor every finding, include the query that produced it and state whether it is trending, stable, or improving. Rank findings by how likely they are to cause an outage within 7 days.\n\nYou are read-only. Do not remediate. If nothing is trending badly, say so in one line and still name the two weakest points in the environment."
+}

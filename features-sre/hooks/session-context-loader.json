@@ -1,0 +1,14 @@
+{
+  "name": "session-context-loader",
+  "type": "GlobalHook",
+  "properties": {
+    "eventType": "Start",
+    "activationMode": "always",
+    "description": "At the start of every investigation, load prior context: search team memory for similar incidents and state the current Grubify baseline before doing anything else.",
+    "hook": {
+      "type": "prompt",
+      "prompt": "Before you begin this investigation, do two things and state them explicitly:\n\n1. Search team memory for previous incidents involving the same resource or the same symptom. If a match exists, summarise in one line what the cause was last time and what was done about it.\n2. State the current known-good baseline for the affected Grubify service: active revision, CPU and memory limits, and replica bounds. Read these from Azure — do not assume them.\n\nIf either step returns nothing, say so plainly and continue. Do not fabricate prior context.",
+      "timeout": 60
+    }
+  }
+}

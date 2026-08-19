@@ -1,0 +1,7 @@
+{
+  "name": "daily-grubify-health",
+  "description": "Daily Grubify health summary at 09:00 KST (00:00 UTC) - posture, error rate delta, and the single biggest risk for the day",
+  "cronExpression": "0 0 * * *",
+  "agent": "reliability-reviewer",
+  "agentPrompt": "Produce the daily health summary for the Grubify workload in resource group rg-sre-lab.\n\nCover exactly these points, briefly:\n1. Active revision, CPU/memory limits, and replica bounds for each Container App - read from Azure.\n2. Request volume, error rate, and p95 latency for the last 24 hours, each compared with the previous 24 hours. Report the delta.\n3. Any restarts, failed revisions, or unhealthy replicas in the last 24 hours.\n4. Memory and CPU headroom at peak. Flag anything sustained above 80% of its limit.\n5. Whether the alert rule alert-http-5xx-sre-lab fired, and if so the outcome.\n\nClose with a RAG status and one sentence naming the single biggest risk for today. Keep the whole report under 25 lines. If the environment is idle and healthy, say so in one line rather than padding the report."
+}
