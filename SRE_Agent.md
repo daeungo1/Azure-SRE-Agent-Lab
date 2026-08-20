@@ -290,9 +290,13 @@
 
 | 계층 | 무엇을 통제하나 | 설정 위치 |
 |---|---|---|
-| ① **관리 ID(UAMI) 의 Azure RBAC** | 에이전트가 Azure 리소스에 **할 수 있는 일** | Settings ▸ Managed resources ▸ 권한 수준 |
+| ① **관리 ID(UAMI) 의 Azure RBAC** | 에이전트가 Azure 리소스에 **실제로 할 수 있는 일** — **최종 판정 기준** | 권한 수준 선택으로 자동 부여, 또는 직접 역할 할당 |
 | ② **실행 모드 (Run mode)** | 조치 전 **승인이 필요한지** | Response Plan / 예약 작업별 |
 | ③ **사용자 역할 (SRE Agent RBAC)** | 사람이 포털에서 **할 수 있는 일** | 에이전트 리소스 IAM |
+
+> 포털의 **Agent permissions level** (Settings ▸ Basics) 은 ①을 편하게 채워 주는 **프로필**입니다.
+> 표시된 수준과 무관하게 관리 ID 에 역할을 직접 부여하면 그 역할만큼 동작합니다 —
+> ARM 은 요청 주체의 **역할 할당**만 보고 허용 여부를 결정하기 때문입니다. (실제 사례는 5.2)
 
 ### 5.1 권한 수준 — Reader vs Privileged
 
@@ -335,25 +339,31 @@
 즉 **Reader = "진단은 완전 자동, 실행은 사람이 버튼 한 번"**,
 **Privileged = "진단부터 완화까지 무인"** 모델입니다.
 
-### 5.2 이 Lab 이 사용하는 권한 — **Privileged (의도적 선택)**
+### 5.2 이 Lab 이 사용하는 권한 — 권한 수준은 Reader, 쓰기 역할은 직접 부여
 
-기본값은 Reader 이지만, **에이전트가 조치까지 수행하는 장면을 재현**하기 위해
-이 Lab 은 Privileged 상당으로 구성했습니다.
-[infra/modules/subscription-rbac.bicep](infra/modules/subscription-rbac.bicep) 에서 **구독 범위**로 5개 역할을 할당합니다.
+이 Lab 의 에이전트는 **권한 수준을 기본값 Reader 그대로** 두고 있습니다 (`accessLevel: Low`).
+대신 [infra/modules/subscription-rbac.bicep](infra/modules/subscription-rbac.bicep) 이 관리 ID 에
+**구독 범위로 5개 역할을 직접** 부여합니다 — 권한 수준과 무관하게 항상 부여됩니다.
 
-| 역할 | 종류 | 부여 기준 | 이 Lab 에서 실제로 쓰인 곳 |
-|---|:--:|---|---|
-| `Reader` | 읽기 | 항상 | Container App 구성·리비전 조회 |
-| `Monitoring Reader` | 읽기 | 항상 | 요청/CPU/메모리 메트릭 조회 |
-| `Log Analytics Reader` | 읽기 | 항상 | `ContainerAppConsoleLogs_CL` KQL 질의 |
-| `Monitoring Contributor` | **쓰기** | 항상 | 경고 `alert-http-5xx-sre-lab` **종료** |
-| `Container Apps Contributor` | **쓰기** | **Privileged 선택 시** | 리비전 **재시작**, 메모리 **1Gi→2Gi 확장** |
+| 역할 | 종류 | 이 Lab 에서 실제로 쓰인 곳 |
+|---|:--:|---|
+| `Reader` | 읽기 | Container App 구성·리비전 조회 |
+| `Monitoring Reader` | 읽기 | 요청/CPU/메모리 메트릭 조회 |
+| `Log Analytics Reader` | 읽기 | `ContainerAppConsoleLogs_CL` KQL 질의 |
+| `Monitoring Contributor` | **쓰기** | 경고 `alert-http-5xx-sre-lab` **종료** |
+| `Container Apps Contributor` | **쓰기** | 리비전 **재시작**, 메모리 **1Gi→2Gi 확장** |
 
-> 마지막 한 줄이 이 Lab 을 Privileged 로 만듭니다. 이것만 제거하면 Reader 상당으로 돌아가며,
-> 에이전트는 조사를 마친 뒤 완화 단계에서 OBO 승인을 요청하며 대기합니다.
-> (전환 방법은 [README — 권한 수준 선택](README.md#권한-수준-선택--reader기본값-vs-privileged) 참고)
+> **포털 표시(Reader)와 실제 동작(쓰기 가능)이 어긋나 보이는 이유** — ARM 은 권한 수준 표시가 아니라
+> **요청 주체의 역할 할당**으로 허용 여부를 판정합니다. 위 표의 마지막 두 역할이 쓰기 역할이므로
+> 에이전트는 Autonomous 모드에서 승인 없이 조치를 실행할 수 있었습니다.
+> 그 호출이 관리 ID 로 이뤄졌다는 활동 로그 근거는
+> [README — 6.3 조치를 실행한 주체](README.md#63-에이전트-자동-조사-타임라인) 에 있습니다.
+>
+> 반대로 포털에서 Reader 로 만들고 **역할을 따로 부여하지 않으면** 조치 단계에서 OBO 승인 요청이 뜹니다.
+> 이 Lab 은 무인 완화 장면을 재현하려고 쓰기 역할을 명시적으로 부여한 것입니다.
+> (되돌리는 방법은 [README — 권한 구조](README.md#권한-구조--조사와-조치의-경계) 참고)
 
-> 🔐 운영 환경에서는 **구독 범위 Contributor 부여를 피하고**, 대상 리소스 그룹 범위로만 최소 권한을 부여하세요.
+> 🔐 운영 환경에서는 **구독 범위 부여를 피하고**, 대상 리소스 그룹 범위로만 최소 권한을 부여하세요.
 > 이 Lab 은 실습 편의를 위해 구독 범위를 사용합니다.
 
 ### 5.3 쓰기 작업 시 실제 동작 — 권한 × 실행 모드

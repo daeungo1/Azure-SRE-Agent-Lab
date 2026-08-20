@@ -40,65 +40,62 @@
 | **Container Registry (ACR)** | Grubify 컨테이너 이미지 빌드/저장 |
 | **Managed Identity** | 에이전트가 Azure 를 조작할 때 쓰는 ID (권한은 아래 표 참고) |
 
-### 권한 수준 선택 — Reader(기본값) vs Privileged
+### 권한 구조 — 조사와 조치의 경계
 
-SRE Agent 는 생성 시 **권한 수준을 고릅니다.** Azure 기본값은 **Reader(읽기 전용)** 이며,
-읽기 전용 상태에서도 조사·근본 원인 분석·리포트 작성은 **모두 그대로 동작**합니다.
+에이전트가 무엇을 할 수 있는지는 **서로 다른 두 가지**가 결정합니다. 이 둘을 하나로 보면 오해가 생깁니다.
 
-> **이 Lab 은 의도적으로 `Privileged` 를 선택했습니다.**
-> "에이전트가 조사만 하고 끝나는 것"이 아니라 **조치(완화)까지 스스로 수행하는 장면**을
-> 재현해 보여주는 것이 데모 목표이기 때문입니다.
-> 조사만 시연해도 충분하다면 **Reader 로도 이 Lab 의 대부분을 진행할 수 있습니다.**
+| | 어디서 보나 | 무엇을 뜻하나 |
+|---|---|---|
+| ① **Agent permissions level** | 포털 **Settings ▸ Basics** | 에이전트를 만들 때 고르는 **권한 프로필** — Reader(기본값) / Privileged |
+| ② **관리 ID 의 Azure RBAC** | 관리 ID 의 **역할 할당** | **Azure 가 실제로 허용·거부하는 경계.** ARM 은 이것만 보고 판정합니다 |
 
-#### 단계별로 — 어디까지 되고, 어디서 사람을 기다리나
+포털에서 에이전트를 만들면 ①을 고르는 순간 ②가 그에 맞게 채워지므로 보통 둘이 일치합니다.
+**이 Lab 은 일치하지 않습니다 — 의도적으로 그렇게 구성했습니다.**
 
-| 인시던트 처리 단계 | Reader (기본값) | Privileged (이 Lab) |
-|---|:--:|:--:|
-| 경고 수신 · Acknowledge | ✅ | ✅ |
-| Knowledge Base(런북·아키텍처) 검색 | ✅ | ✅ |
-| 메트릭 · KQL 로그 질의 | ✅ | ✅ |
-| 리비전 · 배포 이력 · 리소스 구성 조회 | ✅ | ✅ |
-| 소스 코드에서 `파일:라인` 근본 원인 특정 *(코드 연결 시)* | ✅ | ✅ |
-| 차트 생성 · 인시던트 리포트 작성 | ✅ | ✅ |
-| Team Memory 에 학습 내용 저장 | ✅ | ✅ |
-| GitHub 이슈/PR 생성 *(GitHub 연동 시)* | ✅ | ✅ |
-| Azure Monitor 경고 **종료(Close)** | ✅ ※ | ✅ |
-| 컨테이너 **재시작** | ⛔ → **OBO 승인 요청** | ✅ 직접 실행 |
-| 메모리·CPU **스케일 변경** | ⛔ → **OBO 승인 요청** | ✅ 직접 실행 |
-| 리소스 **설정 변경** | ⛔ → **OBO 승인 요청** | ✅ 직접 실행 |
+#### 이 Lab 의 실제 구성
 
-> ※ `Monitoring Contributor` 는 **권한 수준과 무관하게 항상 부여**되는 기본 역할이라,
-> Reader 를 선택해도 경고 확인·종료는 가능합니다. **차이가 생기는 지점은 "리소스 자체를 바꾸는" 조치입니다.**
+| 항목 | 값 |
+|---|---|
+| Agent permissions level | **Reader** — 기본값 그대로 (`actionConfiguration.accessLevel: Low`) |
+| Agent mode | **Autonomous** |
+| 관리 ID 의 역할 | Reader · Monitoring Reader · Log Analytics Reader · Monitoring Contributor · **Container Apps Contributor** |
 
-#### Reader 만 선택했을 때 사용자가 보게 되는 것
+[infra/modules/subscription-rbac.bicep](infra/modules/subscription-rbac.bicep) 이 위 5개 역할을
+**구독 범위로, 권한 수준과 무관하게 항상** 부여합니다. 마지막 `Container Apps Contributor` 가 쓰기 역할입니다.
 
-1. 에이전트가 조사를 **끝까지 수행**하고 근본 원인과 완화 방안을 제시합니다.
-2. 완화를 실행하려는 순간 **`Approve action` (OBO) 프롬프트**가 뜨고 멈춥니다.
-3. **SRE Agent Administrator** 역할을 가진 사람이 승인하면, **그 사람의 자격 증명으로** 실행됩니다.
-   (자격 증명은 저장되지 않으며, 작업 후 다시 관리 ID 로 돌아갑니다.)
-4. Standard User·개인 Microsoft 계정은 승인할 수 없습니다. 직장/학교 계정만 가능합니다.
+> **그래서 포털에 `Reader` 로 표시되어도 에이전트는 컨테이너를 재시작하고 메모리를 확장할 수 있습니다.**
+> ARM 은 권한 수준 표시가 아니라 **요청 주체가 그 작업에 대한 역할을 갖고 있는지**만 판정하기 때문입니다.
+> 실제로 그렇게 동작한 기록은 [6.3 — 조치를 실행한 주체](#63-에이전트-자동-조사-타임라인)에서 활동 로그로 확인할 수 있습니다.
 
-즉 Reader 는 **"진단은 완전 자동, 실행은 사람이 버튼 한 번"** 모델이고,
-Privileged 는 **"진단부터 완화까지 무인"** 모델입니다.
+**이 Lab 에서 가장 중요한 보안 관점의 교훈이 여기 있습니다** —
+포털의 권한 수준 표시만 보고 "이 에이전트는 읽기 전용이겠거니" 판단하면 안 되고,
+**관리 ID 에 실제로 붙어 있는 역할 할당을 함께 확인해야 합니다.**
 
-#### 이 Lab 이 실제로 부여하는 역할
+#### 단계별로 — 무엇이 권한을 필요로 하나
 
-[infra/modules/subscription-rbac.bicep](infra/modules/subscription-rbac.bicep) 에서 **구독 범위**로 5개 역할을 할당합니다.
+| 인시던트 처리 단계 | 필요한 역할 | 이 Lab |
+|---|---|:--:|
+| 경고 수신 · Acknowledge | `Monitoring Contributor` | ✅ |
+| Knowledge Base(런북·아키텍처) 검색 | 없음 | ✅ |
+| 메트릭 · KQL 로그 질의 | `Monitoring Reader` · `Log Analytics Reader` | ✅ |
+| 리비전 · 배포 이력 · 리소스 구성 조회 | `Reader` | ✅ |
+| 소스 코드에서 `파일:라인` 근본 원인 특정 | 없음 *(GitHub 연동 필요)* | 연동 시 |
+| 차트 생성 · 인시던트 리포트 작성 · Team Memory 저장 | 없음 | ✅ |
+| Azure Monitor 경고 **종료(Close)** | `Monitoring Contributor` | ✅ |
+| 컨테이너 **재시작 · 스케일 · 설정 변경** | **`Container Apps Contributor`** | ✅ |
 
-| 할당되는 역할 | 종류 | 부여 기준 | 에이전트가 할 수 있는 일 |
-|---|:--:|---|---|
-| `Reader` | 읽기 | 항상 | 리소스 구성·속성 조회 |
-| `Monitoring Reader` | 읽기 | 항상 | 메트릭 · 모니터링 데이터 조회 |
-| `Log Analytics Reader` | 읽기 | 항상 | KQL 로그 쿼리 |
-| `Monitoring Contributor` | **쓰기** | 항상 | 경고 **확인 · 종료** |
-| `Container Apps Contributor` | **쓰기** | **Privileged 선택 시** | Container App **재시작 · 스케일 · 설정 변경** |
+**조사에 해당하는 항목에는 쓰기 역할이 하나도 필요하지 않습니다.**
+쓰기 역할이 없으면 마지막 줄만 막히고, 그때 에이전트는 조사를 끝낸 뒤
+**`Approve action`(OBO) 승인 요청**을 띄우고 대기합니다.
+승인하면 **승인한 사람의 자격 증명으로** 실행되며, 자격 증명은 저장되지 않고 작업 후 다시 관리 ID 로 돌아갑니다.
+승인은 **SRE Agent Administrator** 역할을 가진 직장/학교 계정만 가능합니다.
 
-> 마지막 한 줄이 이 Lab 을 Privileged 로 만듭니다. [6. E2E 결과](#6-e2e-실행-결과)에서 에이전트가
-> **사람 승인 없이** 리비전 재시작 → 메모리 1Gi→2Gi 확장까지 수행할 수 있었던 근거입니다.
+즉 쓰기 역할 없이 운영하면 **"진단은 완전 자동, 실행은 사람이 버튼 한 번"** 모델이 되고,
+쓰기 역할을 부여하면 이 Lab 처럼 **"진단부터 완화까지 무인"** 모델이 됩니다.
 
-#### Reader 모드로 시연하려면 (선택)
+#### 쓰기 권한 없이 운영하려면 (선택)
 
-OBO 승인 흐름을 보여주고 싶거나, 쓰기 권한을 부여할 수 없는 환경이라면
+OBO 승인 흐름을 확인하고 싶거나 쓰기 권한을 부여할 수 없는 환경이라면
 `Container Apps Contributor` 만 제거하면 됩니다.
 
 ```bash
@@ -113,12 +110,12 @@ az role assignment delete --assignee "$PRINCIPAL_ID" \
 ```
 
 이 상태로 `break-app.sh` 를 실행하면 에이전트가 조사를 마친 뒤
-**완화 단계에서 승인 프롬프트를 띄우고 대기**하는 것을 시연할 수 있습니다.
+**완화 단계에서 승인 프롬프트를 띄우고 대기**합니다.
 
-> 🔐 **운영 환경 권장:** 구독 범위 Contributor 부여를 피하고 **대상 리소스 그룹 범위**로만
+> 🔐 **운영 환경 권장:** 구독 범위 부여를 피하고 **대상 리소스 그룹 범위**로만
 > 필요한 역할을 주세요. 또한 신규 Response Plan 은 **Review 모드로 시작**해 동작을 검증한 뒤
 > Autonomous 로 전환하는 것이 안전합니다.
-> 전체 권한 모델(3계층 · 실행 모드 매트릭스 · OBO)은
+> 전체 권한 모델(계층 · 실행 모드 매트릭스 · OBO)은
 > **[SRE_Agent.md — 권한 모델](SRE_Agent.md#5-권한-모델-permission-model)** 참고.
 
 ### SRE Agent 구성 요소
@@ -474,6 +471,27 @@ Azure Monitor 경고 → Response Plan → `incident-handler`(Autonomous) 로
 | 완화(MTTR) — 경고 발화 → 메모리 확장 적용 | **약 5분** |
 | 전체 조사 완료 — 경고 발화 → 최종 보고 | **약 14분** |
 | 사람 개입 | **0회** |
+
+**조치를 실행한 주체 — 활동 로그 검증**
+
+"사람 개입 0회" 는 에이전트의 자기 보고가 아니라 **Azure 활동 로그**로 확인한 사실입니다.
+
+| 시각(UTC) | ARM 작업 | 호출자 | 결과 |
+|---|---|---|---|
+| 00:22:20 | `containerApps/revisions/restart/action` | `id-sre-huvqg3bjooyw6` | Succeeded |
+| 00:22:43 | `containerApps/listSecrets/action` | `id-sre-huvqg3bjooyw6` | Succeeded |
+| 00:22:43 → 00:22:59 | `containerApps/write` | `id-sre-huvqg3bjooyw6` | Succeeded |
+
+호출자는 사용자 계정(UPN)이 아니라 **에이전트의 관리 ID (`ManagedIdentity`)** 입니다.
+즉 OBO 승인 경로가 아니었고, 사람이 버튼을 누른 것도 아닙니다 —
+[권한 구조](#권한-구조--조사와-조치의-경계)에서 설명한대로 **관리 ID 에 부여된 `Container Apps Contributor`** 로 통과했습니다.
+
+```bash
+# 직접 확인하는 명령
+az monitor activity-log list -g rg-sre-lab \
+  --start-time 2026-08-19T00:00:00Z --end-time 2026-08-19T01:00:00Z \
+  --query "[?contains(operationName.value,'Microsoft.App')].{time:eventTimestamp, op:operationName.value, caller:caller}" -o table
+```
 
 ### 6.4 에이전트가 도출한 근본 원인
 
