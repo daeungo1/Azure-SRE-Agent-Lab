@@ -141,17 +141,49 @@ foreach ($f in Get-ChildItem "$root\response-plans\*.json") {
   else { Write-Warn2 "plan $($spec.id) — $(Show-Failure $r)" }
 }
 
-# ── 7. Connectors (opt-in: needs an interactive OAuth authorisation afterwards) ─
+# ── 7. Connectors ────────────────────────────────────────────────────────────
+Write-Step "7/7  Connectors  ->  Builder / Connectors"
+
+# Telemetry connectors authenticate with the managed identity, so unlike GitHub they need no
+# interactive authorisation. Targets are discovered from the Lab resource group at apply time.
+$telemetryFile = "$root\connectors\telemetry.json"
+if (Test-Path $telemetryFile) {
+  $t  = Get-Content $telemetryFile -Raw | ConvertFrom-Json
+  $rg = $t.resourceGroup
+  $identity = az identity list -g $rg --query '[0].id' -o tsv 2>$null
+  if (-not $identity) {
+    Write-Warn2 "telemetry connectors skipped — no managed identity found in $rg"
+  } else {
+    $targets = @()
+    foreach ($w in @(az monitor log-analytics workspace list -g $rg -o json 2>$null | ConvertFrom-Json)) {
+      $targets += @{ name = $w.name; type = 'LogAnalytics'; id = $w.id
+                     ext = @{ armResourceId = $w.id; workspace = @{ name = $w.name; customerId = $w.customerId } } }
+    }
+    foreach ($a in @(az resource list -g $rg --resource-type Microsoft.Insights/components -o json 2>$null | ConvertFrom-Json)) {
+      $targets += @{ name = $a.name; type = 'AppInsights'; id = $a.id
+                     ext = @{ armResourceId = $a.id; resource = @{ name = $a.name } } }
+    }
+    foreach ($x in $targets) {
+      $spec = @{ name = $x.name; type = 'AgentConnector'; properties = @{
+          dataConnectorType = $x.type; dataSource = $x.id; identity = $identity; extendedProperties = $x.ext } }
+      $r = Invoke-Agent PUT "/api/v2/extendedAgent/connectors/$($x.name)" ($spec | ConvertTo-Json -Depth 10)
+      if (Test-Ok $r) { Write-Ok "connector: $($x.name)  [$($x.type)]" }
+      else { Write-Warn2 "connector $($x.name) — $(Show-Failure $r)" }
+    }
+    if (-not $targets) { Write-Warn2 "no Log Analytics or Application Insights resources found in $rg" }
+  }
+}
+
+# GitHub is opt-in: it needs an interactive OAuth authorisation in the portal afterwards.
 if ($EnableGitHubConnector) {
-  Write-Step "7/7  Connectors  ->  Builder / Connectors"
-  foreach ($f in Get-ChildItem "$root\connectors\*.json") {
+  foreach ($f in Get-ChildItem "$root\connectors\github*.json") {
     $spec = Get-Content $f.FullName -Raw | ConvertFrom-Json
     $r = Invoke-Agent PUT "/api/v2/extendedAgent/connectors/$($spec.name)" ($spec | ConvertTo-Json -Depth 10)
     if (Test-Ok $r) { Write-Ok "connector: $($spec.name) — authorise it in the portal to finish" }
     else { Write-Warn2 "connector $($spec.name) — $(Show-Failure $r)" }
   }
 } else {
-  Write-Step "7/7  Connectors  ->  skipped (pass -EnableGitHubConnector to create)"
+  Write-Host "        GitHub connector skipped (pass -EnableGitHubConnector to create)" -ForegroundColor DarkGray
 }
 
 # ── Verification ─────────────────────────────────────────────────────────────

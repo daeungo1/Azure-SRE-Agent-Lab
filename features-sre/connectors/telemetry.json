@@ -1,0 +1,14 @@
+{
+  "$comment": "Log Analytics / Application Insights connectors. Targets are discovered at apply time from the Lab resource group, so no resource IDs are hard-coded here.",
+  "resourceGroup": "rg-sre-lab",
+  "connectors": [
+    {
+      "dataConnectorType": "LogAnalytics",
+      "description": "Preconfigured KQL access to the Lab workspace - skips Resource Graph discovery on every query."
+    },
+    {
+      "dataConnectorType": "AppInsights",
+      "description": "Preconfigured access to request/dependency/exception telemetry for Grubify."
+    }
+  ]
+}

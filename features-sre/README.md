@@ -47,7 +47,8 @@ Azure SRE Agent 는 배포 직후에도 인시던트를 조사하고 조치합�
 | **Agent Canvas** | 1 | **3** | 비용 분석 · 안정성 점검 담당 추가 |
 | **Knowledge Sources** | 4 | **6** | SLO 기준, 에스컬레이션 정책 |
 | **Response Plans** | 1 | **2** | 자동 조치 계획 + 사람 검토 계획 |
-| Connectors · Code Access | 0 | 0 | GitHub 인증 필요 → [4장](#4-외부-연동이-필요한-기능) |
+| **Connectors** | 0 | **2** | Log Analytics · Application Insights 직접 연결 |
+| Code Access | 0 | 연결된 저장소 | GitHub 인증 후 활성화 → [4장](#4-외부-연동이-필요한-기능) |
 
 이 숫자는 추정이 아니라 **적용 후 포털에서 확인한 값**입니다 ([8.2](#82-적용-전--후)).
 
@@ -162,6 +163,22 @@ Response Plan 은 **어떤 인시던트를, 누가, 어느 수준까지** 처리
 | `grubify-slo.md` | SLO · 에러 예산 · RAG(정상/주의/위험) 판정 규칙 |
 | `escalation-policy.md` | 자율 허용 범위, 사람 승인 필수 항목, 에스컬레이션 트리거 |
 
+### Connectors — 로그를 매번 찾지 않게 하기
+
+에이전트는 커넥터 없이도 Log Analytics 를 질의합니다 — Resource Graph 로 워크스페이스를 **매번 찾아서**
+질의문을 구성하는 방식입니다. 커넥터를 등록하면 그 탐색 단계가 사라져 **응답이 빨라지고 토큰 사용량이 줄어듭니다.**
+
+| 커넥터 | 대상 | 에이전트가 얻는 것 |
+|---|---|---|
+| `LogAnalytics` | Lab 워크스페이스 | `ContainerAppConsoleLogs_CL` 등 KQL 질의를 바로 실행 |
+| `AppInsights` | Lab App Insights | 요청 · 종속성 · 예외 텔레메트리 |
+
+인증은 **관리 ID** 로 처리되므로 GitHub 처럼 별도 승인이 필요 없습니다.
+이미 부여된 `Log Analytics Reader` · `Monitoring Reader` 역할을 그대로 씁니다.
+
+> **도입 관점** — 조사 품질은 같고 **비용과 지연만 줄어드는** 최적화입니다.
+> 같은 워크스페이스를 반복해서 보는 팀일수록 효과가 커집니다.
+
 ---
 
 ## 3. 우리 환경에 적용하기
@@ -196,6 +213,7 @@ Verification — what the portal will now show
    Agent Canvas        3 item(s)  incident-handler, cost-analyzer, reliability-reviewer
    Automation          3 item(s)  daily-grubify-health, nightly-reliability-scan, ...
    Response plans      2 item(s)  Grubify HTTP Errors, Grubify Latency Degradation (Review mode)
+   Connectors          2 item(s)  law-<suffix>, appi-<suffix>
 ```
 
 적용 후 [sre.azure.com](https://sre.azure.com) 을 **새로고침**하세요.
@@ -206,6 +224,9 @@ Verification — what the portal will now show
 
 아래 세 가지는 외부 인증이나 외부 저장소가 필요해 스크립트만으로 끝나지 않습니다.
 **포털에서 한 번 직접 승인**해야 합니다.
+
+> Log Analytics · Application Insights 커넥터는 여기에 해당하지 않습니다 —
+> 관리 ID 로 인증되므로 스크립트만으로 끝납니다 ([2장](#2-각-기능이-해결하는-문제)).
 
 ### Connectors (GitHub)
 
