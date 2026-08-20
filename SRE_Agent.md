@@ -19,8 +19,11 @@
 5. [권한 모델 (Permission Model)](#5-권한-모델-permission-model)
 6. [관리 대상 Azure 서비스 & 통합](#6-관리-대상-azure-서비스--통합)
 7. [함께 생성되는 리소스](#7-함께-생성되는-리소스)
-8. [고려사항](#8-고려사항)
-9. [참고 링크 & 데모 영상](#9-참고-링크--데모-영상)
+8. [비용은 어떻게 발생하나요](#8-비용은-어떻게-발생하나요)
+9. [보안과 네트워크는 어떻게 통제하나요](#9-보안과-네트워크는-어떻게-통제하나요)
+10. [도입 전 체크리스트](#10-도입-전-체크리스트)
+11. [알아두어야 할 제한 사항](#11-알아두어야-할-제한-사항)
+12. [참고 링크 & 데모 영상](#12-참고-링크--데모-영상)
 
 ---
 
@@ -120,8 +123,12 @@
 
 | 자율성 수준 | 동작 |
 |---|---|
-| **Review** | 조치를 제안하고 **승인 대기** (신규 플랜 권장) |
-| **Autonomous** | 승인 없이 직접 조사·완화 (기본값, 별도 동의 대화상자 확인) |
+| **Review** | 조치를 제안하고 **승인 대기** — 승인은 `SRE Agent Administrator` 만 가능 |
+| **Autonomous** | 승인 없이 직접 조사·완화 |
+
+> **기본값이 두 군데에서 다릅니다.** 에이전트를 만들 때의 **전역 기본값은 Review**,
+> Response Plan · 예약 작업을 새로 만들 때의 **기본값은 Autonomous** 입니다.
+> 권장되는 방식은 **Review 로 2~4주 관찰**한 뒤, 계속 승인하게 되는 트리거만 Autonomous 로 옮기는 것입니다.
 
 **라우팅 예시**
 
@@ -453,18 +460,168 @@ SRE Agent 리소스를 만들면 다음이 자동 생성됩니다.
 
 ---
 
-## 8. 고려사항
+## 8. 비용은 어떻게 발생하나요
 
-- 채팅 인터페이스는 **영어만 지원**합니다. (런북·문서는 한국어로 작성해도 색인되지만, 프롬프트는 영어 권장)
-- 리전 및 테넌트 구성에 따라 **가용성이 다릅니다.** 이 Lab 은 `eastus2`, `swedencentral`, `australiaeast` 만 허용합니다.
-- 브라우저에서 `*.azuresre.ai` 도메인 접근이 필요합니다. (일부 프록시/Zscaler 가 차단)
-- **사용량 기반 과금(AAU)** 입니다. 사용량은 Operations Hub ▸ Overview 또는 Settings 에서 확인하세요.
-- 모든 AI 시스템과 마찬가지로 **잘못된 결론이나 부적절한 완화 방안을 제안할 수 있습니다.** 승인 전 검토하세요.
-- Operations Hub 는 기본 최근 30일 데이터를 표시하며, 그 이전은 아카이브 질의가 필요합니다.
+과금 단위는 **AAU (Azure Agent Unit)** 이며, 성격이 다른 **두 가지 비용**이 함께 발생합니다.
+이 둘을 구분하지 않으면 "안 쓰는데 왜 청구되지?" 라는 오해가 생깁니다.
+
+| 구분 | 언제 발생하나 | 멈추는 방법 |
+|---|---|---|
+| **상시 비용 (Always-on)** | 에이전트를 만든 순간부터 **시간 단위로 계속** — `4 AAU/시간` | **삭제**해야 멈춥니다. **중지(Stop)해도 계속 부과됩니다.** |
+| **활성 비용 (Active flow)** | 조사 · 채팅 · 예약 작업 등 **모델이 실제로 일할 때** 토큰량 기준 | 중지하거나 월 한도에 도달하면 멈춥니다 |
+
+> **승인을 기다리는 시간은 과금되지 않습니다.** 에이전트가 실제로 처리 중인 시간만 활성 비용에 포함됩니다.
+
+### 8.1 모델 선택이 단가를 좌우합니다
+
+토큰은 입력 · 출력 · 캐시 읽기 · 캐시 쓰기 네 종류로 따로 계량되며, **모델별 단가가 다릅니다.**
+
+| 모델 | 입력 | 출력 | 캐시 읽기 | 캐시 쓰기 |
+|---|--:|--:|--:|--:|
+| Claude Opus 4.6 | 100 | 500 | 10 | 125 |
+| GPT 5.3 Codex | 35 | 280 | 3.5 | 0 |
+| GPT 5.2 | 35 | 280 | 3.5 | 0 |
+
+<sup>100만 토큰당 AAU. 모델 공급자는 **Settings ▸ Basics** 에서 에이전트 단위로 지정합니다.</sup>
+
+작업 유형별 대략적인 소모량입니다.
+
+| 작업 | Claude Opus 4.6 | GPT 5.3 Codex |
+|---|--:|--:|
+| 간단한 질문 ("최근 경고 보여줘") | 약 3.8 AAU | 약 1.3 AAU |
+| 인시던트 자동 조사 1건 | 약 35 AAU | 약 12 AAU |
+| 진단 + 완화까지 전체 수행 | 약 87 AAU | 약 30 AAU |
+
+> **어떤 모델을 고를까** — Opus 는 단가가 높지만 더 적은 단계로 결론에 도달하는 경향이 있어
+> 복잡한 근본 원인 분석에서는 총비용이 역전될 수 있습니다.
+> 반대로 정기 점검처럼 단순·반복 작업이 많다면 GPT 계열이 유리합니다. 언제든 변경해 비교할 수 있습니다.
+
+### 8.2 비용을 통제하는 방법
+
+- **월 AAU 한도 설정** — Settings ▸ Agent consumption (최소 500, 최대 1,000,000).
+  **활성 비용에만** 적용되며, 한도 도달 시 다음 달까지 채팅·조사가 중단됩니다. 상시 비용은 계속됩니다.
+- **Response Plan 으로 대상 좁히기** — 심각도·서비스·키워드로 걸러 불필요한 조사를 막습니다.
+- **컨텍스트 보강** — 스킬·지식 문서를 갖추면 헤매지 않아 토큰이 줄어듭니다.
+- **자동화 전 채팅에서 검증** — 잘못 만든 예약 작업은 반복 실행되며 계속 소모합니다.
+- **안 쓰는 에이전트는 삭제** — 중지만으로는 상시 비용이 멈추지 않습니다.
+
+> **무료 티어는 없습니다.** 에이전트를 만든 시점부터 과금이 시작됩니다.
+> Log Analytics 조회처럼 **연결된 서비스의 비용은 별도**로 발생합니다.
 
 ---
 
-## 9. 참고 링크 & 데모 영상
+## 9. 보안과 네트워크는 어떻게 통제하나요
+
+RBAC 이 **에이전트가 무엇을 할 수 있는지**를 정한다면, 네트워크 제어는 **트래픽이 어디로 나가는지**를 정합니다.
+운영 환경 도입 검토에서 거의 항상 나오는 두 번째 질문입니다.
+
+### 9.1 실행 환경의 기본 안전장치
+
+- 도구는 **격리된 샌드박스**에서 실행되며 호출마다 새 프로세스를 사용합니다.
+- 자격 증명은 **짧은 수명 토큰**으로 발급되고 대화 맥락에 남지 않습니다. OBO 자격 증명도 캐시되지 않습니다.
+- **읽기 전용으로 잠근 리소스는 변경하지 않습니다.**
+- 모든 도구 호출은 실행 전 **Permission Gate** 를 통과하며, 감사 로그는 조직 소유의
+  Application Insights `customEvents` 테이블로 전송됩니다.
+
+### 9.2 네트워크 제어 모드 3가지
+
+| 모드 | 동작 | 적합한 환경 |
+|---|---|---|
+| **Unrestricted** *(기본값)* | 아웃바운드 제한 없음 | 개발 · 테스트 · 비민감 워크로드 |
+| **Limited** | 허용 목록(와일드카드)에 등록한 호스트로만 연결 | VNet 없이 대상만 제한하고 싶을 때 |
+| **Azure VNet** | 플랫폼 트래픽을 제외한 아웃바운드를 **내 VNet 으로** 라우팅 | 송신 통제·감사가 필요한 운영 환경 |
+
+VNet 통합을 적용하면 에이전트 트래픽이 **내 네트워크 로그에 남고**, 계층 4·7 방화벽 검사와
+사용자 지정 DNS, 기존 송신 규칙을 그대로 따릅니다. 같은 서브넷의 다른 워크로드와 동일한 규칙 아래 동작합니다.
+
+**왜 필요한가** — 무제한 송신은 두 가지 위험을 남깁니다.
+민감 데이터가 조직 밖으로 나가는 **데이터 유출** 경로, 그리고 외부 콘텐츠를 가져오는 과정에서 발생하는 **프롬프트 인젝션** 입니다.
+
+### 9.3 VNet 모드 사전 조건
+
+| 항목 | 요구사항 |
+|---|---|
+| 서브넷 크기 | **/28 이상** (여러 에이전트·버스트 대비 시 /26 권장) |
+| 위임 | `Microsoft.App/environments` 에 위임 |
+| 리전 | 에이전트와 **동일 리전** |
+| 전용 여부 | 다른 서비스와 **공유 불가** |
+
+> ⚠️ VNet 통합은 **미리 보기**이며 **아웃바운드만** 제어합니다. 프라이빗 엔드포인트를 통한 인바운드는 지원하지 않습니다.
+> 또한 미리 보기 기간에는 **커넥터 트래픽이 VNet 을 거치지 않고** 공개 인터넷으로 나갑니다.
+
+GitHub · PyPI · npm 처럼 서비스 태그가 없고 IP 대역이 자주 바뀌는 대상은 **인프라 네트워크 우회 토글**로 열 수 있지만,
+이는 FQDN 기반 송신 필터링(예: Azure Firewall Premium)으로 옮겨 가기 전까지의 **과도기 수단**으로 다뤄야 합니다.
+Azure Policy 로 이 토글 자체를 제한해 담당자가 임의로 VNet 밖으로 우회하지 못하게 할 수 있습니다.
+
+### 9.4 방화벽에서 허용해야 하는 도메인
+
+| 도메인 | 용도 |
+|---|---|
+| `*.azuresre.ai` | 에이전트 포털·API·실시간 대화(WebSocket) |
+| `sre.azure.com` | 에이전트 관리 포털 |
+| `api.applicationinsights.io` | Application Insights 쿼리 |
+| `api.loganalytics.io` · `api.loganalytics.azure.com` | Log Analytics 쿼리 |
+| `management.azure.com` | Azure Resource Manager |
+| `login.microsoftonline.com` | Microsoft Entra ID 인증 |
+
+> Zscaler 등 일부 사내 프록시는 `*.azuresre.ai` 를 기본 차단합니다.
+> 포털이 열리지 않거나 대화가 멈추면 이 도메인과 **WebSocket 허용 여부**를 함께 확인하세요.
+
+---
+
+## 10. 도입 전 체크리스트
+
+**조사 범위**
+
+- [ ] 필요한 구독·리소스 그룹만 연결했는가
+- [ ] Application Insights · Log Analytics 에 데이터가 실제로 들어오는가
+- [ ] 운영에 배포된 소스 분기와 런북을 연결했는가
+
+**인시던트 전달**
+
+- [ ] 사용할 인시던트 플랫폼을 정했는가 (Azure Monitor · PagerDuty · ServiceNow)
+- [ ] 심각도 · 서비스 · 제목 기준으로 Response Plan 을 만들었는가
+- [ ] 자동 생성된 `quickstart` 플랜을 삭제했는가 (중복 라우팅 방지)
+- [ ] **Review 모드로 시작**하는가
+
+**권한과 안전**
+
+- [ ] 읽기 권한부터 시작하는가
+- [ ] 쓰기는 **대상 리소스 그룹 범위**로만 부여했는가
+- [ ] 관리 ID 에 실제로 붙은 역할을 확인했는가 (포털 표시만 믿지 않기)
+- [ ] 커넥터에 필요한 작업만 노출하고, 수신자·프로젝트 키 같은 값은 고정했는가
+
+**조사 품질**
+
+- [ ] 영향 서비스와 발생 시각이 정확한가
+- [ ] 결론에 **근거**가 함께 제시되는가
+- [ ] 확인하지 못한 부분을 불확실성으로 표시하는가
+- [ ] 조치가 **최소 범위이고 되돌릴 수 있는가**
+- [ ] 올바른 대상에서 복구를 확인하는가
+
+---
+
+## 11. 알아두어야 할 제한 사항
+
+- 다른 AI 시스템과 마찬가지로 **잘못된 결론이나 부적절한 조치를 제안할 수 있습니다.** 승인 전 검토가 전제입니다.
+- 채팅 인터페이스는 **영어만 지원**합니다. (런북·문서는 한국어로 작성해도 색인됩니다)
+- **에이전트 리전은 생성 후 변경할 수 없습니다.** 다른 리전에서 운영하려면 별도 에이전트를 만듭니다.
+  단, 배포 리전과 무관하게 **다른 리전의 리소스를 조사할 수 있습니다.**
+- **모델 추론은 공급자에 따라 다른 국가에서 처리될 수 있습니다.** 조사 대화와 요약은 배포 리전에 저장되지만,
+  데이터 처리 위치 요건이 있는 조직은 도입 검토 단계에서 현재 공급자와 처리 범위를 확인하세요.
+  (예: Anthropic 은 미국에서 처리하며 EU 데이터 경계(EUDB)에서 제외됩니다 — 필요하면 다른 모델을 선택합니다.)
+- 한 대화에서 동시에 활성화되는 **스킬은 최대 5개**이며, 초과하면 오래된 것부터 해제되었다가 필요할 때 다시 로드됩니다.
+- 연결한 소스가 **실제 배포 분기와 다르면** 코드 변경을 정확히 짚지 못할 수 있습니다.
+- 여러 서비스가 같은 원격 분석 이름을 쓰면 **서로 다른 데이터를 혼동**할 수 있습니다.
+- **자율 모드에서는 일부 승인 절차가 생략**됩니다. 중요한 대상은 별도의 최소 권한 연결로 분리하세요.
+- 리전·테넌트 구성에 따라 **사용 가능한 기능이 다를 수 있습니다.**
+- Operations Hub 는 기본 최근 30일 데이터를 표시하며, 그 이전은 아카이브 질의가 필요합니다.
+
+> 결론적으로 **충분한 근거 · 최소 권한 · Review 모드 우선 · 실제 복구 확인** 네 가지를 운영 원칙으로 삼는 것이 안전합니다.
+
+---
+
+## 12. 참고 링크 & 데모 영상
 
 ### 문서
 
@@ -481,6 +638,10 @@ SRE Agent 리소스를 만들면 다음이 자동 생성됩니다.
 | 자동화 | [Automate workflows](https://learn.microsoft.com/azure/sre-agent/automate-workflows) · [Scheduled tasks](https://learn.microsoft.com/azure/sre-agent/scheduled-tasks) |
 | 가치 측정 | [Operations Hub](https://learn.microsoft.com/azure/sre-agent/operations-hub) · [Track incident value](https://learn.microsoft.com/azure/sre-agent/track-incident-value) |
 | 권한 | [Agent permissions](https://learn.microsoft.com/azure/sre-agent/permissions) · [Manage permissions](https://learn.microsoft.com/azure/sre-agent/manage-permissions) · [User roles](https://learn.microsoft.com/azure/sre-agent/user-roles) · [Run modes](https://learn.microsoft.com/azure/sre-agent/run-modes) |
+| 비용 | [Pricing and billing](https://learn.microsoft.com/azure/sre-agent/pricing-billing) · [Monitor agent usage](https://learn.microsoft.com/azure/sre-agent/monitor-agent-usage) |
+| 보안 · 네트워크 | [Security overview](https://learn.microsoft.com/azure/sre-agent/security-overview) · [Network integration](https://learn.microsoft.com/azure/sre-agent/network-integration) · [Network requirements](https://learn.microsoft.com/azure/sre-agent/network-requirements) · [Data privacy](https://learn.microsoft.com/azure/sre-agent/data-privacy) |
+| 리전 | [Supported regions](https://learn.microsoft.com/azure/sre-agent/supported-regions) |
+| 감사 | [Audit agent actions](https://learn.microsoft.com/azure/sre-agent/audit-agent-actions) |
 | 보안 · 네트워크 | [Security overview](https://learn.microsoft.com/azure/sre-agent/security-overview) · [Network integration](https://learn.microsoft.com/azure/sre-agent/network-integration) |
 | 확장 | [Agent hooks](https://learn.microsoft.com/azure/sre-agent/agent-hooks) · [Skills](https://learn.microsoft.com/azure/sre-agent/skills) · [Python code execution](https://learn.microsoft.com/azure/sre-agent/python-code-execution) · [MCP server](https://learn.microsoft.com/azure/sre-agent/mcp-server) |
 | 가격 | [Pricing and billing](https://learn.microsoft.com/azure/sre-agent/pricing-billing) |

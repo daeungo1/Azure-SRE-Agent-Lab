@@ -63,6 +63,18 @@
 [infra/modules/subscription-rbac.bicep](infra/modules/subscription-rbac.bicep) 이 위 5개 역할을
 **구독 범위로, 권한 수준과 무관하게 항상** 부여합니다. 마지막 `Container Apps Contributor` 가 쓰기 역할입니다.
 
+#### 제품 기본값과 이 Lab 의 차이
+
+무인 완화가 가능했던 것은 **제품이 원래 그렇게 동작해서가 아니라, 이 Lab 이 기본값 두 개를 바꿨기 때문입니다.**
+
+| 항목 | 제품 기본값 | 이 Lab | 무엇이 달라지나 |
+|---|---|---|---|
+| Agent mode | **Review** — 조치 전 사람 승인 | **Autonomous** | 승인 대기 없이 실행 |
+| 관리 ID 의 쓰기 역할 | 없음 *(Reader 선택 시)* | `Container Apps Contributor` | ARM 쓰기 요청이 통과 |
+
+> **둘 중 하나만 빠져도 무인 완화는 일어나지 않습니다.** 기본 상태의 SRE Agent 는
+> 조사를 마친 뒤 **사람의 승인을 기다립니다.**
+
 > **그래서 포털에 `Reader` 로 표시되어도 에이전트는 컨테이너를 재시작하고 메모리를 확장할 수 있습니다.**
 > ARM 은 권한 수준 표시가 아니라 **요청 주체가 그 작업에 대한 역할을 갖고 있는지**만 판정하기 때문입니다.
 > 실제로 그렇게 동작한 기록은 [6.3 — 조치를 실행한 주체](#63-에이전트-자동-조사-타임라인)에서 활동 로그로 확인할 수 있습니다.
@@ -151,7 +163,10 @@ az role assignment delete --assignee "$PRINCIPAL_ID" \
 
 - 구독에 **Owner** 권한 (구독 범위 RBAC 역할 할당 필요)
 - 리소스 공급자 등록: `az provider register -n Microsoft.App --wait`
-- 허용 리전: `eastus2`, `swedencentral`, `australiaeast`
+- 리전 — SRE Agent 는 **Korea Central 을 포함해 19개 리전**을 지원합니다
+  ([지원 리전](https://learn.microsoft.com/azure/sre-agent/supported-regions)).
+  이 Lab 은 기본값으로 `eastus2` 를 쓰며, `azd env set AZURE_LOCATION <region>` 으로 바꿀 수 있습니다.
+  구독이 SRE Agent 사용 대상으로 등록되지 않았다면 포털의 리전 목록이 비어 있습니다.
 
 ### 선택 사항
 
