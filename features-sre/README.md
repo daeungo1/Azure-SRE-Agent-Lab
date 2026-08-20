@@ -45,7 +45,7 @@ Azure SRE Agent 는 배포 직후에도 인시던트를 조사하고 조치합�
 | **Hooks** | 0 | **4** | 조사 시작 · 쓰기 전 · 쓰기 후 · 종료 시점의 통제 규칙 |
 | **Automation** | 0 | **3** | 장애가 없어도 도는 일 · 주 단위 점검 |
 | **Agent Canvas** | 1 | **3** | 비용 분석 · 안정성 점검 담당 추가 |
-| **Knowledge Sources** | 4 | **6** | SLO 기준, 에스컬레이션 정책 |
+| **Knowledge Sources** | 5 | **7** | SLO 기준, 에스컬레이션 정책 |
 | **Response Plans** | 1 | **2** | 자동 조치 계획 + 사람 검토 계획 |
 | **Connectors** | 0 | **2** | Log Analytics · Application Insights 직접 연결 |
 | Code Access | 0 | 연결된 저장소 | GitHub 인증 후 활성화 → [4장](#4-어떤-기능이-외부-연동을-필요로-하나요) |
@@ -207,7 +207,7 @@ pwsh -File features-sre/scripts/apply-features.ps1 `
 
 ```
 Verification — what the portal will now show
-   Knowledge Sources   6 item(s)  escalation-policy.md, grubify-slo.md, ...
+   Knowledge Sources   7 item(s)  escalation-policy.md, grubify-slo.md, ...
    Skill Builder       4 item(s)  containerapp-safe-scaling, cost-guardrail-review, ...
    Hooks               4 item(s)  post-write-verification, pre-write-evidence-gate, ...
    Agent Canvas        3 item(s)  incident-handler, cost-analyzer, reliability-reviewer
@@ -389,7 +389,7 @@ Invoke-WebRequest "$ep/api/v1/incidentPlayground/filters/grubify-latency-review"
 
 | 포털 섹션 | 적용 전 | 적용 후 |
 |---|:--:|---|
-| Knowledge Sources | 4 | **6** — `grubify-slo.md`, `escalation-policy.md` 추가 |
+| Knowledge Sources | 5 | **7** — `grubify-slo.md`, `escalation-policy.md` 추가 |
 | Response Plans | 1 | **2** — Review 모드 계획 추가 |
 | Agent Canvas | 1 | **3** — `cost-analyzer`, `reliability-reviewer` 추가 |
 | Skill Builder | **0** | **4** |
