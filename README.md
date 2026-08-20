@@ -6,7 +6,7 @@
 > - 📖 **문서 사이트: [daeungo1.github.io/Azure-SRE-Agent-Lab](https://daeungo1.github.io/Azure-SRE-Agent-Lab/)** — 탭·목차·검색이 있는 읽기 편한 버전
 > - 기능 설명: **[SRE_Agent.md](SRE_Agent.md)**
 > - 원본 Lab: [microsoft/sre-agent — labs/starter-lab](https://github.com/microsoft/sre-agent/tree/main/labs/starter-lab) ([영문 README](docs/README.en.md))
-> - **이 저장소의 모든 절차는 실제 Azure 구독에서 E2E 검증을 마쳤습니다.** → [6. E2E 실행 결과](#6-e2e-실행-결과)
+> - **이 저장소의 모든 절차는 실제 Azure 구독에서 E2E 검증을 마쳤습니다.** → [6. 실제로 되나요](#6-실제로-되나요--e2e-실행-결과)
 
 ## 장애 시나리오 — 한눈에 보기
 
@@ -31,15 +31,15 @@
 ## 목차
 
 1. [무엇을 배포하나요](#1-무엇을-배포하나요)
-2. [사전 요구사항](#2-사전-요구사항)
-3. [빠른 시작](#3-빠른-시작)
-4. [배포 확인](#4-배포-확인)
-5. [실습 시나리오](#5-실습-시나리오)
-6. [E2E 실행 결과](#6-e2e-실행-결과)
-7. [Lab 마무리와 반복 시연](#7-lab-마무리와-반복-시연)
-8. [정리 (Cleanup)](#8-정리-cleanup)
-9. [트러블슈팅](#9-트러블슈팅)
-10. [저장소 구조](#10-저장소-구조)
+2. [무엇을 준비해야 하나요](#2-무엇을-준비해야-하나요)
+3. [어떻게 배포하나요](#3-어떻게-배포하나요)
+4. [제대로 배포됐는지 어떻게 확인하나요](#4-제대로-배포됐는지-어떻게-확인하나요)
+5. [무엇을 실습하나요](#5-무엇을-실습하나요)
+6. [실제로 되나요 — E2E 실행 결과](#6-실제로-되나요--e2e-실행-결과)
+7. [다시 시연하려면 무엇을 되돌려야 하나요](#7-다시-시연하려면-무엇을-되돌려야-하나요)
+8. [다 쓰고 나면 어떻게 정리하나요](#8-다-쓰고-나면-어떻게-정리하나요)
+9. [잘 안 될 때는 어떻게 하나요](#9-잘-안-될-때는-어떻게-하나요)
+10. [저장소는 어떻게 구성돼 있나요](#10-저장소는-어떻게-구성돼-있나요)
 
 ---
 
@@ -142,7 +142,7 @@ az role assignment delete --assignee "$PRINCIPAL_ID" \
 > 필요한 역할을 주세요. 또한 신규 Response Plan 은 **Review 모드로 시작**해 동작을 검증한 뒤
 > Autonomous 로 전환하는 것이 안전합니다.
 > 전체 권한 모델(계층 · 실행 모드 매트릭스 · OBO)은
-> **[SRE_Agent.md — 권한 모델](SRE_Agent.md#5-권한-모델-permission-model)** 참고.
+> **[SRE_Agent.md — 권한 모델](SRE_Agent.md#5-권한과-승인은-어떻게-통제하나요)** 참고.
 
 ### SRE Agent 구성 요소
 
@@ -158,7 +158,7 @@ az role assignment delete --assignee "$PRINCIPAL_ID" \
 
 ---
 
-## 2. 사전 요구사항
+## 2. 무엇을 준비해야 하나요
 
 | 도구 | Windows 설치 | macOS 설치 |
 |---|---|---|
@@ -193,10 +193,17 @@ az role assignment delete --assignee "$PRINCIPAL_ID" \
 > ```bash
 > azd env set GITHUB_USER <your-github-username>
 > ```
+>
+> 이슈를 앱 저장소가 아닌 **별도 저장소**에 모으고 싶다면 `GITHUB_ISSUE_REPO` 를 함께 지정하세요.
+> 지정하지 않으면 `GITHUB_REPO` 와 같은 저장소를 사용합니다.
+>
+> ```bash
+> azd env set GITHUB_ISSUE_REPO <owner>/<repo>
+> ```
 
 ---
 
-## 3. 빠른 시작
+## 3. 어떻게 배포하나요
 
 ### 방법 A — 원커맨드 스크립트
 
@@ -246,7 +253,7 @@ Skill Builder · Hooks · Agent Canvas · Automation · Knowledge Sources · Res
 
 ---
 
-## 4. 배포 확인
+## 4. 제대로 배포됐는지 어떻게 확인하나요
 
 ```bash
 bash scripts/post-provision.sh --status
@@ -282,7 +289,7 @@ bash scripts/post-provision.sh --status
 
 ---
 
-## 5. 실습 시나리오
+## 5. 무엇을 실습하나요
 
 | # | 시나리오 | 대상 | 소요 | GitHub 필요 |
 |:--:|---|---|:--:|:--:|
@@ -350,7 +357,7 @@ bash scripts/break-app.sh <API_URL> 200 0.5
 > then propose a mitigation.
 > ```
 >
-> 실제 소요 시간: 경고 발화 → 완화 약 5분, 최종 보고까지 약 14분 → [6. E2E 결과](#6-e2e-실행-결과)
+> 실제 소요 시간: 경고 발화 → 완화 약 5분, 최종 보고까지 약 14분 → [6. E2E 결과](#6-실제로-되나요--e2e-실행-결과)
 
 ### 시나리오 2 — 개발자 (GitHub 필요)
 
@@ -482,7 +489,7 @@ bash scripts/break-app-latency.sh restore
 
 ---
 
-## 6. E2E 실행 결과
+## 6. 실제로 되나요 — E2E 실행 결과
 
 > 이 저장소의 결과는 **주장이 아니라 채점 결과**입니다.
 > 장애를 주입하기 전에 정답(Ground truth)을 적어 두고, 에이전트의 결론을 아래 기준으로 채점했습니다.
@@ -524,12 +531,12 @@ bash scripts/break-app-latency.sh restore
 
 1-C 는 **장애가 만들어지지 않아** 점수를 매기지 못했습니다. 그 과정과 이유를 [6.10](#610-시나리오-1-c--용량-부족-지연--재현되지-않음) 에 그대로 남겼습니다.
 
-
+아래는 각 시나리오의 원본 기록입니다.
 
 > **실행일:** 2026-08-19 · **리전:** `eastus2` · **시나리오:** 1 (IT 운영, GitHub 미연동)
 > 모든 타임스탬프는 **UTC** 기준입니다.
 
-### 6.1 배포 결과
+### 시나리오 1 — 무엇이 배포됐나요
 
 `azd up` 으로 생성된 리소스 (리소스 그룹 `rg-sre-lab`):
 
@@ -548,7 +555,7 @@ bash scripts/break-app-latency.sh restore
 `scripts/post-provision.sh` 결과: ACR 이미지 2종 빌드·배포, CORS 구성,
 Knowledge Base 4개 파일 색인, `incident-handler`(19 tools), Response Plan, Azure Monitor 연결 — **전부 성공**.
 
-### 6.2 장애 주입 결과
+### 시나리오 1 — 장애를 어떻게 주입했나요
 
 ```text
 Target:   https://ca-grubify-huvqg3bjooyw6...azurecontainerapps.io
@@ -796,18 +803,36 @@ Container Apps 진단 도구로 경로를 바꿔 조사를 완료했습니다. �
 Code Access 에는 fork(`daeungo1/grubify`)가 정상 연결되어 있었습니다.
 **코드를 읽는 대상과 이슈를 쓰는 대상이 서로 달랐던 것**이 핵심입니다.
 
-**조치**
+**조치 — 읽는 저장소와 쓰는 저장소를 분리**
 
-- 지식 베이스에서 저장소 하드코딩을 제거하고, **업스트림에 이슈·PR·코멘트를 만들지 말 것**을 명시 → 재색인 완료
+`GITHUB_ISSUE_REPO` 를 새로 도입해, 이슈를 쓸 저장소를 코드를 읽을 저장소와 **따로** 지정합니다.
+
+```bash
+azd env set GITHUB_ISSUE_REPO daeungo1/Azure-SRE-Agent-Lab   # 이슈가 쌓일 곳
+azd env set GITHUB_REPO       daeungo1/grubify               # 코드를 읽을 곳
+```
+
+- 지식 베이스에서 저장소 하드코딩을 제거하고, 실행 환경 값은 `knowledge-base/lab-environment.md` 에 **배포 시점에 렌더링**해 색인
+- 서브에이전트 지시문에 *"오직 `GITHUB_ISSUE_REPO` 에만 쓸 것. 다른 저장소에는 이슈·코멘트·PR 금지. 코드 읽기는 허용"* 을 명시
 - `post-provision.sh` 가 `GITHUB_REPO` 없이 예약 작업을 만들지 않도록 변경 (업스트림 기본값 제거)
-- `azd env set GITHUB_USER` 를 사전 요구사항에 경고와 함께 명시
+- `yaml-to-api-json.py` 가 빈 값이나 업스트림 저장소를 받으면 **오류로 중단**
+
+**재검증 (2026-08-20 07:21~07:34 UTC)** — 같은 포트 불일치 장애를 다시 주입해 확인했습니다.
+
+| 항목 | 결과 |
+|---|---|
+| 조사 스레드 | `58eb42e8` 신규 생성 (07:28:24) |
+| 근본 원인 | targetPort 9090 ↔ 앱 8080 불일치로 시작 프로브 크래시 루프 |
+| 조치 | `UpdateTargetPort` → 8080, 07:31 복구 (1/1 replica) |
+| 이슈 등록 위치 | **`daeungo1/Azure-SRE-Agent-Lab#1`** ✅ |
+| 업스트림 신규 이슈 | 없음 ✅ |
 
 > **교훈** — 에이전트에 쓰기 권한이 있는 외부 시스템에서는 **대상 범위를 지식·설정 양쪽에서 고정**해야 합니다.
 > 권한을 좁히는 것만으로는 부족하고, 에이전트가 참조하는 문서가 잘못된 대상을 가리키면 그대로 따라갑니다.
 
 ---
 
-## 7. Lab 마무리와 반복 시연
+## 7. 다시 시연하려면 무엇을 되돌려야 하나요
 
 환경을 삭제하지 않고 **여러 번 시연**할 때만 필요한 내용입니다.
 
@@ -884,14 +909,14 @@ az containerapp update --name <APP> --resource-group rg-sre-lab --min-replicas 1
 | 1 | SRE Agent 란 무엇인가 — 한 줄 요약과 동작 흐름 | [SRE_Agent.md §1~2](SRE_Agent.md) | 5분 |
 | 2 | 포털 투어 (설정 · Builder · Capabilities · 권한) | [시나리오 0](#시나리오-0--포털-투어-github-불필요) | 10분 |
 | 3 | 정상 동작 시연 후 `break-app.sh` 실행 | [시나리오 1](#시나리오-1--it-운영-github-불필요) | 3분 |
-| 4 | 대기 중 — 아키텍처·런북·권한 모델 설명 | [architecture-ko.svg](docs/architecture-ko.svg) · [SRE_Agent.md §5](SRE_Agent.md#5-권한-모델-permission-model) | 10분 |
+| 4 | 대기 중 — 아키텍처·런북·권한 모델 설명 | [architecture-ko.svg](docs/architecture-ko.svg) · [SRE_Agent.md §5](SRE_Agent.md#5-권한과-승인은-어떻게-통제하나요) | 10분 |
 | 5 | Incidents ▸ 조사 스레드 실시간 시청 | 포털 | 10분 |
-| 6 | 근본 원인·완화 결과 리뷰, E2E 기록과 비교 | [6. E2E 결과](#6-e2e-실행-결과) | 5분 |
+| 6 | 근본 원인·완화 결과 리뷰, E2E 기록과 비교 | [6. E2E 결과](#6-실제로-되나요--e2e-실행-결과) | 5분 |
 | 7 | Operations Hub · Live Reports 로 가치 측정 | [시나리오 4](#시나리오-4--가치-측정-github-불필요) | 7분 |
 
 ---
 
-## 8. 정리 (Cleanup)
+## 8. 다 쓰고 나면 어떻게 정리하나요
 
 ```bash
 azd down --purge
@@ -899,11 +924,11 @@ azd down --purge
 
 > ⚠️ **SRE Agent 는 사용량 기반 과금 리소스입니다.** 환경을 더 이상 쓰지 않으면 삭제하세요.
 > `--purge` 를 붙여야 Log Analytics / Application Insights 가 soft-delete 상태로 남지 않습니다.
-> 반복 시연을 위해 **환경을 유지**한다면 [7. Lab 마무리와 반복 시연](#7-lab-마무리와-반복-시연)을 따르세요.
+> 반복 시연을 위해 **환경을 유지**한다면 [7. 다시 시연하려면](#7-다시-시연하려면-무엇을-되돌려야-하나요)을 따르세요.
 
 ---
 
-## 9. 트러블슈팅
+## 9. 잘 안 될 때는 어떻게 하나요
 
 | 증상 | 해결 |
 |---|---|
@@ -918,11 +943,11 @@ azd down --purge
 | 두 번째 시연에서 장애가 재현되지 않음 | 에이전트가 메모리를 확장해 둔 상태 — [7.1 데모 리셋](#71-데모-재현을-위한-필수-리셋) 수행 |
 | 경고는 떴는데 새 조사가 안 생김 | 재조사 쿼다운(기본 3시간)으로 기존 스레드에 병합됨 — [7.2](#72-시연-전-체크리스트) 참고 |
 | 포털이 응답 없음 / 채팅 불가 | 방화벽·프록시가 `*.azuresre.ai` 를 차단했는지 확인 (허용 목록 추가) |
-| 에이전트가 조치를 못하고 승인만 요청 | 권한 수준이 Reader 일 수 있음 — [SRE_Agent.md §5](SRE_Agent.md#5-권한-모델-permission-model) 참고 |
+| 에이전트가 조치를 못하고 승인만 요청 | 권한 수준이 Reader 일 수 있음 — [SRE_Agent.md §5](SRE_Agent.md#5-권한과-승인은-어떻게-통제하나요) 참고 |
 
 ---
 
-## 10. 저장소 구조
+## 10. 저장소는 어떻게 구성돼 있나요
 
 ```text
 .

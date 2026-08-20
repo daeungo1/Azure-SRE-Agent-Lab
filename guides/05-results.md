@@ -121,11 +121,20 @@ Code Access 에는 fork 가 정상 연결돼 있었습니다.
 (*"GitHub issue creation failed due to auth"*), 에이전트가 `gh api` 로 **우회해서 성공**했습니다.
 즉 **권한이 아니라 지식이 잘못된 대상을 가리킨 문제**였습니다.
 
-**조치**
+**조치 — 읽는 저장소와 쓰는 저장소를 분리**
 
-- 지식 베이스에서 저장소 하드코딩 제거 + **업스트림 쓰기 금지** 명시
-- 배포별 `lab-environment.md` 를 생성해 **대상 저장소를 이름으로 고정**
+```bash
+azd env set GITHUB_ISSUE_REPO daeungo1/Azure-SRE-Agent-Lab   # 이슈가 쌓일 곳
+azd env set GITHUB_REPO       daeungo1/grubify               # 코드를 읽을 곳
+```
+
+- 지식 베이스에서 저장소 하드코딩 제거, 실행 환경 값은 `lab-environment.md` 로 **배포 시점에 렌더링**해 색인
+- 서브에이전트 지시문에 *"오직 `GITHUB_ISSUE_REPO` 에만 쓸 것. 코드 읽기는 허용"* 명시
 - `post-provision.sh` 가 `GITHUB_REPO` 없이 예약 작업을 만들지 않도록 변경
+- `yaml-to-api-json.py` 가 빈 값·업스트림 저장소를 받으면 **오류로 중단**
+
+**재검증 (2026-08-20)** — S2 포트 불일치를 다시 주입한 결과, 에이전트는 07:31 에 자동 복구하고
+이슈를 **`daeungo1/Azure-SRE-Agent-Lab#1`** 에 등록했습니다. 업스트림에는 신규 이슈가 없습니다.
 
 > **교훈** — 에이전트에 쓰기 권한이 있는 외부 시스템은 **권한만 좁혀서는 부족**합니다.
 > 에이전트가 참조하는 문서가 잘못된 대상을 가리키면 그대로 따라갑니다.
