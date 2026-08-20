@@ -294,16 +294,16 @@ bash scripts/post-provision.sh --status
 | # | 시나리오 | 대상 | 소요 | GitHub 필요 |
 |:--:|---|---|:--:|:--:|
 | 0 | **포털 투어** — 설정·Builder·Capabilities 둘러보기 | 전체 | 10분 | ❌ |
-| 1 | 앱 장애(메모리 누수) → 에이전트가 로그 기반 조사·완화 | IT 운영 | 20분 | ❌ |
-| 1-B | **배포 설정 오류**(포트 불일치) → 리비전 기동 실패 조사 | IT 운영 · DevOps | 20분 | ❌ |
-| 1-C | **용량 부족 지연**(CPU 삭감) → 오류 없는 느림 ⚠️ 재현 안 됨 | IT 운영 | 15분 | ❌ |
+| **S1** | 앱 장애(메모리 누수) → 에이전트가 로그 기반 조사·완화 | IT 운영 | 20분 | ❌ |
+| **S2** | **배포 설정 오류**(포트 불일치) → 리비전 기동 실패 조사 | IT 운영 · DevOps | 20분 | ❌ |
+| **S3** | **응답 지연**(오류 없는 느림) → 지연만 보고 원인 판정 | IT 운영 | 20분 | ❌ |
 | 2 | 동일 장애 → 소스 코드에서 근본 원인 발견 + GitHub 이슈 생성 | 개발자 + IT | 20분 | ✅ |
 | 3 | 고객 이슈 트리아지 → 분류·라벨·코멘트 자동화 | 워크플로 자동화 | 10분 | ✅ |
 | 4 | **가치 측정** — Operations Hub · Live Reports 로 효과 확인 | 의사결정자 | 10분 | ❌ |
 
-> 시간이 부족하면 **0 → 1 → 4** 순서만으로도 완결된 스토리가 됩니다 (GitHub 불필요, 약 40분).
-> 시나리오 1 과 1-B 는 **근본 원인의 종류가 다릅니다** — 앞은 코드·용량 문제, 뒤는 배포 설정 오류입니다.
-> 둘을 이어서 보여주면 "에이전트가 증상이 아니라 **원인을** 본다"는 점이 분명해집니다.
+> 시간이 부족하면 **0 → S1 → 4** 순서만으로도 완결된 스토리가 됩니다 (GitHub 불필요, 약 40분).
+> **S1 · S2 · S3 는 근본 원인의 종류가 각각 다릅니다** — 코드·용량, 배포 설정, 애플리케이션 설정입니다.
+> 세 개를 이어서 보여주면 "에이전트가 증상이 아니라 **원인을** 본다"는 점이 분명해집니다.
 
 ### 시나리오 0 — 포털 투어 (GitHub 불필요)
 
@@ -330,7 +330,7 @@ What Azure resources are you managing right now? Give me a one-line summary of e
 What do you already know about the Grubify application? Cite your knowledge sources.
 ```
 
-### 시나리오 1 — IT 운영 (GitHub 불필요)
+### 시나리오 S1 — IT 운영 (GitHub 불필요)
 
 ```bash
 bash scripts/break-app.sh <API_URL> 200 0.5
@@ -448,9 +448,9 @@ Thursday-Sunday is Team Beta. Escalation path: on-call → team lead → VP Engi
 Who is on call today, and what should they check first if the cart API fails again?
 ```
 
-### 시나리오 1-B — 배포 설정 오류 (GitHub 불필요)
+### 시나리오 S2 — 배포 설정 오류 (GitHub 불필요)
 
-시나리오 1 과 **같은 증상(HTTP 5xx), 다른 원인**입니다.
+시나리오 S1 과 **같은 증상(HTTP 5xx), 다른 원인**입니다.
 "에이전트가 증상이 아니라 원인을 보는가" 를 확인하는 시나리오입니다.
 
 ```bash
@@ -472,20 +472,37 @@ bash scripts/break-app-config.sh status
 | 조치 | `targetPort` 를 8080 으로 정렬 (Autonomous) |
 
 > 에이전트가 스스로 복구하지 않았다면 `bash scripts/break-app-config.sh restore` 로 되돌립니다.
-> 실측 결과는 [6.8](#68-시나리오-1-b--인그레스-포트-불일치-2026-08-20) 에 있습니다.
+> 실측 결과는 [6.8](#68-시나리오-s2--인그레스-포트-불일치-2026-08-20) 에 있습니다.
 
-### 시나리오 1-C — 용량 부족 지연 (선택 · ⚠️ 미검증)
+### 시나리오 S3 — 응답 지연 (GitHub 불필요)
 
-오류 없이 **느려지기만 하는** 장애를 만들어 에이전트가 용량 문제로 판정하는지 보려는 시나리오입니다.
+오류가 **하나도 나지 않고 느려지기만** 하는 장애입니다.
+5xx 가 없으므로 "에러 없으니 이상 없음" 으로 넘어가지 않는지를 봅니다.
+
+> **사전 준비** — 기본 Grubify 이미지에는 지연을 넣을 지점이 없습니다.
+> fork 한 저장소에 `ORDER_DELAY_MS` 미들웨어를 넣고 이미지를 다시 빌드해야 합니다.
+> 코드와 빌드 명령은 [guides/04-scenario-s3.md](guides/04-scenario-s3.md) 에 있습니다.
 
 ```bash
-bash scripts/break-app-latency.sh break     # CPU 1.0 -> 0.25, 스케일아웃 차단
-CONCURRENCY=40 ROUNDS=20 bash scripts/break-app-latency.sh load
+# 1) 주입 — /api/orders 가 4초 지연 후 200 을 반환한다
+bash scripts/break-app-latency.sh break
+
+# 2) 부하 — 모두 200 이지만 4초씩 걸린다
+CONCURRENCY=10 ROUNDS=20 bash scripts/break-app-latency.sh load
+
+# 3) 복구
 bash scripts/break-app-latency.sh restore
 ```
 
-> **이 저장소의 Grubify 에서는 동작하지 않습니다.** 엔드포인트가 너무 가벼워 CPU 를 1/4 로 줄여도
-> 응답 시간이 1~3ms 그대로입니다. 실측 데이터와 필요 조건은 [6.10](#610-시나리오-1-c--용량-부족-지연--재현되지-않음) 참고.
+| 볼 것 | 기대 |
+|---|---|
+| 경고 | `alert-latency-sre-lab` (Sev2, 평균 `ResponseTime` > 200ms) 발화 |
+| 조사 | 오류율은 정상인데 지연만 올라간 점을 구분해 서술 |
+| 원인 | 리비전 환경 변수 `ORDER_DELAY_MS=4000` 을 지목 |
+| 한계 | 원인은 찾았지만 **완화까지 끝내지 못했습니다** (감점 사유) |
+
+> 실측 결과는 [6.10](#610-시나리오-s3--응답-지연-2026-08-20) 에 있습니다.
+> CPU 를 굶겨서 지연을 만들려던 **첫 시도는 실패**했습니다. 그 기록도 6.10 에 함께 남겼습니다.
 
 ---
 
@@ -521,22 +538,23 @@ bash scripts/break-app-latency.sh restore
 
 | 시나리오 | 장애 신호 | 탐지 | 인수 | 원인 도달 | 조치 | 점수 | 판정 |
 |---|---|--:|--:|--:|---|--:|---|
-| **1 — 메모리 누수 → OOM** | HTTP 5xx 급증 | 3분 | 54초 | 4분 25초 | 재시작 + 1Gi→2Gi | **10/10** | ✅ Pass |
-| **1-B — 인그레스 포트 불일치** | 전 요청 503 | 2분 52초 | 49초 | **80초** | targetPort 9090→8080 | **8/10** | ✅ Pass |
-| **1-C — 용량 부족 지연** | — | — | — | — | — | — | ⚠️ 재현 안 됨 |
+| **S1 — 메모리 누수 → OOM** | HTTP 5xx 급증 | 3분 | 54초 | 4분 25초 | 재시작 + 1Gi→2Gi | **10/10** | ✅ Pass |
+| **S2 — 인그레스 포트 불일치** | 전 요청 503 | 2분 52초 | 49초 | **80초** | targetPort 9090→8080 | **8/10** | ✅ Pass |
+| **S3 — 주문 API 응답 지연** | 오류 없이 4초 지연 | 3분 44초 | 69초 | 4분 49초 | 미완료 — 수동 복구 | **8/10** | ✅ Pass |
 
-시나리오 1 과 1-B 는 **증상이 같고(5xx) 원인이 다릅니다.** 1-B 조사에서 에이전트가 남긴 문장이 이 Lab 의 핵심입니다.
+S1 과 S2 는 **증상이 같고(5xx) 원인이 다릅니다.** S3 는 **아예 오류가 나지 않습니다.**
+S2 조사에서 에이전트가 남긴 문장이 이 Lab 의 핵심입니다.
 
 > *"Root cause identified: Port mismatch, **NOT OOM this time**. … different root cause than previous incidents."*
 
-1-C 는 **장애가 만들어지지 않아** 점수를 매기지 못했습니다. 그 과정과 이유를 [6.10](#610-시나리오-1-c--용량-부족-지연--재현되지-않음) 에 그대로 남겼습니다.
+S3 는 원인을 정확히 지목했지만 **완화를 끝내지 못했습니다.** 감점 사유를 그대로 기록했습니다.
 
 아래는 각 시나리오의 원본 기록입니다.
 
 > **실행일:** 2026-08-19 · **리전:** `eastus2` · **시나리오:** 1 (IT 운영, GitHub 미연동)
 > 모든 타임스탬프는 **UTC** 기준입니다.
 
-### 시나리오 1 — 무엇이 배포됐나요
+### 시나리오 S1 — 무엇이 배포됐나요
 
 `azd up` 으로 생성된 리소스 (리소스 그룹 `rg-sre-lab`):
 
@@ -555,7 +573,12 @@ bash scripts/break-app-latency.sh restore
 `scripts/post-provision.sh` 결과: ACR 이미지 2종 빌드·배포, CORS 구성,
 Knowledge Base 4개 파일 색인, `incident-handler`(19 tools), Response Plan, Azure Monitor 연결 — **전부 성공**.
 
-### 시나리오 1 — 장애를 어떻게 주입했나요
+> 위는 **2026-08-19 최초 실행 시점**의 기록입니다. 이후 S2·S3 시나리오를 만들며
+> 경고 규칙 2개(`alert-revision-unhealthy-sre-lab`, `alert-latency-sre-lab`)와
+> 지식 문서 `lab-environment.md` 를 추가했습니다.
+> **지금 배포하면 경고 3개 · Knowledge Base 5개 파일**이 만들어집니다.
+
+### 시나리오 S1 — 장애를 어떻게 주입했나요
 
 ```text
 Target:   https://ca-grubify-huvqg3bjooyw6...azurecontainerapps.io
@@ -675,10 +698,10 @@ GET  frontend /                  → HTTP 200 (700ms)
 추가로 subagent 생성 PUT 이 **비동기(202)** 라 연속 호출 시 일시적으로 400 이 나는 현상이 있어,
 `post-provision.sh` 의 subagent 생성에 **재시도 로직**을 넣었습니다.
 
-### 6.8 시나리오 1-B — 인그레스 포트 불일치 (2026-08-20)
+### 6.8 시나리오 S2 — 인그레스 포트 불일치 (2026-08-20)
 
 > **실행일:** 2026-08-20 · **리전:** `eastus2` · **모드:** Autonomous
-> 시나리오 1 과 **증상은 같지만(HTTP 5xx) 원인이 다른** 장애입니다.
+> 시나리오 S1 과 **증상은 같지만(HTTP 5xx) 원인이 다른** 장애입니다.
 
 #### Ground truth
 
@@ -760,33 +783,46 @@ bash scripts/break-app-config.sh restore   # 복구
 *"App Insights and Log Analytics returned zero rows — need to sanity-check the data sources"* 라고 말한 뒤
 Container Apps 진단 도구로 경로를 바꿔 조사를 완료했습니다. 데이터 소스가 비어도 **멈추지 않고 우회**합니다.
 
-### 6.10 시나리오 1-C — 용량 부족 지연 ⚠️ 재현되지 않음
+### 6.10 시나리오 S3 — 응답 지연 (2026-08-20)
 
-**의도한 Ground truth:** CPU 를 `1.0 → 0.25` 로 줄이고 스케일아웃을 막아(`maxReplicas 1`)
-**오류 없이 느려지는** 상태를 만든다. 에이전트가 OOM·설정 오류가 아닌 **용량 문제**로 판정하는지 확인.
+**Ground truth:** `/api/orders` 가 **4초 지연 후 200** 을 반환한다.
+오류율은 변하지 않고 지연만 올라간다. 에이전트가 **오류가 없는 장애**를 인지하는지 확인.
 
-**결과: 지연이 발생하지 않아 경고가 발화하지 않았습니다.**
+| 시각(UTC) | 사건 | 경과 |
+|---|---|--:|
+| 06:32:37 | `ORDER_DELAY_MS=4000` 주입 | — |
+| 06:33:25 | 부하 시작 (10 동시 × 20회, **전부 200**) | +48초 |
+| 06:34 | `ResponseTime` **4034 ms** 기록 (정상 4 ms) | |
+| 06:36:21 | 경고 `alert-latency-sre-lab`(Sev2) 발화 | +3분 44초 |
+| 06:37:30 | 에이전트 인수 | +69초 |
+| 06:42:19 | **근본 원인 확정** — `ORDER_DELAY_MS=4000` | **+4분 49초** |
+| 06:43:30 | `pre-write-evidence-gate` 훅 통과 — **이후 쓰기 미완료** | |
+| 06:46:03 | 사람이 수동 복구 | |
+
+**점수 8/10** — 원인은 정확히 지목했지만 **완화를 끝내지 못했습니다.**
+롤백 준비까지 가고 실행이 이어지지 않았고, 최종 요약은 "MITIGATED" 로 적었습니다.
+실제로는 사람이 복구한 상태였습니다. 상세 채점은 [guides/04-scenario-s3.md](guides/04-scenario-s3.md) 에 있습니다.
+
+#### 이 시나리오를 만들 때 처음 시도한 방법은 실패했습니다
+
+처음에는 **CPU 를 굶겨서**(`1.0 → 0.25`, `maxReplicas 1`) 지연을 만들려 했습니다. 결과는 실패였습니다.
 
 | 구간 | 요청량(분당) | 서버 응답시간(평균) |
 |---|--:|--:|
 | 정상 (cpu 1.0) | 120 | **1~3 ms** |
 | CPU 1/4 + 스케일아웃 차단 | **518 ~ 633** | **0 ~ 0.5 ms** |
 
-트래픽은 분명히 도달했지만(분당 600건 이상) 서버 응답 시간은 그대로였습니다.
+트래픽은 분당 600건 이상 도달했지만 응답 시간은 그대로였습니다.
 `GET /api/fooditems` 가 **메모리에서 정적 목록을 반환하는 수준**이라 CPU 를 1/4 로 줄여도 병목이 생기지 않습니다.
 중간에 관측된 72ms 는 리비전 교체 직후의 **콜드 스타트**였지 부하로 인한 지연이 아니었습니다.
 
-**그래서 무엇이 필요한가**
+그래서 **앱에 지연 주입 지점을 직접 만드는 방식**으로 바꿨습니다 —
+fork 한 저장소에 `ORDER_DELAY_MS` 미들웨어를 넣고 이미지를 다시 빌드했습니다.
+이후 위 타임라인대로 재현에 성공했습니다.
 
-| 필요한 것 | 이유 |
-|---|---|
-| 실제 작업을 하는 엔드포인트 | 외부 호출·DB 질의·직렬화 등 CPU/IO 를 쓰는 경로가 있어야 굶겼을 때 느려집니다 |
-| 또는 앱의 App Insights 계측 | `AppRequests` 의 `DurationMs` 로 p95 를 재야 정확한 지연 판정이 가능합니다 |
-
-**남겨둔 것** — [scripts/break-app-latency.sh](scripts/break-app-latency.sh) 와 `alert-latency-sre-lab`
-(평균 `ResponseTime` > 200ms) 경고 규칙은 그대로 두었습니다.
-계측된 앱이나 무거운 엔드포인트가 있는 환경이라면 **그대로 재사용**할 수 있습니다.
-이 저장소에서는 **"검증되지 않은 시나리오"** 로 표시합니다.
+> **교훈** — 부하로 지연을 만들려면 **실제 작업을 하는 엔드포인트**가 필요합니다.
+> 정적 응답만 하는 API 는 CPU 를 굶겨도 느려지지 않습니다.
+> 지연 시나리오는 부하보다 **결정적인 주입 지점**을 만드는 편이 재현성이 높습니다.
 
 ### 6.11 에이전트가 업스트림 저장소에 이슈를 만든 건
 
@@ -914,7 +950,7 @@ az containerapp update --name <APP> --resource-group rg-sre-lab --min-replicas 1
 |:--:|---|---|---|
 | 1 | SRE Agent 란 무엇인가 — 한 줄 요약과 동작 흐름 | [SRE_Agent.md §1~2](SRE_Agent.md) | 5분 |
 | 2 | 포털 투어 (설정 · Builder · Capabilities · 권한) | [시나리오 0](#시나리오-0--포털-투어-github-불필요) | 10분 |
-| 3 | 정상 동작 시연 후 `break-app.sh` 실행 | [시나리오 1](#시나리오-1--it-운영-github-불필요) | 3분 |
+| 3 | 정상 동작 시연 후 `break-app.sh` 실행 | [시나리오 S1](#시나리오-s1--it-운영-github-불필요) | 3분 |
 | 4 | 대기 중 — 아키텍처·런북·권한 모델 설명 | [architecture-ko.svg](docs/architecture-ko.svg) · [SRE_Agent.md §5](SRE_Agent.md#5-권한과-승인은-어떻게-통제하나요) | 10분 |
 | 5 | Incidents ▸ 조사 스레드 실시간 시청 | 포털 | 10분 |
 | 6 | 근본 원인·완화 결과 리뷰, E2E 기록과 비교 | [6. E2E 결과](#6-실제로-되나요--e2e-실행-결과) | 5분 |

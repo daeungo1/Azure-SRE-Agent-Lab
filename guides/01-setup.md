@@ -22,6 +22,13 @@ bash scripts/post-provision.sh
 > 설정하지 않으면 에이전트가 **업스트림 저장소(`dm-chelupati/grubify`)를 대상으로 삼아**
 > 남의 저장소에 이슈를 만듭니다. 이 Lab 에서 실제로 발생했습니다 →
 > [05-results.md — 발견한 문제](05-results.md#에이전트가-업스트림-저장소에-이슈를-만든-건)
+>
+> 이슈를 앱 저장소가 아닌 **별도 저장소**에 모으려면 `GITHUB_ISSUE_REPO` 를 함께 지정하세요.
+> 지정하지 않으면 `GITHUB_REPO` 와 같은 저장소를 사용합니다.
+>
+> ```bash
+> azd env set GITHUB_ISSUE_REPO <owner>/<repo>
+> ```
 
 `azd up` 은 **인프라만** 만듭니다. 컨테이너 이미지 빌드와 에이전트 구성(지식 베이스 업로드,
 Custom Agent · Response Plan 생성)은 `post-provision.sh` 가 담당합니다. **둘 다 실행해야 합니다.**
