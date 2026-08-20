@@ -477,9 +477,11 @@ except: pass
   done
 
 TASK_BODY=$($PYTHON -c "
-import json, os
-repo = os.environ.get('GITHUB_REPO', 'dm-chelupati/grubify')
-body = {'name':'triage-grubify-issues','description':'Triage customer issues in '+repo+' every 12 hours','cronExpression':'0 */12 * * *','agentPrompt':'Use the issue-triager subagent to list all open issues in '+repo+' that have [Customer Issue] in the title and have not been triaged yet. For each untriaged customer issue, classify it, add labels, and post a triage comment following the triage runbook in the knowledge base.','agent':'issue-triager'}
+import json, os, sys
+repo = os.environ.get('GITHUB_REPO', '')
+if not repo:
+    sys.exit('GITHUB_REPO is empty - refusing to target the upstream repository')
+body = {'name':'triage-grubify-issues','description':'Triage customer issues in '+repo+' every 12 hours','cronExpression':'0 */12 * * *','agentPrompt':'Use the issue-triager subagent to list all open issues in '+repo+' that have [Customer Issue] in the title and have not been triaged yet. For each untriaged customer issue, classify it, add labels, and post a triage comment following the triage runbook in the knowledge base. Only ever act on '+repo+' - never on any other repository.','agent':'issue-triager'}
 print(json.dumps(body))
 ")
 HTTP_CODE=$(echo "$TASK_BODY" | curl -s -o /dev/null -w "%{http_code}" \

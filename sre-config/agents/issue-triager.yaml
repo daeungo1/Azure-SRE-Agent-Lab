@@ -1,5 +1,5 @@
 # Issue Triager Subagent (requires GitHub)
-# Scenario 3: Triage issues in dm-chelupati/grubify — label and comment
+# Scenario 3: Triage issues in the connected grubify fork — label and comment
 # Pattern from: https://techcommunity.microsoft.com/blog/appsonazureblog/extend-sre-agent-with-mcp-build-an-agentic-workflow-to-triage-customer-issues/4480710
 api_version: azuresre.ai/v1
 kind: AgentConfiguration

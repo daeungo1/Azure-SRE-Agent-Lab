@@ -71,7 +71,45 @@ resource http5xxAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = {
 }
 
 // ============================================================
-// Scenario 2 — revision health
+// Scenario 1-C — response latency
+// Baseline on this app is 1-3 ms, so 200 ms is unambiguous. The scenario is not
+// reproducible on the stock Grubify endpoints (see README 6.10) — the rule is
+// here for environments whose endpoints actually do work.
+// ============================================================
+resource latencyAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = {
+  name: 'alert-latency-${environmentName}'
+  location: 'global'
+  properties: {
+    description: 'Grubify response time is far above the 1-3ms baseline — triggers SRE Agent investigation'
+    severity: 2
+    enabled: true
+    scopes: [
+      containerAppId
+    ]
+    evaluationFrequency: 'PT1M'
+    windowSize: 'PT5M'
+    criteria: {
+      'odata.type': 'Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria'
+      allOf: [
+        {
+          name: 'responseTime'
+          metricName: 'ResponseTime'
+          metricNamespace: 'microsoft.app/containerapps'
+          operator: 'GreaterThan'
+          threshold: 200
+          timeAggregation: 'Average'
+          criterionType: 'StaticThresholdCriterion'
+        }
+      ]
+    }
+    actions: [
+      {
+        actionGroupId: actionGroup.id
+      }
+    ]
+  }
+}
+
 // A separate rule on purpose: the agent's reinvestigation cooldown is per alert
 // rule, so a config-error run gets its own investigation instead of being merged
 // into the 5xx thread.

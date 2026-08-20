@@ -172,6 +172,14 @@ az role assignment delete --assignee "$PRINCIPAL_ID" \
 
 - GitHub 계정 — 시나리오 2·3 을 위해 [dm-chelupati/grubify](https://github.com/dm-chelupati/grubify/fork) 를 fork
 
+> ⚠️ **fork 했다면 `GITHUB_USER` 를 반드시 설정하세요.**
+> 설정하지 않으면 에이전트가 업스트림 저장소를 대상으로 삼아 **남의 저장소에 이슈를 만들 수 있습니다.**
+> 실제로 이 Lab 에서 발생했고, 재발 방지 조치를 넣었습니다 → [6.11](#611-에이전트가-업스트림-저장소에-이슈를-만든-건)
+>
+> ```bash
+> azd env set GITHUB_USER <your-github-username>
+> ```
+
 ---
 
 ## 3. 빠른 시작
@@ -267,6 +275,7 @@ bash scripts/post-provision.sh --status
 | 0 | **포털 투어** — 설정·Builder·Capabilities 둘러보기 | 전체 | 10분 | ❌ |
 | 1 | 앱 장애(메모리 누수) → 에이전트가 로그 기반 조사·완화 | IT 운영 | 20분 | ❌ |
 | 1-B | **배포 설정 오류**(포트 불일치) → 리비전 기동 실패 조사 | IT 운영 · DevOps | 20분 | ❌ |
+| 1-C | **용량 부족 지연**(CPU 삭감) → 오류 없는 느림 ⚠️ 재현 안 됨 | IT 운영 | 15분 | ❌ |
 | 2 | 동일 장애 → 소스 코드에서 근본 원인 발견 + GitHub 이슈 생성 | 개발자 + IT | 20분 | ✅ |
 | 3 | 고객 이슈 트리아지 → 분류·라벨·코멘트 자동화 | 워크플로 자동화 | 10분 | ✅ |
 | 4 | **가치 측정** — Operations Hub · Live Reports 로 효과 확인 | 의사결정자 | 10분 | ❌ |
@@ -444,6 +453,19 @@ bash scripts/break-app-config.sh status
 > 에이전트가 스스로 복구하지 않았다면 `bash scripts/break-app-config.sh restore` 로 되돌립니다.
 > 실측 결과는 [6.8](#68-시나리오-1-b--인그레스-포트-불일치-2026-08-20) 에 있습니다.
 
+### 시나리오 1-C — 용량 부족 지연 (선택 · ⚠️ 미검증)
+
+오류 없이 **느려지기만 하는** 장애를 만들어 에이전트가 용량 문제로 판정하는지 보려는 시나리오입니다.
+
+```bash
+bash scripts/break-app-latency.sh break     # CPU 1.0 -> 0.25, 스케일아웃 차단
+CONCURRENCY=40 ROUNDS=20 bash scripts/break-app-latency.sh load
+bash scripts/break-app-latency.sh restore
+```
+
+> **이 저장소의 Grubify 에서는 동작하지 않습니다.** 엔드포인트가 너무 가벼워 CPU 를 1/4 로 줄여도
+> 응답 시간이 1~3ms 그대로입니다. 실측 데이터와 필요 조건은 [6.10](#610-시나리오-1-c--용량-부족-지연--재현되지-않음) 참고.
+
 ---
 
 ## 6. E2E 실행 결과
@@ -480,10 +502,13 @@ bash scripts/break-app-config.sh status
 |---|---|--:|--:|--:|---|--:|---|
 | **1 — 메모리 누수 → OOM** | HTTP 5xx 급증 | 3분 | 54초 | 4분 25초 | 재시작 + 1Gi→2Gi | **10/10** | ✅ Pass |
 | **1-B — 인그레스 포트 불일치** | 전 요청 503 | 2분 52초 | 49초 | **80초** | targetPort 9090→8080 | **8/10** | ✅ Pass |
+| **1-C — 용량 부족 지연** | — | — | — | — | — | — | ⚠️ 재현 안 됨 |
 
-두 시나리오는 **증상이 같고(5xx) 원인이 다릅니다.** 1-B 조사에서 에이전트가 남긴 문장이 이 Lab 의 핵심입니다.
+시나리오 1 과 1-B 는 **증상이 같고(5xx) 원인이 다릅니다.** 1-B 조사에서 에이전트가 남긴 문장이 이 Lab 의 핵심입니다.
 
 > *"Root cause identified: Port mismatch, **NOT OOM this time**. … different root cause than previous incidents."*
+
+1-C 는 **장애가 만들어지지 않아** 점수를 매기지 못했습니다. 그 과정과 이유를 [6.10](#610-시나리오-1-c--용량-부족-지연--재현되지-않음) 에 그대로 남겼습니다.
 
 
 
@@ -713,6 +738,58 @@ bash scripts/break-app-config.sh restore   # 복구
 두 번째 조사에서 에이전트가 이를 스스로 발견하고
 *"App Insights and Log Analytics returned zero rows — need to sanity-check the data sources"* 라고 말한 뒤
 Container Apps 진단 도구로 경로를 바꿔 조사를 완료했습니다. 데이터 소스가 비어도 **멈추지 않고 우회**합니다.
+
+### 6.10 시나리오 1-C — 용량 부족 지연 ⚠️ 재현되지 않음
+
+**의도한 Ground truth:** CPU 를 `1.0 → 0.25` 로 줄이고 스케일아웃을 막아(`maxReplicas 1`)
+**오류 없이 느려지는** 상태를 만든다. 에이전트가 OOM·설정 오류가 아닌 **용량 문제**로 판정하는지 확인.
+
+**결과: 지연이 발생하지 않아 경고가 발화하지 않았습니다.**
+
+| 구간 | 요청량(분당) | 서버 응답시간(평균) |
+|---|--:|--:|
+| 정상 (cpu 1.0) | 120 | **1~3 ms** |
+| CPU 1/4 + 스케일아웃 차단 | **518 ~ 633** | **0 ~ 0.5 ms** |
+
+트래픽은 분명히 도달했지만(분당 600건 이상) 서버 응답 시간은 그대로였습니다.
+`GET /api/fooditems` 가 **메모리에서 정적 목록을 반환하는 수준**이라 CPU 를 1/4 로 줄여도 병목이 생기지 않습니다.
+중간에 관측된 72ms 는 리비전 교체 직후의 **콜드 스타트**였지 부하로 인한 지연이 아니었습니다.
+
+**그래서 무엇이 필요한가**
+
+| 필요한 것 | 이유 |
+|---|---|
+| 실제 작업을 하는 엔드포인트 | 외부 호출·DB 질의·직렬화 등 CPU/IO 를 쓰는 경로가 있어야 굶겼을 때 느려집니다 |
+| 또는 앱의 App Insights 계측 | `AppRequests` 의 `DurationMs` 로 p95 를 재야 정확한 지연 판정이 가능합니다 |
+
+**남겨둔 것** — [scripts/break-app-latency.sh](scripts/break-app-latency.sh) 와 `alert-latency-sre-lab`
+(평균 `ResponseTime` > 200ms) 경고 규칙은 그대로 두었습니다.
+계측된 앱이나 무거운 엔드포인트가 있는 환경이라면 **그대로 재사용**할 수 있습니다.
+이 저장소에서는 **"검증되지 않은 시나리오"** 로 표시합니다.
+
+### 6.11 에이전트가 업스트림 저장소에 이슈를 만든 건
+
+**증상** — 에이전트가 조사 결과를 원본 저장소 `dm-chelupati/grubify` 에 이슈로 등록했습니다.
+사용자의 fork 가 아니라 **남의 저장소**입니다.
+
+**원인 두 가지**
+
+| # | 원인 | 확인 방법 |
+|:--:|---|---|
+| 1 | `knowledge-base/grubify-architecture.md` 가 저장소를 `dm-chelupati/grubify` 로 **하드코딩** | Knowledge Base 에 색인된 문서라 에이전트가 이를 정답으로 신뢰 |
+| 2 | `GITHUB_USER` 미설정 → `post-provision.sh` 의 예약 작업이 **업스트림을 기본값**으로 사용 | `azd env get-value GITHUB_USER` → key not found |
+
+Code Access 에는 fork(`daeungo1/grubify`)가 정상 연결되어 있었습니다.
+**코드를 읽는 대상과 이슈를 쓰는 대상이 서로 달랐던 것**이 핵심입니다.
+
+**조치**
+
+- 지식 베이스에서 저장소 하드코딩을 제거하고, **업스트림에 이슈·PR·코멘트를 만들지 말 것**을 명시 → 재색인 완료
+- `post-provision.sh` 가 `GITHUB_REPO` 없이 예약 작업을 만들지 않도록 변경 (업스트림 기본값 제거)
+- `azd env set GITHUB_USER` 를 사전 요구사항에 경고와 함께 명시
+
+> **교훈** — 에이전트에 쓰기 권한이 있는 외부 시스템에서는 **대상 범위를 지식·설정 양쪽에서 고정**해야 합니다.
+> 권한을 좁히는 것만으로는 부족하고, 에이전트가 참조하는 문서가 잘못된 대상을 가리키면 그대로 따라갑니다.
 
 ---
 

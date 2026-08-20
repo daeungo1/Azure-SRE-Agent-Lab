@@ -56,7 +56,11 @@ done
 
 ## Source Code
 
-- **GitHub repository:** [github.com/dm-chelupati/grubify](https://github.com/dm-chelupati/grubify)
+- **GitHub repository:** use the repository connected to this agent under **Code Access**, which is a
+  fork of the upstream sample. Resolve it at investigation time instead of assuming a name.
+- **Never create issues, comments or pull requests in the upstream `dm-chelupati/grubify` repository.**
+  It belongs to another owner and is not part of this environment. If no repository is connected,
+  record the finding in the investigation thread instead of filing an issue anywhere.
 - **Language / runtime:** C# — ASP.NET Core (.NET), served by Kestrel
 - **Container image:** built from source by the lab's post-provision step and pushed to the
   lab ACR as `grubify-api:latest` (frontend: `grubify-frontend:latest`)
