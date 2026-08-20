@@ -16,8 +16,8 @@ Azure SRE Agent 는 배포 직후에도 인시던트를 조사하고 조치합�
 설정 파일과 적용 스크립트는 이 저장소의 [features-sre](.) 폴더에 그대로 들어 있어
 **그대로 가져가 다른 환경에 적용**할 수 있습니다.
 
-> 이 페이지의 포털 화면은 **Microsoft Learn 문서의 예시 화면**이며 이 Lab 환경이 아닙니다.
-> 본인 환경 화면은 적용 후 [sre.azure.com](https://sre.azure.com) 에서 확인하세요.
+> 이 페이지의 포털 화면은 이 폴더의 설정을 **실제로 적용한 뒤 캡처한 화면**입니다.
+> 같은 설정을 넣으면 본인 환경 [sre.azure.com](https://sre.azure.com) 에서도 동일하게 보입니다.
 
 ---
 
@@ -63,8 +63,9 @@ Azure SRE Agent 는 배포 직후에도 인시던트를 조사하고 조치합�
 Skill 은 그 절차를 **에이전트가 조사 중에 꺼내 쓰는 형태**로 등록하는 기능입니다.
 사람이 읽는 문서와 같은 내용을, 사람이 아니라 에이전트가 실행합니다.
 
-[![Skill 생성 화면](https://learn.microsoft.com/azure/sre-agent/media/skills/portal-create-skill.png)](https://learn.microsoft.com/azure/sre-agent/skills)
-<sup>출처: [Skills in Azure SRE Agent](https://learn.microsoft.com/azure/sre-agent/skills)</sup>
+![Skill Builder — 등록된 스킬 4개와 incident-report-writer 상세](../docs/portal-skill-builder.png)
+<sup>적용 후 **Capabilities ▸ Skill Builder**. 오른쪽은 `incident-report-writer` 상세 —
+에이전트가 쓸 도구 목록과 절차서 본문이 그대로 등록되어 있습니다.</sup>
 
 이 Lab 에 넣은 4개는 다음과 같습니다.
 
@@ -86,9 +87,9 @@ Skill 은 그 절차를 **에이전트가 조사 중에 꺼내 쓰는 형태**�
 Hook 은 세 번째 선택지입니다. 에이전트 실행 흐름의 특정 시점에 **조직의 규칙을 강제로 끼워 넣습니다.**
 권한은 그대로 두고 행동에 조건을 겁니다.
 
-[![Stop 훅이 응답을 반려하고 재시도시키는 화면](https://learn.microsoft.com/azure/sre-agent/media/agent-hooks/hooks-stop-hook-working.png)](https://learn.microsoft.com/azure/sre-agent/agent-hooks)
-<sup>훅이 실제로 개입하는 장면 — 응답이 조건을 충족하지 않아 반려되고, 에이전트가 보완해 다시 답합니다.
-출처: [Agent Hooks in Azure SRE Agent](https://learn.microsoft.com/azure/sre-agent/agent-hooks)</sup>
+![Hooks — 4개 훅과 각각의 실행 시점](../docs/portal-hooks.png)
+<sup>적용 후 **Capabilities ▸ Hooks**. `Event type` 열이 훅이 끼어드는 시점이며,
+`pre-write-evidence-gate` 는 쓰기 계열 도구에만 걸리도록 도구 matcher 가 지정되어 있습니다.</sup>
 
 | 훅 | 시점 | 강제하는 규칙 |
 |---|---|---|
@@ -107,9 +108,9 @@ Hook 은 세 번째 선택지입니다. 에이전트 실행 흐름의 특정 시
 하나의 에이전트가 모든 것을 하면 책임 범위와 권한 범위가 같이 넓어집니다.
 Agent Canvas 는 역할별로 에이전트를 나누고 **각자에게 다른 도구와 권한**을 주는 화면입니다.
 
-[![Agent Canvas](https://learn.microsoft.com/azure/sre-agent/media/sub-agents/portal-sub-agent-canvas-full.png)](https://learn.microsoft.com/azure/sre-agent/sub-agents)
-<sup>적용 후 이 캔버스에 3개 에이전트가 표시됩니다.
-출처: [Custom agents in Azure SRE Agent](https://learn.microsoft.com/azure/sre-agent/sub-agents)</sup>
+![Agent Canvas — weekly-cost-review 트리거가 cost-analyzer 에 연결된 모습](../docs/portal-agent-canvas.png)
+<sup>적용 후 **Builder ▸ Agent Canvas**. 트리거(예약 작업) → 담당 에이전트 → 도구가 한 줄로 이어집니다.
+`cost-analyzer` 에는 읽기 도구만 연결되어 있습니다.</sup>
 
 | 에이전트 | 역할 | 권한 |
 |---|---|---|
@@ -125,9 +126,9 @@ Agent Canvas 는 역할별로 에이전트를 나누고 **각자에게 다른 �
 효과가 장애 시점에만 있으면 도입 근거를 만들기 어렵습니다.
 Automation 은 정해진 주기로 에이전트를 돌려 **장애가 나기 전에 징후를 보고**하게 합니다.
 
-[![Operations Hub — Automation 탭](https://learn.microsoft.com/azure/sre-agent/media/operations-hub/operations-hub-automation-tab.png)](https://learn.microsoft.com/azure/sre-agent/operations-hub)
-<sup>실행 수 · 성공률 · 소요 시간을 이 화면에서 확인합니다.
-출처: [Operations Hub](https://learn.microsoft.com/azure/sre-agent/operations-hub)</sup>
+![Automation — 예약 작업 3개가 On 상태로 등록된 화면](../docs/portal-automation.png)
+<sup>적용 후 **Automation** 목록. 3개 작업이 모두 `On` 이며, 마지막 실행 시각과 실행 횟수를
+이 화면에서 확인합니다.</sup>
 
 | 작업 | 주기 | 담당 |
 |---|---|---|
