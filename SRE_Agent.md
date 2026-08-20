@@ -6,55 +6,25 @@
 > 포털 [sre.azure.com](https://sre.azure.com) · 공식 문서 [learn.microsoft.com/azure/sre-agent](https://learn.microsoft.com/azure/sre-agent/overview)
 > 실제 검증 결과는 **[README — E2E 실행 결과](README.md#6-e2e-실행-결과)** 참고
 
+> 처음 보시는 분은 **[SRE Agent 개요](OVERVIEW.md)** 를 먼저 읽으세요 — 이 문서의 핵심을 5분 분량으로 정리한 문서입니다.
+
 ---
 
 ## 목차
 
-1. [한 줄 요약](#1-한-줄-요약)
-2. [동작 흐름](#2-동작-흐름)
-3. [포털 한눈에 보기](#3-포털-한눈에-보기)
-4. [초기 설정 — 데이터 소스 6종](#4-초기-설정--데이터-소스-6종)
-5. [핵심 기능](#5-핵심-기능)
-6. [권한 모델 (Permission Model)](#6-권한-모델-permission-model)
-7. [관리 대상 Azure 서비스 & 통합](#7-관리-대상-azure-서비스--통합)
-8. [함께 생성되는 리소스](#8-함께-생성되는-리소스)
-9. [고려사항](#9-고려사항)
-10. [참고 링크 & 데모 영상](#10-참고-링크--데모-영상)
+1. [동작 흐름](#1-동작-흐름)
+2. [포털 한눈에 보기](#2-포털-한눈에-보기)
+3. [초기 설정 — 데이터 소스 6종](#3-초기-설정--데이터-소스-6종)
+4. [핵심 기능](#4-핵심-기능)
+5. [권한 모델 (Permission Model)](#5-권한-모델-permission-model)
+6. [관리 대상 Azure 서비스 & 통합](#6-관리-대상-azure-서비스--통합)
+7. [함께 생성되는 리소스](#7-함께-생성되는-리소스)
+8. [고려사항](#8-고려사항)
+9. [참고 링크 & 데모 영상](#9-참고-링크--데모-영상)
 
 ---
 
-## 1. 한 줄 요약
-
-**새벽 2시 47분, 당직 폰이 울립니다. "결제 API 5xx 급증."**
-
-- **원인 파악에만 1시간.** 관제 통보 → 담당자 호출 → VPN 접속 → 시스템별 로그인.
-  조사를 시작하기도 전에 한 시간이 지나갑니다.
-- **아는 사람이 없으면 원점.** 지난 분기 같은 장애의 원인과 조치는 개인 메모에만 남아 있습니다.
-- **복구가 끝나도 반나절.** 타임라인 재구성, 장애 보고서, 재발 방지 대책, 경영층 보고.
-
-<p align="center">
-  <img src="docs/sre-agent-hook-timeline-ko.svg" alt="같은 장애에 대한 사람 대응과 Azure SRE Agent 자율 대응 타임라인 비교" width="100%">
-</p>
-
-> **Azure SRE Agent 는 이 세 구간을 대신합니다.**
-> 당직자가 접속을 마쳤을 때, **원인 · 영향 범위 · 다음 조치가 채워진 조사 결과(Investigation)** 가 이미 기다립니다.
-> 조사 내용은 팀 메모리에 남아 다음 장애 때 재사용됩니다.
-
-| 구분 | 사람이 하던 방식 | SRE Agent 도입 후 |
-|---|---|---|
-| 알림 확인 | 사람이 깰 때까지 대기 | 즉시 Acknowledge |
-| 도구 전환 | 탭 5개 이상 | 0개 (에이전트가 처리) |
-| 조사 | 도구별 수동 상관분석 | 모든 소스 자동 질의 |
-| 지식 축적 | 담당자 머릿속 | Memory 에 영구 저장 |
-| 사후 보고 | 타임라인 수기 재구성 | 인시던트 리포트 자동 생성 |
-| 공유 | 화면 캡처 · 경로 설명 | 스레드 링크 복사 → Teams/Slack |
-
-> 에이전트는 **변경을 제안(propose)** 하고 팀이 **승인(approve)** 하는 것이 기본입니다.
-> 다만 **권한 수준과 실행 모드 조합**에 따라 직접 조치도 가능합니다 → [6. 권한 모델](#6-권한-모델-permission-model)
-
----
-
-## 2. 동작 흐름
+## 1. 동작 흐름
 
 <p align="center">
   <img src="docs/sre-agent-flow-ko.svg" alt="SRE Agent 동작 흐름" width="1020"/>
@@ -70,7 +40,7 @@
 
 ---
 
-## 3. 포털 한눈에 보기
+## 2. 포털 한눈에 보기
 
 <p align="center">
   <img src="docs/sre-agent-portal-map-ko.svg" alt="SRE Agent 포털 기능 지도" width="1020"/>
@@ -107,7 +77,7 @@
 
 ---
 
-## 4. 초기 설정 — 데이터 소스 6종
+## 3. 초기 설정 — 데이터 소스 6종
 
 에이전트를 만들면 **"더 많은 컨텍스트. 더 나은 조사."** 설정 페이지가 열립니다.
 **연결한 소스가 많을수록 조사 품질이 올라갑니다.** (진행률 바로 미연결 항목 확인)
@@ -135,9 +105,9 @@
 
 ---
 
-## 5. 핵심 기능
+## 4. 핵심 기능
 
-### 5.1 인시던트 자동화 & Response Plan
+### 4.1 인시던트 자동화 & Response Plan
 
 인시던트를 **어떤 Custom Agent 가, 어떤 자율성 수준으로** 처리할지 규칙으로 정의합니다.
 
@@ -167,7 +137,7 @@
 > **재조사 쿨다운(Reinvestigation cooldown)** — Azure Monitor 연동 시 기본 3시간. 같은 경고 규칙의 재발화는
 > 새 조사를 만들지 않고 기존 스레드에 병합됩니다. 반복 시연 시 이 값을 줄이세요.
 
-### 5.2 Custom Agent & Agent Canvas
+### 4.2 Custom Agent & Agent Canvas
 
 특정 운영 도메인에 특화된 에이전트를 **시각적 캔버스**에서 정의하고, 트리거·도구와 연결합니다.
 
@@ -195,7 +165,7 @@
 | `code-analyzer` | 위 기능 + 소스 코드 검색, GitHub 이슈 생성 | [code-analyzer.yaml](sre-config/agents/code-analyzer.yaml) |
 | `issue-triager` | 고객 이슈 분류 · 라벨링 · 코멘트 | [issue-triager.yaml](sre-config/agents/issue-triager.yaml) |
 
-### 5.3 Knowledge Base
+### 4.3 Knowledge Base
 
 런북 · 아키텍처 문서 · 포스트모템을 업로드하면 자동 색인되어 조사 중 검색됩니다.
 
@@ -218,7 +188,7 @@
 
 > 웹 페이지(내부 위키·상태 페이지) URL 도 지식 소스로 추가할 수 있습니다.
 
-### 5.4 도구(Tools) & 확장 프리미티브
+### 4.4 도구(Tools) & 확장 프리미티브
 
 **도구 카테고리** — 에이전트가 실제로 "할 수 있는 일"의 최소 단위입니다.
 
@@ -250,7 +220,7 @@
 > | 도구 | 붙일 수 있음 | 보유 | 없음 |
 > | 적합 대상 | 절차 | 도메인 전문가 | 런북·문서 |
 
-### 5.5 Automation — 예약 작업 & 트리거
+### 4.5 Automation — 예약 작업 & 트리거
 
 헬스 체크, 정리 작업, 컴플라이언스 스윕 등 반복 업무를 IaC 없이 일정 기반으로 실행합니다.
 구성은 **커넥터 → Custom Agent → 예약 작업** 3단 조립입니다.
@@ -266,7 +236,7 @@
 
 이 Lab 은 12시간마다 GitHub 이슈를 분류하는 `triage-grubify-issues` 작업을 생성합니다.
 
-### 5.6 Operations Hub & Live Reports — 가치 측정
+### 4.6 Operations Hub & Live Reports — 가치 측정
 
 에이전트가 **실제로 도움이 되고 있는지**를 숫자로 봅니다.
 
@@ -295,7 +265,7 @@
 
 > 기본 조회 범위는 최근 30일이며, Overview 기본 기간은 최근 7일입니다.
 
-### 5.7 Team Memory — 사라지지 않는 지식
+### 4.7 Team Memory — 사라지지 않는 지식
 
 모든 조사가 학습됩니다. 근본 원인 · 해결 절차 · 팀 선호 · 운영 패턴이 축적되어 세션을 넘어 유지됩니다.
 
@@ -310,7 +280,7 @@
 
 ---
 
-## 6. 권한 모델 (Permission Model)
+## 5. 권한 모델 (Permission Model)
 
 <p align="center">
   <img src="docs/sre-agent-permissions-ko.svg" alt="SRE Agent 권한 모델" width="1020"/>
@@ -324,7 +294,7 @@
 | ② **실행 모드 (Run mode)** | 조치 전 **승인이 필요한지** | Response Plan / 예약 작업별 |
 | ③ **사용자 역할 (SRE Agent RBAC)** | 사람이 포털에서 **할 수 있는 일** | 에이전트 리소스 IAM |
 
-### 6.1 권한 수준 — Reader vs Privileged
+### 5.1 권한 수준 — Reader vs Privileged
 
 에이전트 생성 시 선택하며, 선택한 리소스 그룹에 대해 UAMI 에 부여되는 RBAC 역할이 달라집니다.
 
@@ -365,7 +335,7 @@
 즉 **Reader = "진단은 완전 자동, 실행은 사람이 버튼 한 번"**,
 **Privileged = "진단부터 완화까지 무인"** 모델입니다.
 
-### 6.2 이 Lab 이 사용하는 권한 — **Privileged (의도적 선택)**
+### 5.2 이 Lab 이 사용하는 권한 — **Privileged (의도적 선택)**
 
 기본값은 Reader 이지만, **에이전트가 조치까지 수행하는 장면을 재현**하기 위해
 이 Lab 은 Privileged 상당으로 구성했습니다.
@@ -386,7 +356,7 @@
 > 🔐 운영 환경에서는 **구독 범위 Contributor 부여를 피하고**, 대상 리소스 그룹 범위로만 최소 권한을 부여하세요.
 > 이 Lab 은 실습 편의를 위해 구독 범위를 사용합니다.
 
-### 6.3 쓰기 작업 시 실제 동작 — 권한 × 실행 모드
+### 5.3 쓰기 작업 시 실제 동작 — 권한 × 실행 모드
 
 | 권한 보유 | 실행 모드 | 에이전트 동작 |
 |:--:|---|---|
@@ -397,7 +367,7 @@
 
 읽기 작업은 권한이 있으면 두 모드 모두 즉시 수행하고, 권한이 없으면 읽기라도 OBO 승인이 필요합니다.
 
-### 6.4 OBO (On-Behalf-Of) — 권한이 없을 때의 우회 경로
+### 5.4 OBO (On-Behalf-Of) — 권한이 없을 때의 우회 경로
 
 [![OBO 승인 프롬프트](https://learn.microsoft.com/azure/sre-agent/media/permissions/portal-on-behalf-of-authorization.png)](https://learn.microsoft.com/azure/sre-agent/permissions)
 <sup>출처: Microsoft Learn — [Agent permissions](https://learn.microsoft.com/azure/sre-agent/permissions)</sup>
@@ -415,7 +385,7 @@
 </p>
 <sup>출처: Microsoft Learn — [Agent permissions](https://learn.microsoft.com/azure/sre-agent/permissions)</sup>
 
-### 6.5 사용자 역할 (사람에게 부여)
+### 5.5 사용자 역할 (사람에게 부여)
 
 | 영역 | Reader | Standard User | Administrator |
 |---|---|---|---|
@@ -438,7 +408,7 @@ az role assignment create \
 
 ---
 
-## 7. 관리 대상 Azure 서비스 & 통합
+## 6. 관리 대상 Azure 서비스 & 통합
 
 | 범주 | 서비스 |
 |---|---|
@@ -461,7 +431,7 @@ az role assignment create \
 
 ---
 
-## 8. 함께 생성되는 리소스
+## 7. 함께 생성되는 리소스
 
 SRE Agent 리소스를 만들면 다음이 자동 생성됩니다.
 
@@ -473,7 +443,7 @@ SRE Agent 리소스를 만들면 다음이 자동 생성됩니다.
 
 ---
 
-## 9. 고려사항
+## 8. 고려사항
 
 - 채팅 인터페이스는 **영어만 지원**합니다. (런북·문서는 한국어로 작성해도 색인되지만, 프롬프트는 영어 권장)
 - 리전 및 테넌트 구성에 따라 **가용성이 다릅니다.** 이 Lab 은 `eastus2`, `swedencentral`, `australiaeast` 만 허용합니다.
@@ -484,7 +454,7 @@ SRE Agent 리소스를 만들면 다음이 자동 생성됩니다.
 
 ---
 
-## 10. 참고 링크 & 데모 영상
+## 9. 참고 링크 & 데모 영상
 
 ### 문서
 

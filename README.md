@@ -119,7 +119,7 @@ az role assignment delete --assignee "$PRINCIPAL_ID" \
 > 필요한 역할을 주세요. 또한 신규 Response Plan 은 **Review 모드로 시작**해 동작을 검증한 뒤
 > Autonomous 로 전환하는 것이 안전합니다.
 > 전체 권한 모델(3계층 · 실행 모드 매트릭스 · OBO)은
-> **[SRE_Agent.md — 권한 모델](SRE_Agent.md#6-권한-모델-permission-model)** 참고.
+> **[SRE_Agent.md — 권한 모델](SRE_Agent.md#5-권한-모델-permission-model)** 참고.
 
 ### SRE Agent 구성 요소
 
@@ -607,7 +607,7 @@ az containerapp update --name <APP> --resource-group rg-sre-lab --min-replicas 1
 | 1 | SRE Agent 란 무엇인가 — 한 줄 요약과 동작 흐름 | [SRE_Agent.md §1~2](SRE_Agent.md) | 5분 |
 | 2 | 포털 투어 (설정 · Builder · Capabilities · 권한) | [시나리오 0](#시나리오-0--포털-투어-github-불필요) | 10분 |
 | 3 | 정상 동작 시연 후 `break-app.sh` 실행 | [시나리오 1](#시나리오-1--it-운영-github-불필요) | 3분 |
-| 4 | 대기 중 — 아키텍처·런북·권한 모델 설명 | [architecture-ko.svg](docs/architecture-ko.svg) · [SRE_Agent.md §6](SRE_Agent.md#6-권한-모델-permission-model) | 10분 |
+| 4 | 대기 중 — 아키텍처·런북·권한 모델 설명 | [architecture-ko.svg](docs/architecture-ko.svg) · [SRE_Agent.md §5](SRE_Agent.md#5-권한-모델-permission-model) | 10분 |
 | 5 | Incidents ▸ 조사 스레드 실시간 시청 | 포털 | 10분 |
 | 6 | 근본 원인·완화 결과 리뷰, E2E 기록과 비교 | [6. E2E 결과](#6-e2e-실행-결과) | 5분 |
 | 7 | Operations Hub · Live Reports 로 가치 측정 | [시나리오 4](#시나리오-4--가치-측정-github-불필요) | 7분 |
@@ -641,7 +641,7 @@ azd down --purge
 | 두 번째 시연에서 장애가 재현되지 않음 | 에이전트가 메모리를 확장해 둔 상태 — [7.1 데모 리셋](#71-데모-재현을-위한-필수-리셋) 수행 |
 | 경고는 떴는데 새 조사가 안 생김 | 재조사 쿼다운(기본 3시간)으로 기존 스레드에 병합됨 — [7.2](#72-시연-전-체크리스트) 참고 |
 | 포털이 응답 없음 / 채팅 불가 | 방화벽·프록시가 `*.azuresre.ai` 를 차단했는지 확인 (허용 목록 추가) |
-| 에이전트가 조치를 못하고 승인만 요청 | 권한 수준이 Reader 일 수 있음 — [SRE_Agent.md §6](SRE_Agent.md#6-권한-모델-permission-model) 참고 |
+| 에이전트가 조치를 못하고 승인만 요청 | 권한 수준이 Reader 일 수 있음 — [SRE_Agent.md §5](SRE_Agent.md#5-권한-모델-permission-model) 참고 |
 
 ---
 
@@ -649,8 +649,9 @@ azd down --purge
 
 ```text
 .
+├── OVERVIEW.md                      # SRE Agent 개요 (5분 브리핑용)
 ├── README.md                        # 이 문서 (실습 가이드 + E2E 결과 + Lab 마무리)
-├── SRE_Agent.md                     # Azure SRE Agent 기능 소개 (포털·기능·권한 전반)
+├── SRE_Agent.md                     # Azure SRE Agent 기능 설명 (포털·기능·권한 전반)
 ├── azure.yaml                       # azd 템플릿 정의
 ├── mkdocs.base.yml                  # 문서 사이트 테마·확장 설정 (nav 는 빌드 시 생성)
 ├── .github/workflows/pages.yml      # 문서 사이트 자동 배포 (GitHub Pages)

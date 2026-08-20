@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
     paths:
+      - "OVERVIEW.md"
       - "README.md"
       - "SRE_Agent.md"
       - "features-sre/README.md"

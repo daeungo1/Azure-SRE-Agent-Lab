@@ -25,6 +25,7 @@ OUT = REPO / ".site"
 DOCS = OUT / "docs"
 GH = "https://github.com/daeungo1/Azure-SRE-Agent-Lab"
 
+TAB_FEATURES = "SRE Agent 기능 설명"
 TAB_LAB = "Lab 실습"
 TAB_E2E = "E2E 결과"
 TAB_PORTAL = "Portal 기능"
@@ -128,9 +129,15 @@ def section_number(heading: str) -> int | None:
 def build_pages() -> list[Page]:
     pages: list[Page] = []
 
-    # Home — the whole product introduction, minus its own table of contents.
+    # Landing page — the 5-minute briefing.
+    overview_md = (REPO / "OVERVIEW.md").read_text(encoding="utf-8")
+    pages.append(Page(out="index.md", title="SRE Agent 개요", body=overview_md))
+
+    # The full product introduction, minus its own table of contents.
     sre_md = (REPO / "SRE_Agent.md").read_text(encoding="utf-8")
-    pages.append(Page(out="index.md", title="홈 — SRE Agent 소개", body=drop_toc(sre_md)))
+    pages.append(
+        Page(out="features/index.md", title="기능 상세", body=drop_toc(sre_md), tab=TAB_FEATURES)
+    )
 
     # Lab guide — README.md split by top-level section.
     readme = (REPO / "README.md").read_text(encoding="utf-8")
@@ -186,7 +193,8 @@ SRC_RE = re.compile(r'(?<=src=")([^"]+)(?=")')
 
 # Source file -> the page that now holds its preamble, used when a link has no anchor.
 DEFAULT_TARGET = {
-    "SRE_Agent.md": "index.md",
+    "OVERVIEW.md": "index.md",
+    "SRE_Agent.md": "features/index.md",
     "README.md": "lab/index.md",
     "features-sre/README.md": "portal/index.md",
 }
@@ -244,7 +252,7 @@ def rewrite(page: Page, anchor_index: dict[str, str], svgs: set[str]) -> str:
 
 def write_nav(pages: list[Page]) -> str:
     lines = ["", "nav:"]
-    order = [None, TAB_LAB, TAB_E2E, TAB_PORTAL, TAB_OPS]
+    order = [None, TAB_FEATURES, TAB_LAB, TAB_E2E, TAB_PORTAL, TAB_OPS]
     for tab in order:
         members = [p for p in pages if p.tab == tab]
         if not members:
@@ -269,10 +277,13 @@ def main() -> int:
     DOCS.mkdir(parents=True)
 
     svg_dir = REPO / "docs"
-    svgs = {f"docs/{p.name}" for p in svg_dir.glob("*.svg")}
+    media = sorted(
+        p for p in svg_dir.iterdir() if p.suffix.lower() in {".svg", ".png", ".jpg", ".jpeg"}
+    )
+    svgs = {f"docs/{p.name}" for p in media}
     assets = DOCS / "assets"
     assets.mkdir()
-    for p in svg_dir.glob("*.svg"):
+    for p in media:
         shutil.copy2(p, assets / p.name)
 
     pages = build_pages()
