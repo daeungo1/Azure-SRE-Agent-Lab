@@ -5,14 +5,15 @@ should use instead of guessing.
 
 ## Where incident issues go
 
-**File every incident report, GitHub issue, comment and pull request in `__GITHUB_REPO__`.**
+**File every incident report, GitHub issue and comment in `__GITHUB_ISSUE_REPO__`.**
 
-- This is the fork of the Grubify sample that belongs to this environment's owner.
+- This is the repository that tracks operational findings for this environment.
+- The application source lives in `__GITHUB_REPO__`. Read code there, but **file issues in
+  `__GITHUB_ISSUE_REPO__`** unless you are explicitly asked otherwise.
 - **Never** open issues, comments or pull requests in `dm-chelupati/grubify`. That is the upstream
   sample and belongs to a different owner — writing there is unwanted noise for them.
-- If `__GITHUB_REPO__` still contains a placeholder or the repository is unreachable, do **not**
-  substitute another repository. Report the finding in the investigation thread instead and say that
-  no issue was filed.
+- If the target repository is unreachable, do **not** substitute another one. Report the finding in
+  the investigation thread and say that no issue was filed.
 
 ## Azure resources
 

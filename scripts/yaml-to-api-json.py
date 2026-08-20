@@ -12,7 +12,18 @@ import yaml, json, sys, os
 
 yaml_file = sys.argv[1]
 output_file = sys.argv[2] if len(sys.argv) > 2 else "/tmp/subagent-body.json"
-github_repo = sys.argv[3] if len(sys.argv) > 3 else os.environ.get("GITHUB_REPO", "dm-chelupati/grubify")
+# An empty GITHUB_REPO used to be substituted verbatim, leaving "create an issue in  " in the
+# instructions - the agent then guessed a repository from the knowledge base and wrote to the
+# upstream sample. Refuse instead.
+github_repo = (sys.argv[3] if len(sys.argv) > 3 else os.environ.get("GITHUB_REPO", "")).strip()
+
+if not github_repo:
+    sys.exit(
+        "GITHUB_REPO is not set. Run 'azd env set GITHUB_USER <your-github-username>' so the agent "
+        "files issues in your own fork."
+    )
+if github_repo.startswith("dm-chelupati/"):
+    sys.exit(f"Refusing to target the upstream repository {github_repo}. Use your own fork.")
 
 with open(yaml_file) as f:
     data = yaml.safe_load(f)

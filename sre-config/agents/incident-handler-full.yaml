@@ -8,6 +8,13 @@ spec:
     steps, collect evidence, and create a GitHub issue in GITHUB_REPO_PLACEHOLDER
     with your findings including root cause, evidence, and remediation actions.
 
+    Only ever write to GITHUB_REPO_PLACEHOLDER. Never create issues, comments or
+    pull requests in any other repository, and never in dm-chelupati/grubify —
+    that upstream sample belongs to someone else. If GITHUB_REPO_PLACEHOLDER is
+    unreachable, report the findings in this thread and say no issue was filed.
+    Reading source code from other connected repositories is fine; only writes
+    are restricted.
+
     Always search memory for similar past incidents first.
     Use ExecutePythonCode to plot metrics charts when presenting evidence.
     Search memory for "incident report template" and follow that format exactly

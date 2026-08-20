@@ -111,6 +111,17 @@ else
   export GITHUB_REPO=""
 fi
 
+# Where incident issues are filed. Defaults to the app repo, but teams usually track
+# operational findings somewhere else - set GITHUB_ISSUE_REPO to point them there.
+GITHUB_ISSUE_REPO=$(azd env get-value GITHUB_ISSUE_REPO 2>/dev/null || echo "")
+if echo "$GITHUB_ISSUE_REPO" | grep -q "ERROR\|not found"; then
+  GITHUB_ISSUE_REPO=""
+fi
+if [ -z "$GITHUB_ISSUE_REPO" ]; then
+  GITHUB_ISSUE_REPO="$GITHUB_REPO"
+fi
+export GITHUB_ISSUE_REPO
+
 if [ -z "$AGENT_ENDPOINT" ] || [ -z "$AGENT_NAME" ]; then
   echo "❌ ERROR: Could not read agent details from azd environment."
   exit 1
@@ -261,12 +272,14 @@ get_token() {
 create_subagent() {
   local yaml_file="$1"
   local agent_name="$2"
+  # Incident agents write findings; the triager works inside the app repo itself.
+  local target_repo="${3:-$GITHUB_ISSUE_REPO}"
   local token
   token=$(get_token)
 
   # Convert YAML spec to API JSON using helper script, pipe directly to curl
   local json_body
-  json_body=$($PYTHON "$SCRIPT_DIR/yaml-to-api-json.py" "$yaml_file" "-" 2>&1)
+  json_body=$($PYTHON "$SCRIPT_DIR/yaml-to-api-json.py" "$yaml_file" "-" "$target_repo" 2>&1)
 
   if [ -z "$json_body" ] || echo "$json_body" | grep -q "^Traceback\|ModuleNotFoundError\|ImportError\|SyntaxError"; then
     echo "   ⚠️  ${agent_name}: Python conversion failed"
@@ -455,7 +468,7 @@ echo "   ✅ Uploaded: github-issue-triage.md"
 
 # Create additional subagents
 create_subagent "sre-config/agents/code-analyzer.yaml" "code-analyzer"
-create_subagent "sre-config/agents/issue-triager.yaml" "issue-triager"
+create_subagent "sre-config/agents/issue-triager.yaml" "issue-triager" "$GITHUB_REPO"
 
 # Create scheduled task to triage issues every 12 hours
 echo "   Creating scheduled task for issue triage..."
