@@ -1,26 +1,26 @@
 #!/bin/bash
 # =============================================================================
-# Scenario 1-C — Capacity starvation (slow responses, no errors)
+# Scenario S3 — Slow responses, no errors
 #
-# Ground truth: CPU is cut to a quarter and scale-out is disabled, so the app
-# keeps answering 200 but takes far longer. Nothing crashes and nothing returns
-# 5xx — the agent has to recognise a capacity problem instead of reaching for
-# the OOM or config-error explanations it has seen before.
+# Ground truth: ORDER_DELAY_MS makes the order endpoints answer slowly while
+# still returning 200. Nothing crashes and nothing returns 5xx, so the agent has
+# to reason about latency instead of reaching for the OOM or config-error
+# explanations it has already seen.
+#
+# Requires the fork's ORDER_DELAY_MS middleware (GrubifyApi/Program.cs).
 #
 #   ./scripts/break-app-latency.sh break     # inject
 #   ./scripts/break-app-latency.sh load      # drive concurrent traffic
 #   ./scripts/break-app-latency.sh restore   # roll back
-#   ./scripts/break-app-latency.sh status    # show sizing and a timed request
+#   ./scripts/break-app-latency.sh status    # show setting and a timed request
 # =============================================================================
 set -euo pipefail
 
 RG="${RG:-rg-sre-lab}"
 APP="${APP:-}"
-# Container Apps only allows fixed CPU:memory pairs (1:2 ratio).
-GOOD_CPU="1.0";  GOOD_MEM="2Gi";  GOOD_MAX="5"
-BAD_CPU="0.25";  BAD_MEM="0.5Gi"; BAD_MAX="1"
+DELAY_MS="${DELAY_MS:-4000}"
 CONCURRENCY="${CONCURRENCY:-8}"
-ROUNDS="${ROUNDS:-40}"
+ROUNDS="${ROUNDS:-12}"
 
 if [ -z "$APP" ]; then
   APP=$(az containerapp list -g "$RG" --query "[?starts_with(name,'ca-grubify-') && !contains(name,'-fe-')].name | [0]" -o tsv)
@@ -31,14 +31,15 @@ if [ -z "$APP" ]; then
 fi
 
 FQDN=$(az containerapp show -g "$RG" -n "$APP" --query properties.configuration.ingress.fqdn -o tsv)
-URL="https://$FQDN/api/fooditems"
+URL="https://$FQDN/api/orders/user/demo-user"
 
 show_status() {
   echo ""
   echo "  App:  $APP"
-  az containerapp show -g "$RG" -n "$APP" --query \
-    "{cpu:properties.template.containers[0].resources.cpu, memory:properties.template.containers[0].resources.memory, minReplicas:properties.template.scale.minReplicas, maxReplicas:properties.template.scale.maxReplicas}" -o table
-  printf "  timed request: "
+  printf "  ORDER_DELAY_MS: "
+  az containerapp show -g "$RG" -n "$APP" \
+    --query "properties.template.containers[0].env[?name=='ORDER_DELAY_MS'].value | [0]" -o tsv
+  printf "  timed request:  "
   curl -s -m 60 -o /dev/null -w "HTTP %{http_code} in %{time_total}s\n" "$URL" || echo "failed"
   echo ""
 }
@@ -59,16 +60,14 @@ case "${1:-status}" in
   break)
     echo ""
     echo "============================================="
-    echo "  Scenario 1-C — starving the app of CPU"
+    echo "  Scenario S3 — delaying the order endpoints"
     echo "============================================="
     echo ""
-    echo "  Before: cpu=$GOOD_CPU mem=$GOOD_MEM maxReplicas=$GOOD_MAX"
-    echo "  After:  cpu=$BAD_CPU mem=$BAD_MEM maxReplicas=$BAD_MAX (no scale-out to hide it)"
-    echo ""
+    echo "  Setting ORDER_DELAY_MS=$DELAY_MS (responses stay 200, just slow)"
     echo "  Injecting at $(date -u +%Y-%m-%dT%H:%M:%SZ) UTC ..."
     az containerapp update -g "$RG" -n "$APP" \
-      --cpu "$BAD_CPU" --memory "$BAD_MEM" --min-replicas 1 --max-replicas "$BAD_MAX" -o none
-    echo "  Done. Responses should stay 200 but get much slower."
+      --set-env-vars "ORDER_DELAY_MS=$DELAY_MS" -o none
+    echo "  Done. Wait for the new revision to go healthy before driving load."
     show_status
     ;;
   load)
@@ -76,9 +75,9 @@ case "${1:-status}" in
     ;;
   restore)
     echo ""
-    echo "  Restoring cpu=$GOOD_CPU mem=$GOOD_MEM maxReplicas=$GOOD_MAX at $(date -u +%Y-%m-%dT%H:%M:%SZ) UTC ..."
+    echo "  Restoring ORDER_DELAY_MS=0 at $(date -u +%Y-%m-%dT%H:%M:%SZ) UTC ..."
     az containerapp update -g "$RG" -n "$APP" \
-      --cpu "$GOOD_CPU" --memory "$GOOD_MEM" --min-replicas 1 --max-replicas "$GOOD_MAX" -o none
+      --set-env-vars "ORDER_DELAY_MS=0" -o none
     echo "  Done."
     show_status
     ;;

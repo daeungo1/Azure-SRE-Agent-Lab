@@ -27,6 +27,7 @@ GH = "https://github.com/daeungo1/Azure-SRE-Agent-Lab"
 
 TAB_FEATURES = "SRE Agent 기능 설명"
 TAB_LAB = "Lab 실습"
+TAB_SCENARIOS = "시나리오"
 TAB_E2E = "E2E 결과"
 TAB_PORTAL = "Portal 기능"
 TAB_OPS = "Lab 마무리"
@@ -175,9 +176,23 @@ def build_pages() -> list[Page]:
     portal_md = (REPO / "features-sre" / "README.md").read_text(encoding="utf-8")
     pages.append(Page(out="portal/index.md", title="포털 기능 구성", body=drop_toc(portal_md), tab=TAB_PORTAL))
 
+    # Scenario guides — one file per scenario, already numbered on disk.
+    for guide in sorted((REPO / "guides").glob("*.md")):
+        body = guide.read_text(encoding="utf-8")
+        title = first_heading(body) or guide.stem
+        out = "scenarios/index.md" if guide.name == "README.md" else f"scenarios/{guide.stem}.md"
+        pages.append(Page(out=out, title=title, body=body, tab=TAB_SCENARIOS))
+
     for p in pages:
         p.anchors = collect_anchors(p.body)
     return pages
+
+
+def first_heading(md: str) -> str | None:
+    for line, in_fence in iter_lines_outside_fences(md):
+        if not in_fence and line.startswith("# "):
+            return line[2:].strip()
+    return None
 
 
 def drop_toc(md: str) -> str:
@@ -198,6 +213,23 @@ DEFAULT_TARGET = {
     "README.md": "lab/index.md",
     "features-sre/README.md": "portal/index.md",
 }
+
+
+def guide_targets() -> dict[str, str]:
+    """Guides link to each other by bare filename; map that plus the repo-relative form.
+
+    The bare name "README.md" is deliberately left out: it belongs to the repository root.
+    """
+    targets: dict[str, str] = {}
+    for g in sorted((REPO / "guides").glob("*.md")):
+        out = "scenarios/index.md" if g.name == "README.md" else f"scenarios/{g.stem}.md"
+        if g.name != "README.md":
+            targets[g.name] = out
+        targets[f"guides/{g.name}"] = out
+    return targets
+
+
+GUIDE_TARGET = guide_targets()
 
 
 def resolve(src_page_out: str, url: str, anchor_index: dict[str, str], svgs: set[str]) -> str:
@@ -230,6 +262,9 @@ def resolve(src_page_out: str, url: str, anchor_index: dict[str, str], svgs: set
     if path in svgs:
         return rel(f"assets/{Path(path).name}", "")
 
+    if path in GUIDE_TARGET:
+        return rel(GUIDE_TARGET[path], anchor)
+
     if path in DEFAULT_TARGET:
         if anchor and anchor in anchor_index:
             return rel(anchor_index[anchor], anchor)
@@ -252,7 +287,7 @@ def rewrite(page: Page, anchor_index: dict[str, str], svgs: set[str]) -> str:
 
 def write_nav(pages: list[Page]) -> str:
     lines = ["", "nav:"]
-    order = [None, TAB_FEATURES, TAB_LAB, TAB_E2E, TAB_PORTAL, TAB_OPS]
+    order = [None, TAB_FEATURES, TAB_LAB, TAB_SCENARIOS, TAB_E2E, TAB_PORTAL, TAB_OPS]
     for tab in order:
         members = [p for p in pages if p.tab == tab]
         if not members:

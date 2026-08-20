@@ -8,6 +8,20 @@
 > - 원본 Lab: [microsoft/sre-agent — labs/starter-lab](https://github.com/microsoft/sre-agent/tree/main/labs/starter-lab) ([영문 README](docs/README.en.md))
 > - **이 저장소의 모든 절차는 실제 Azure 구독에서 E2E 검증을 마쳤습니다.** → [6. E2E 실행 결과](#6-e2e-실행-결과)
 
+## 장애 시나리오 — 한눈에 보기
+
+정답(Ground truth)을 먼저 적어 두고 장애를 주입한 뒤, 에이전트의 결론을 **10점 루브릭으로 채점**했습니다.
+시나리오별 절차와 실측 기록은 [guides/](guides/README.md) 에 하나씩 정리되어 있습니다.
+
+| # | 시나리오 | 근본 원인의 종류 | 장애 신호 | 원인 도달 | 점수 |
+|---|---|---|---|--:|--:|
+| [S1](guides/02-scenario-s1.md) | 메모리 누수 → OOM | 코드 · 리소스 한계 | HTTP 5xx 급증 | 4분 25초 | ✅ **10/10** |
+| [S2](guides/03-scenario-s2.md) | 인그레스 포트 불일치 | 배포 설정 오류 | 전 요청 503 | **80초** | ✅ **8/10** |
+| [S3](guides/04-scenario-s3.md) | 주문 API 응답 지연 | 애플리케이션 설정 | 오류 없이 4초 지연 | 4분 49초 | ✅ **8/10** |
+
+**S1 과 S2 는 증상이 같고(5xx) 원인이 다릅니다. S3 는 아예 오류가 나지 않습니다.**
+채점 종합과 에이전트가 틀린 부분은 [guides/05-results.md](guides/05-results.md) 에 있습니다.
+
 <p align="center">
   <img src="docs/architecture-ko.svg" alt="Lab 아키텍처" width="960"/>
 </p>
