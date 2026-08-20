@@ -24,6 +24,7 @@ Azure SRE Agent 는 운영 인시던트를 **자동으로 조사하고**, 수집
 7. [비용은 어떻게 발생하나요](#7-비용은-어떻게-발생하나요)
 8. [실제로 되나요 — 검증 결과](#8-실제로-되나요--검증-결과)
 9. [도입 전에 확인할 것](#9-도입-전에-확인할-것)
+10. [참고 자료](#참고-자료)
 
 ---
 
@@ -56,8 +57,10 @@ Azure SRE Agent 는 운영 인시던트를 **자동으로 조사하고**, 수집
 ## 2. 인시던트가 발생하면 어떻게 조사하나요
 
 <p align="center">
-  <img src="docs/sre-agent-flow-ko.svg" alt="SRE Agent 동작 흐름" width="1020"/>
+  <img src="docs/sre-agent-flow-ko.svg" alt="경고 수신부터 기록까지 다섯 단계로 이어지는 흐름을 보여 주는 다이어그램입니다. Azure Monitor와 PagerDuty, ServiceNow 에서 신호를 받으면 대응 계획이 심각도와 서비스, 키워드로 담당 에이전트를 고르고, 선택된 에이전트가 관측 데이터와 기술 자료, 코드를 병렬로 조회해 증거를 모은 뒤 근본 원인과 완화안을 내고, 마지막으로 완화 실행과 경고 종료, 리포트 생성, 메모리 저장으로 마무리합니다." width="100%"/>
 </p>
+
+> 출처: [인시던트 대응 자동화](https://learn.microsoft.com/azure/sre-agent/incident-response)
 
 | 단계 | 무슨 일이 일어나나 |
 |:--:|---|
@@ -78,6 +81,12 @@ Azure SRE Agent 는 운영 인시던트를 **자동으로 조사하고**, 수집
 에이전트는 **관리 ID 와 Azure RBAC 권한**으로 리소스를 조사합니다.
 Azure 내부 원격 분석은 **커넥터 없이도** 기본 도구로 조회됩니다.
 
+<p align="center">
+  <img src="docs/sre-agent-data-sources-ko.svg" alt="에이전트가 조사에 사용하는 정보를 두 갈래로 정리한 다이어그램입니다. 왼쪽은 별도 연결 설정 없이 기본 도구로 조회하는 영역으로 애플리케이션 상태, 로그, 인프라 상태, 변경 이력, 소스와 문서, 과거 경험 여섯 가지가 있고, 오른쪽은 커넥터를 추가해야 닿는 외부 관측 도구와 인시던트 티켓 시스템, 사내 MCP 서버입니다. 아래에는 모은 근거를 서로 연결해 근본 원인을 설명하며, 접근하지 못한 데이터 소스가 있으면 그 사실도 함께 알린다고 적혀 있습니다." width="100%"/>
+</p>
+
+> 출처: [Azure 관찰 가능성으로 진단하기](https://learn.microsoft.com/azure/sre-agent/diagnose-azure-observability)
+
 | 분류 | 확인할 수 있는 정보 |
 |---|---|
 | 애플리케이션 상태 | Application Insights 요청 · 예외 · 종속성 호출 |
@@ -97,6 +106,12 @@ Azure 내부 원격 분석은 **커넥터 없이도** 기본 도구로 조회됩
 조사가 끝나면 **증상 · 근본 원인 · 해결 단계 · 피해야 할 접근**이 추출되어 다음 조사에 쓰입니다.
 업로드한 런북과 아키텍처 문서도 같은 지식 기반에서 함께 검색되며 **출처와 함께** 제시됩니다.
 
+<p align="center">
+  <img src="docs/sre-agent-memory-loop-ko.svg" alt="지식이 쌓이는 경로를 보여 주는 다이어그램입니다. 왼쪽은 사람이 올린 지식으로 런북과 아키텍처 안내서, 대기 근무 지침, SLO 기준과 위키 연결이고, 오른쪽은 에이전트가 조사할 때마다 증상과 근본 원인, 해결 단계, 피해야 할 접근을 자동으로 남기는 지식입니다. 둘은 하나의 지식 기반으로 모여 함께 검색되고 답변에 출처가 붙습니다. 아래에는 이 Lab 의 S2 조사에서 과거 OOM 인시던트 여섯 건을 회수하고도 이번은 원인이 다르다고 판단한 사례가 적혀 있습니다." width="100%"/>
+</p>
+
+> 출처: [메모리와 지식 관리](https://learn.microsoft.com/azure/sre-agent/memory)
+
 | 지식의 출처 | 예 |
 |---|---|
 | 업로드한 문서 | 런북, 아키텍처 안내서, 대기 근무 지침, SLO 기준 |
@@ -115,6 +130,12 @@ Azure 내부 원격 분석은 **커넥터 없이도** 기본 도구로 조회됩
 
 **기본 태세는 "사람이 승인" 입니다.** 에이전트 전역 기본값은 Review 모드이고,
 무인 실행은 **명시적으로 선택**해야 합니다.
+
+<p align="center">
+  <img src="docs/sre-agent-permissions-ko.svg" alt="권한 모델을 설명하는 다이어그램입니다. 위쪽에는 권한 수준과 무관하게 항상 부여되는 Reader, Log Analytics Reader, Monitoring Reader, Monitoring Contributor 기본 역할이 있고, 가운데는 읽기 전용인 Reader 수준과 쓰기가 가능한 Privileged 수준을 나란히 비교합니다. 아래에는 권한 수준과 실행 모드를 조합했을 때 쓰기 작업이 실제로 어떻게 동작하는지를 표로 정리했습니다." width="100%"/>
+</p>
+
+> 출처: [권한](https://learn.microsoft.com/azure/sre-agent/permissions) · [실행 모드](https://learn.microsoft.com/azure/sre-agent/run-modes)
 
 ### 세 계층으로 통제합니다
 
@@ -155,7 +176,11 @@ Agent Hooks 는 실행 흐름의 특정 시점에 조직의 규칙을 끼워 넣
 ## 6. 우리 팀에 맞게 어떻게 확장하나요
 
 기본 에이전트만으로 부족한 영역은 **다섯 가지 확장 수단**으로 채웁니다.
+<p align="center">
+  <img src="docs/sre-agent-extensibility-ko.svg" alt="기본 에이전트를 확장하는 수단을 세 묶음으로 정리한 다이어그램입니다. 무엇을 아는가에는 상황에 맞게 자동 호출되는 Skills 와 Knowledge Sources 가, 누가 조사하는가에는 담당자가 직접 호출하는 Custom agents 와 인시던트를 배분하는 Response Plans 가, 어떻게 행동하는가에는 실행 시점에 개입하는 Agent Hooks 와 Python tools, MCP servers 가 들어 있습니다. 아래에는 동시 활성 스킬 최대 5개, 도구 최대 80개, 기술 자료 파일 인스턴스당 1,000개라는 용량 제한이 적혀 있습니다." width="100%"/>
+</p>
 
+> 출처: [스킬](https://learn.microsoft.com/azure/sre-agent/skills) · [사용자 지정 에이전트](https://learn.microsoft.com/azure/sre-agent/sub-agents) · [Agent Hooks](https://learn.microsoft.com/azure/sre-agent/agent-hooks)
 | 수단 | 사용 방식 | 적합한 용도 |
 |---|---|---|
 | **Skills** | 관련 상황에서 **자동으로** 불러옴 | 팀 공통 문제 해결 절차 + 실행 도구 |
@@ -178,6 +203,12 @@ Azure CLI · Kusto 쿼리 · Python 스크립트를 절차서에 붙일 수 있�
 ## 7. 비용은 어떻게 발생하나요
 
 과금 단위는 **AAU(Azure Agent Unit)** 이며, 성격이 다른 **두 가지**가 함께 발생합니다.
+
+<p align="center">
+  <img src="docs/sre-agent-cost-ko.svg" alt="비용이 두 갈래로 발생한다는 점을 보여 주는 다이어그램입니다. 왼쪽 상시 비용은 시간당 4 AAU 로 에이전트를 만든 시점부터 삭제할 때까지 발생하며 중지해도 계속 부과되고 월 한도가 적용되지 않습니다. 오른쪽 활성 비용은 조사 1건에 약 12에서 35 AAU 가 들며 승인을 기다리는 시간은 과금되지 않고 월 한도에 도달하면 조사와 채팅이 중단됩니다. 아래에는 모델 단가 낮추기, 커넥터로 탐색 단계 줄이기, 안 쓰는 환경 삭제하기 세 가지 절감 방법이 적혀 있습니다." width="100%"/>
+</p>
+
+> 출처: [가격과 청구](https://learn.microsoft.com/azure/sre-agent/pricing-billing)
 
 | 구분 | 언제 발생하나 | 멈추는 방법 |
 |---|---|---|
@@ -213,7 +244,14 @@ Azure CLI · Kusto 쿼리 · Python 스크립트를 절차서에 붙일 수 있�
 2. **막히면 우회하고, 막힌 사실을 보고합니다** — 데이터 소스가 비었을 때 스스로 알아채고 다른 경로로 조사했습니다.
 3. **틀리기도 합니다** — S2 에서 인과를 뒤집어 서술했고, S3 에서는 조치를 완료하지 못했습니다.
    감점 사유를 그대로 기록했습니다.
+조사 결과는 기록으로 남습니다. 아래는 에이전트가 **직접 생성한 GitHub Issue** 입니다.
 
+<p align="center">
+  <img src="docs/portal-issue.png" alt="GitHub 저장소의 Issues 목록 화면입니다. 열린 이슈 1건으로 'Incident: HTTP 5xx due to TargetPort mismatch crash loop — 3rd recurrence (Grubify Container App)' 제목에 api-bug, bug, port-mismatch, recurring, severity-high 라벨이 붙어 있습니다." width="100%"/>
+</p>
+
+제목의 *3rd recurrence* 는 사람이 적은 것이 아니라 **과거 두 번의 동일 장애를 메모리에서 회수해** 붙인 것입니다.
+실제 운영에서는 같은 내용을 ServiceNow · PagerDuty · Azure DevOps Work Item · Jira 로도 전달할 수 있습니다.
 → [채점 종합](guides/05-results.md) · 직접 재현: [Lab 실습](README.md)
 
 ---
@@ -246,3 +284,45 @@ Azure CLI · Kusto 쿼리 · Python 스크립트를 절차서에 붙일 수 있�
 | 시나리오별 결과를 보고 싶다 | [시나리오 가이드](guides/README.md) |
 | 직접 배포해 보고 싶다 | [Lab 실습](README.md) |
 | 우리 조직 방식으로 구성하고 싶다 | [Portal 기능](features-sre/README.md) |
+
+---
+
+## 참고 자료
+
+### 제품 개요와 조사 방식
+
+- [Azure SRE Agent 개요](https://learn.microsoft.com/azure/sre-agent/overview)
+- [인시던트 대응 자동화](https://learn.microsoft.com/azure/sre-agent/incident-response)
+- [인시던트 대응 계획](https://learn.microsoft.com/azure/sre-agent/incident-response-plans)
+- [인시던트 플랫폼](https://learn.microsoft.com/azure/sre-agent/incident-platforms)
+- [근본 원인 분석](https://learn.microsoft.com/azure/sre-agent/root-cause-analysis)
+- [Azure 관찰 가능성으로 진단하기](https://learn.microsoft.com/azure/sre-agent/diagnose-azure-observability)
+- [조치 실행하기](https://learn.microsoft.com/azure/sre-agent/execute-mitigations)
+- [실행 모드](https://learn.microsoft.com/azure/sre-agent/run-modes)
+- [메모리와 지식 관리](https://learn.microsoft.com/azure/sre-agent/memory)
+
+### 도입과 운영
+
+- [에이전트 만들기와 설정](https://learn.microsoft.com/azure/sre-agent/create-and-set-up)
+- [지원 리전](https://learn.microsoft.com/azure/sre-agent/supported-regions)
+- [가격과 청구](https://learn.microsoft.com/azure/sre-agent/pricing-billing)
+- [예약 작업](https://learn.microsoft.com/azure/sre-agent/scheduled-tasks)
+- [작업 감사](https://learn.microsoft.com/azure/sre-agent/audit-agent-actions)
+- [Operations Hub](https://learn.microsoft.com/azure/sre-agent/operations-hub)
+
+### 보안과 확장
+
+- [보안 개요](https://learn.microsoft.com/azure/sre-agent/security-overview)
+- [권한](https://learn.microsoft.com/azure/sre-agent/permissions)
+- [네트워크 통합](https://learn.microsoft.com/azure/sre-agent/network-integration)
+- [네트워크 요구 사항](https://learn.microsoft.com/azure/sre-agent/network-requirements)
+- [스킬](https://learn.microsoft.com/azure/sre-agent/skills)
+- [사용자 지정 에이전트](https://learn.microsoft.com/azure/sre-agent/sub-agents)
+- [Agent Hooks](https://learn.microsoft.com/azure/sre-agent/agent-hooks)
+- [커넥터](https://learn.microsoft.com/azure/sre-agent/connectors)
+
+### 이 저장소의 검증 자료
+
+- [시나리오별 채점 종합](guides/05-results.md)
+- [실험 환경과 재현 방법](README.md)
+- [포털 기능 구성 결과](features-sre/README.md)

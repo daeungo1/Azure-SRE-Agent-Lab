@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 400" font-family="Segoe UI, Malgun Gothic, 맑은 고딕, -apple-system, sans-serif">
+  <defs>
+    <filter id="c1" x="-4%" y="-8%" width="108%" height="120%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+
+  <rect width="1020" height="400" rx="12" fill="#f7f9fb"/>
+  <text x="510" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#12314e">비용은 두 갈래로 발생합니다</text>
+  <text x="510" y="56" text-anchor="middle" font-size="12" fill="#5a6b7b">과금 단위는 AAU(Azure Agent Unit) 이며, 멈추는 방법이 서로 다릅니다</text>
+
+  <!-- 상시 비용 -->
+  <rect x="16" y="80" width="486" height="182" rx="10" fill="#ffffff" stroke="#d13438" stroke-width="1.6" filter="url(#c1)"/>
+  <rect x="16" y="80" width="486" height="30" rx="10" fill="#fdecea"/>
+  <rect x="16" y="100" width="486" height="10" fill="#fdecea"/>
+  <text x="259" y="101" text-anchor="middle" font-size="12.5" font-weight="700" fill="#a4262c">상시 비용 — 존재하는 동안 계속</text>
+
+  <text x="259" y="140" text-anchor="middle" font-size="22" font-weight="700" fill="#a4262c">4 AAU / 시간</text>
+  <text x="259" y="164" text-anchor="middle" font-size="10" fill="#c05055">에이전트를 만든 시점부터 삭제할 때까지</text>
+
+  <rect x="34" y="180" width="450" height="30" rx="5" fill="#fff5f5" stroke="#d13438" stroke-width="0.9"/>
+  <text x="48" y="199" font-size="10" font-weight="700" fill="#a4262c">⚠ 중지해도 계속 부과됩니다 — 완전히 멈추려면 삭제해야 합니다</text>
+
+  <rect x="34" y="216" width="450" height="30" rx="5" fill="#fff5f5" stroke="#d13438" stroke-width="0.9"/>
+  <text x="48" y="235" font-size="10" fill="#a4262c">월 AAU 한도를 걸어도 이 비용에는 적용되지 않습니다</text>
+
+  <!-- 활성 비용 -->
+  <rect x="518" y="80" width="486" height="182" rx="10" fill="#ffffff" stroke="#0078d4" stroke-width="1.6" filter="url(#c1)"/>
+  <rect x="518" y="80" width="486" height="30" rx="10" fill="#e5f1fb"/>
+  <rect x="518" y="100" width="486" height="10" fill="#e5f1fb"/>
+  <text x="761" y="101" text-anchor="middle" font-size="12.5" font-weight="700" fill="#005a9e">활성 비용 — 모델이 실제로 일할 때</text>
+
+  <text x="761" y="140" text-anchor="middle" font-size="22" font-weight="700" fill="#005a9e">조사 1건 ≈ 12~35 AAU</text>
+  <text x="761" y="164" text-anchor="middle" font-size="10" fill="#33689e">조사 · 채팅 · 예약 작업의 토큰 사용량에 따라 (모델별 상이)</text>
+
+  <rect x="536" y="180" width="450" height="30" rx="5" fill="#f4f9fd" stroke="#0078d4" stroke-width="0.9"/>
+  <text x="550" y="199" font-size="10" font-weight="700" fill="#005a9e">✅ 승인을 기다리는 시간은 과금되지 않습니다</text>
+
+  <rect x="536" y="216" width="450" height="30" rx="5" fill="#f4f9fd" stroke="#0078d4" stroke-width="0.9"/>
+  <text x="550" y="235" font-size="10" fill="#33689e">월 AAU 한도에 도달하면 다음 달까지 조사와 채팅이 중단됩니다</text>
+
+  <!-- 통제 수단 -->
+  <rect x="16" y="278" width="988" height="106" rx="10" fill="#ffffff" stroke="#008272" stroke-width="1.5" filter="url(#c1)"/>
+  <text x="510" y="304" text-anchor="middle" font-size="12" font-weight="700" fill="#006b5d">비용을 줄이는 세 가지 방법</text>
+
+  <rect x="34" y="316" width="306" height="54" rx="7" fill="#f2fbf9" stroke="#008272" stroke-width="1"/>
+  <text x="187" y="336" text-anchor="middle" font-size="10.5" font-weight="700" fill="#006b5d">모델을 낮은 단가로 바꾸기</text>
+  <text x="187" y="355" text-anchor="middle" font-size="9" fill="#4a6b66">단가가 조사 1건 비용을 가장 크게 좌우합니다</text>
+
+  <rect x="357" y="316" width="306" height="54" rx="7" fill="#f2fbf9" stroke="#008272" stroke-width="1"/>
+  <text x="510" y="336" text-anchor="middle" font-size="10.5" font-weight="700" fill="#006b5d">커넥터로 탐색 단계 줄이기</text>
+  <text x="510" y="355" text-anchor="middle" font-size="9" fill="#4a6b66">반복 조회 대상을 미리 연결하면 토큰이 줄어듭니다</text>
+
+  <rect x="680" y="316" width="306" height="54" rx="7" fill="#f2fbf9" stroke="#008272" stroke-width="1"/>
+  <text x="833" y="336" text-anchor="middle" font-size="10.5" font-weight="700" fill="#006b5d">쓰지 않는 데모 환경은 삭제</text>
+  <text x="833" y="355" text-anchor="middle" font-size="9" fill="#4a6b66">Log Analytics 조회 등 연결 서비스 비용은 별도입니다</text>
+</svg>

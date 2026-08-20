@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 430" font-family="Segoe UI, Malgun Gothic, 맑은 고딕, -apple-system, sans-serif">
+  <defs>
+    <filter id="ml1" x="-4%" y="-8%" width="108%" height="120%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.10"/>
+    </filter>
+    <marker id="mla" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#5c2d91"/></marker>
+    <marker id="mlb" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#008272"/></marker>
+  </defs>
+
+  <rect width="1020" height="430" rx="12" fill="#f7f9fb"/>
+  <text x="510" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#12314e">조사가 끝나면 무엇이 남나요</text>
+  <text x="510" y="56" text-anchor="middle" font-size="12" fill="#5a6b7b">해결 경험이 개인 메모가 아니라 팀 지식으로 축적됩니다</text>
+
+  <!-- 상단: 지식의 두 갈래 -->
+  <rect x="16" y="78" width="486" height="118" rx="10" fill="#ffffff" stroke="#008272" stroke-width="1.5" filter="url(#ml1)"/>
+  <rect x="16" y="78" width="486" height="28" rx="10" fill="#e6f4f1"/>
+  <rect x="16" y="96" width="486" height="10" fill="#e6f4f1"/>
+  <text x="259" y="98" text-anchor="middle" font-size="12" font-weight="700" fill="#006b5d">① 사람이 올린 지식</text>
+  <text x="259" y="128" text-anchor="middle" font-size="10" fill="#4a6b66">런북 · 아키텍처 안내서 · 대기 근무 지침 · SLO 기준</text>
+  <text x="259" y="150" text-anchor="middle" font-size="10" fill="#4a6b66">GitHub · Azure DevOps 위키, 사용자 지정 MCP</text>
+  <text x="259" y="176" text-anchor="middle" font-size="9" fill="#7d9a95">Builder 화면에서 업로드하거나 커넥터로 연결합니다</text>
+
+  <rect x="518" y="78" width="486" height="118" rx="10" fill="#ffffff" stroke="#5c2d91" stroke-width="1.5" filter="url(#ml1)"/>
+  <rect x="518" y="78" width="486" height="28" rx="10" fill="#f0eaf8"/>
+  <rect x="518" y="96" width="486" height="10" fill="#f0eaf8"/>
+  <text x="761" y="98" text-anchor="middle" font-size="12" font-weight="700" fill="#4a2378">② 에이전트가 스스로 남긴 지식</text>
+  <text x="761" y="128" text-anchor="middle" font-size="10" fill="#6b5a86">증상 · 근본 원인 · 해결 단계 · 피해야 할 접근</text>
+  <text x="761" y="150" text-anchor="middle" font-size="10" fill="#6b5a86">조사할 때마다 자동으로 추출되어 쌓입니다</text>
+  <text x="761" y="176" text-anchor="middle" font-size="9" fill="#8d7fa6">사람이 정리하지 않아도 다음 조사에서 검색됩니다</text>
+
+  <line x1="259" y1="200" x2="380" y2="228" stroke="#008272" stroke-width="1.6" marker-end="url(#mlb)"/>
+  <line x1="761" y1="200" x2="640" y2="228" stroke="#5c2d91" stroke-width="1.6" marker-end="url(#mla)"/>
+
+  <!-- 중앙: 통합 검색 -->
+  <rect x="300" y="234" width="420" height="66" rx="10" fill="#e5f1fb" stroke="#0078d4" stroke-width="1.8" filter="url(#ml1)"/>
+  <text x="510" y="262" text-anchor="middle" font-size="13" font-weight="700" fill="#005a9e">하나의 지식 기반에서 함께 검색</text>
+  <text x="510" y="284" text-anchor="middle" font-size="9.7" fill="#33689e">답변에는 어떤 문서·어떤 과거 인시던트를 근거로 삼았는지 출처가 함께 붙습니다</text>
+
+  <line x1="510" y1="302" x2="510" y2="322" stroke="#0078d4" stroke-width="1.8" marker-end="url(#mlb)"/>
+
+  <!-- 하단: 실제 효과 -->
+  <rect x="16" y="326" width="988" height="88" rx="10" fill="#ffffff" stroke="#c19c00" stroke-width="1.5" filter="url(#ml1)"/>
+  <text x="510" y="352" text-anchor="middle" font-size="12" font-weight="700" fill="#8a6d00">이 Lab 에서 실제로 관찰된 동작</text>
+  <text x="510" y="376" text-anchor="middle" font-size="10.5" fill="#5a4a00">S2 조사에서 과거 OOM 인시던트 6건을 회수한 뒤, 같은 5xx 증상이지만 원인이 다르다고 판단했습니다.</text>
+  <text x="510" y="398" text-anchor="middle" font-size="10.5" font-weight="700" fill="#8a6d00">"NOT OOM this time — different root cause than previous incidents"</text>
+</svg>

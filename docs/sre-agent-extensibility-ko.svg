@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 440" font-family="Segoe UI, Malgun Gothic, 맑은 고딕, -apple-system, sans-serif">
+  <defs>
+    <filter id="ex1" x="-4%" y="-8%" width="108%" height="120%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.10"/>
+    </filter>
+    <marker id="exa" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#0078d4"/></marker>
+  </defs>
+
+  <rect width="1020" height="440" rx="12" fill="#f7f9fb"/>
+  <text x="510" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#12314e">기본 에이전트를 우리 팀 방식으로 확장하기</text>
+  <text x="510" y="56" text-anchor="middle" font-size="12" fill="#5a6b7b">무엇을 아는지 · 누가 조사하는지 · 어떻게 행동하는지를 각각 바꿉니다</text>
+
+  <!-- 1행: 아는 것 -->
+  <rect x="16" y="80" width="322" height="150" rx="10" fill="#ffffff" stroke="#008272" stroke-width="1.5" filter="url(#ex1)"/>
+  <rect x="16" y="80" width="322" height="28" rx="10" fill="#e6f4f1"/>
+  <rect x="16" y="98" width="322" height="10" fill="#e6f4f1"/>
+  <text x="177" y="100" text-anchor="middle" font-size="12" font-weight="700" fill="#006b5d">무엇을 아는가</text>
+
+  <rect x="32" y="120" width="290" height="46" rx="7" fill="#f2fbf9" stroke="#008272" stroke-width="1"/>
+  <text x="46" y="139" font-size="10.5" font-weight="700" fill="#006b5d">Skills — 상황에 맞게 자동 호출</text>
+  <text x="46" y="156" font-size="9" fill="#4a6b66">절차서에 Azure CLI · KQL · Python 을 붙일 수 있습니다</text>
+
+  <rect x="32" y="174" width="290" height="44" rx="7" fill="#f2fbf9" stroke="#008272" stroke-width="1"/>
+  <text x="46" y="193" font-size="10.5" font-weight="700" fill="#006b5d">Knowledge Sources</text>
+  <text x="46" y="210" font-size="9" fill="#4a6b66">"정상" 의 기준을 조직 언어로 정의합니다</text>
+
+  <!-- 2행: 누가 조사하는가 -->
+  <rect x="349" y="80" width="322" height="150" rx="10" fill="#ffffff" stroke="#5c2d91" stroke-width="1.5" filter="url(#ex1)"/>
+  <rect x="349" y="80" width="322" height="28" rx="10" fill="#f0eaf8"/>
+  <rect x="349" y="98" width="322" height="10" fill="#f0eaf8"/>
+  <text x="510" y="100" text-anchor="middle" font-size="12" font-weight="700" fill="#4a2378">누가 조사하는가</text>
+
+  <rect x="365" y="120" width="290" height="46" rx="7" fill="#faf7fe" stroke="#5c2d91" stroke-width="1"/>
+  <text x="379" y="139" font-size="10.5" font-weight="700" fill="#4a2378">Custom agents — 담당자가 직접 호출</text>
+  <text x="379" y="156" font-size="9" fill="#6b5a86">데이터베이스 · 보안처럼 특정 영역 전문 조사</text>
+
+  <rect x="365" y="174" width="290" height="44" rx="7" fill="#faf7fe" stroke="#5c2d91" stroke-width="1"/>
+  <text x="379" y="193" font-size="10.5" font-weight="700" fill="#4a2378">Response Plans</text>
+  <text x="379" y="210" font-size="9" fill="#6b5a86">심각도 · 서비스 · 키워드로 담당과 실행 모드를 배분</text>
+
+  <!-- 3행: 어떻게 행동하는가 -->
+  <rect x="682" y="80" width="322" height="150" rx="10" fill="#ffffff" stroke="#c19c00" stroke-width="1.5" filter="url(#ex1)"/>
+  <rect x="682" y="80" width="322" height="28" rx="10" fill="#fff8e6"/>
+  <rect x="682" y="98" width="322" height="10" fill="#fff8e6"/>
+  <text x="843" y="100" text-anchor="middle" font-size="12" font-weight="700" fill="#8a6d00">어떻게 행동하는가</text>
+
+  <rect x="698" y="120" width="290" height="46" rx="7" fill="#fffdf5" stroke="#c19c00" stroke-width="1"/>
+  <text x="712" y="139" font-size="10.5" font-weight="700" fill="#8a6d00">Agent Hooks — 실행 시점에 개입</text>
+  <text x="712" y="156" font-size="9" fill="#7a6200">권한은 그대로 두고 근거 없는 조치를 막습니다</text>
+
+  <rect x="698" y="174" width="290" height="44" rx="7" fill="#fffdf5" stroke="#c19c00" stroke-width="1"/>
+  <text x="712" y="193" font-size="10.5" font-weight="700" fill="#8a6d00">Python tools · MCP servers</text>
+  <text x="712" y="210" font-size="9" fill="#7a6200">설정으로 표현 못 하는 로직과 사내 시스템 연동</text>
+
+  <line x1="510" y1="238" x2="510" y2="256" stroke="#0078d4" stroke-width="1.8" marker-end="url(#exa)"/>
+
+  <!-- 하단: 한계와 원칙 -->
+  <rect x="16" y="260" width="988" height="72" rx="10" fill="#e5f1fb" stroke="#0078d4" stroke-width="1.6" filter="url(#ex1)"/>
+  <text x="510" y="288" text-anchor="middle" font-size="12.5" font-weight="700" fill="#005a9e">실행 모드가 "무엇을 할 수 있는지" 를 정한다면, Hooks 는 "어떻게 해야 하는지" 를 정합니다</text>
+  <text x="510" y="313" text-anchor="middle" font-size="10" fill="#33689e">Skills 는 방법을 설명하는 데서 그치지 않고 필요한 조회를 직접 수행합니다</text>
+
+  <!-- 용량 제한 -->
+  <rect x="16" y="344" width="988" height="80" rx="10" fill="#ffffff" stroke="#a0aab4" stroke-width="1.3"/>
+  <text x="510" y="370" text-anchor="middle" font-size="11.5" font-weight="700" fill="#3d4a57">설계할 때 미리 확인할 용량 제한</text>
+  <text x="255" y="396" text-anchor="middle" font-size="10" fill="#5a6b7b">한 대화에서 동시 활성 스킬</text>
+  <text x="255" y="414" text-anchor="middle" font-size="13" font-weight="700" fill="#12314e">최대 5개</text>
+  <text x="510" y="396" text-anchor="middle" font-size="10" fill="#5a6b7b">에이전트 하나가 쓰는 도구 (기본 + MCP)</text>
+  <text x="510" y="414" text-anchor="middle" font-size="13" font-weight="700" fill="#12314e">최대 80개</text>
+  <text x="765" y="396" text-anchor="middle" font-size="10" fill="#5a6b7b">기술 자료 파일</text>
+  <text x="765" y="414" text-anchor="middle" font-size="13" font-weight="700" fill="#12314e">인스턴스당 1,000개 · 파일당 50MB</text>
+</svg>

@@ -136,6 +136,10 @@ azd env set GITHUB_REPO       daeungo1/grubify               # 코드를 읽을 
 **재검증 (2026-08-20)** — S2 포트 불일치를 다시 주입한 결과, 에이전트는 07:31 에 자동 복구하고
 이슈를 **`daeungo1/Azure-SRE-Agent-Lab#1`** 에 등록했습니다. 업스트림에는 신규 이슈가 없습니다.
 
+<p align="center">
+  <img src="../docs/portal-issue.png" alt="daeungo1/Azure-SRE-Agent-Lab 저장소의 Issues 목록 화면입니다. 열린 이슈 1건으로 'Incident: HTTP 5xx due to TargetPort mismatch crash loop — 3rd recurrence (Grubify Container App)' 제목에 api-bug, bug, port-mismatch, recurring, severity-high 라벨이 붙어 있습니다." width="100%"/>
+</p>
+
 > **교훈** — 에이전트에 쓰기 권한이 있는 외부 시스템은 **권한만 좁혀서는 부족**합니다.
 > 에이전트가 참조하는 문서가 잘못된 대상을 가리키면 그대로 따라갑니다.
 

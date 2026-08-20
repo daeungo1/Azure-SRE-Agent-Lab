@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 470" font-family="Segoe UI, Malgun Gothic, 맑은 고딕, -apple-system, sans-serif">
+  <defs>
+    <filter id="ds1" x="-4%" y="-8%" width="108%" height="120%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.10"/>
+    </filter>
+    <marker id="dsa" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#008272"/></marker>
+    <marker id="dsb" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#0078d4"/></marker>
+  </defs>
+
+  <rect width="1020" height="470" rx="12" fill="#f7f9fb"/>
+  <text x="510" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#12314e">에이전트가 조사에 사용하는 정보</text>
+  <text x="510" y="56" text-anchor="middle" font-size="12" fill="#5a6b7b">Azure 내부 원격 분석은 커넥터 없이 관리 ID 와 RBAC 만으로 조회됩니다</text>
+
+  <!-- 좌: 커넥터 없이 조회 -->
+  <rect x="16" y="80" width="640" height="264" rx="10" fill="#ffffff" stroke="#008272" stroke-width="1.5" filter="url(#ds1)"/>
+  <rect x="16" y="80" width="640" height="30" rx="10" fill="#e6f4f1"/>
+  <rect x="16" y="100" width="640" height="10" fill="#e6f4f1"/>
+  <text x="336" y="101" text-anchor="middle" font-size="12.5" font-weight="700" fill="#006b5d">기본 도구로 조회 — 별도 연결 설정이 필요 없습니다</text>
+
+  <rect x="32" y="124" width="196" height="96" rx="8" fill="#f2fbf9" stroke="#008272" stroke-width="1"/>
+  <text x="130" y="146" text-anchor="middle" font-size="11.5" font-weight="700" fill="#006b5d">애플리케이션 상태</text>
+  <text x="130" y="167" text-anchor="middle" font-size="9.3" fill="#4a6b66">Application Insights</text>
+  <text x="130" y="183" text-anchor="middle" font-size="9.3" fill="#4a6b66">요청 · 예외 · 종속성 호출</text>
+  <text x="130" y="205" text-anchor="middle" font-size="8.7" fill="#7d9a95">실패한 요청 수와 구간을 특정</text>
+
+  <rect x="240" y="124" width="196" height="96" rx="8" fill="#f2fbf9" stroke="#008272" stroke-width="1"/>
+  <text x="338" y="146" text-anchor="middle" font-size="11.5" font-weight="700" fill="#006b5d">로그</text>
+  <text x="338" y="167" text-anchor="middle" font-size="9.3" fill="#4a6b66">Log Analytics 작업 영역</text>
+  <text x="338" y="183" text-anchor="middle" font-size="9.3" fill="#4a6b66">KQL 질의</text>
+  <text x="338" y="205" text-anchor="middle" font-size="8.7" fill="#7d9a95">컨테이너 시스템 로그 · 콘솔 로그</text>
+
+  <rect x="448" y="124" width="196" height="96" rx="8" fill="#f2fbf9" stroke="#008272" stroke-width="1"/>
+  <text x="546" y="146" text-anchor="middle" font-size="11.5" font-weight="700" fill="#006b5d">인프라 상태</text>
+  <text x="546" y="167" text-anchor="middle" font-size="9.3" fill="#4a6b66">Azure Monitor 메트릭</text>
+  <text x="546" y="183" text-anchor="middle" font-size="9.3" fill="#4a6b66">리소스 구성 · Resource Graph</text>
+  <text x="546" y="205" text-anchor="middle" font-size="8.7" fill="#7d9a95">CPU · 메모리 · 리소스 한계</text>
+
+  <rect x="32" y="232" width="196" height="96" rx="8" fill="#f2fbf9" stroke="#008272" stroke-width="1"/>
+  <text x="130" y="254" text-anchor="middle" font-size="11.5" font-weight="700" fill="#006b5d">변경 이력</text>
+  <text x="130" y="275" text-anchor="middle" font-size="9.3" fill="#4a6b66">Azure Activity Log</text>
+  <text x="130" y="291" text-anchor="middle" font-size="9.3" fill="#4a6b66">배포 이력 · 리비전</text>
+  <text x="130" y="313" text-anchor="middle" font-size="8.7" fill="#7d9a95">"장애 직전 무엇이 바뀌었나"</text>
+
+  <rect x="240" y="232" width="196" height="96" rx="8" fill="#f2fbf9" stroke="#008272" stroke-width="1"/>
+  <text x="338" y="254" text-anchor="middle" font-size="11.5" font-weight="700" fill="#006b5d">소스와 문서</text>
+  <text x="338" y="275" text-anchor="middle" font-size="9.3" fill="#4a6b66">GitHub · Azure DevOps</text>
+  <text x="338" y="291" text-anchor="middle" font-size="9.3" fill="#4a6b66">런북 · 기술 문서</text>
+  <text x="338" y="313" text-anchor="middle" font-size="8.7" fill="#7d9a95">파일:라인 단위로 원인 특정</text>
+
+  <rect x="448" y="232" width="196" height="96" rx="8" fill="#f2fbf9" stroke="#008272" stroke-width="1"/>
+  <text x="546" y="254" text-anchor="middle" font-size="11.5" font-weight="700" fill="#006b5d">과거 경험</text>
+  <text x="546" y="275" text-anchor="middle" font-size="9.3" fill="#4a6b66">유사 인시던트</text>
+  <text x="546" y="291" text-anchor="middle" font-size="9.3" fill="#4a6b66">이전 근본 원인과 해결 방법</text>
+  <text x="546" y="313" text-anchor="middle" font-size="8.7" fill="#7d9a95">Team Memory 에서 회수</text>
+
+  <!-- 우: 커넥터 -->
+  <rect x="676" y="80" width="328" height="264" rx="10" fill="#ffffff" stroke="#5c2d91" stroke-width="1.5" filter="url(#ds1)"/>
+  <rect x="676" y="80" width="328" height="30" rx="10" fill="#f0eaf8"/>
+  <rect x="676" y="100" width="328" height="10" fill="#f0eaf8"/>
+  <text x="840" y="101" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4a2378">커넥터를 추가하면 넓어지는 범위</text>
+
+  <rect x="692" y="124" width="296" height="60" rx="8" fill="#faf7fe" stroke="#5c2d91" stroke-width="1"/>
+  <text x="840" y="146" text-anchor="middle" font-size="11" font-weight="700" fill="#4a2378">외부 관측 도구</text>
+  <text x="840" y="166" text-anchor="middle" font-size="9.3" fill="#6b5a86">Grafana · Datadog · Dynatrace · Splunk</text>
+
+  <rect x="692" y="196" width="296" height="60" rx="8" fill="#faf7fe" stroke="#5c2d91" stroke-width="1"/>
+  <text x="840" y="218" text-anchor="middle" font-size="11" font-weight="700" fill="#4a2378">인시던트 · 티켓 시스템</text>
+  <text x="840" y="238" text-anchor="middle" font-size="9.3" fill="#6b5a86">PagerDuty · ServiceNow · Jira</text>
+
+  <rect x="692" y="268" width="296" height="60" rx="8" fill="#faf7fe" stroke="#5c2d91" stroke-width="1"/>
+  <text x="840" y="290" text-anchor="middle" font-size="11" font-weight="700" fill="#4a2378">사내 시스템 (MCP)</text>
+  <text x="840" y="310" text-anchor="middle" font-size="9.3" fill="#6b5a86">사용자 지정 MCP 서버 · 위키</text>
+
+  <!-- 결론 -->
+  <rect x="16" y="364" width="988" height="88" rx="10" fill="#ffffff" stroke="#0078d4" stroke-width="1.5" filter="url(#ds1)"/>
+  <text x="510" y="392" text-anchor="middle" font-size="12.5" font-weight="700" fill="#005a9e">모은 근거를 서로 연결해 근본 원인을 설명합니다</text>
+  <text x="510" y="415" text-anchor="middle" font-size="10" fill="#33689e">"메트릭에서 본 이상 + 로그의 오류 + 직전 배포 변경 + 해당 소스 코드" 를 하나의 인과로 묶습니다</text>
+  <text x="510" y="436" text-anchor="middle" font-size="9.3" fill="#7d94ab">접근하지 못한 데이터 소스가 있으면 조사 결과가 완전하지 않다는 사실도 함께 알려 줍니다</text>
+
+  <line x1="656" y1="212" x2="672" y2="212" stroke="#008272" stroke-width="1.6" marker-end="url(#dsa)"/>
+  <line x1="510" y1="346" x2="510" y2="360" stroke="#0078d4" stroke-width="1.6" marker-end="url(#dsb)"/>
+</svg>

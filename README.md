@@ -827,6 +827,12 @@ azd env set GITHUB_REPO       daeungo1/grubify               # 코드를 읽을 
 | 이슈 등록 위치 | **`daeungo1/Azure-SRE-Agent-Lab#1`** ✅ |
 | 업스트림 신규 이슈 | 없음 ✅ |
 
+<p align="center">
+  <img src="docs/portal-issue.png" alt="daeungo1/Azure-SRE-Agent-Lab 저장소의 Issues 목록 화면입니다. 열린 이슈 1건으로 'Incident: HTTP 5xx due to TargetPort mismatch crash loop — 3rd recurrence (Grubify Container App)' 제목에 api-bug, bug, port-mismatch, recurring, severity-high 라벨이 붙어 있습니다." width="100%"/>
+</p>
+
+<sup>에이전트가 직접 생성한 이슈 — 제목의 *3rd recurrence* 는 과거 두 번의 동일 장애를 메모리에서 회수해 붙인 것입니다.</sup>
+
 > **교훈** — 에이전트에 쓰기 권한이 있는 외부 시스템에서는 **대상 범위를 지식·설정 양쪽에서 고정**해야 합니다.
 > 권한을 좁히는 것만으로는 부족하고, 에이전트가 참조하는 문서가 잘못된 대상을 가리키면 그대로 따라갑니다.
 

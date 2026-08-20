@@ -40,8 +40,8 @@
   <rect x="28" y="276" width="469" height="30" rx="5" fill="#f2fbf9" stroke="#008272" stroke-width="0.8"/>
   <text x="42" y="295" font-size="9.5" fill="#4a6b66">⛔ 재시작·스케일·설정 변경은 <tspan font-weight="700">직접 불가</tspan></text>
   <rect x="28" y="310" width="469" height="34" rx="5" fill="#fff8e6" stroke="#c19c00" stroke-width="1"/>
-  <text x="42" y="325" font-size="9.5" font-weight="700" fill="#8a6d00">→ 조치가 필요하면 OBO 승인 요청</text>
-  <text x="42" y="338" font-size="8.7" fill="#7a6200">관리자(Administrator)가 자신의 자격 증명으로 승인해야 실행 (자격 증명은 보관되지 않음)</text>
+  <text x="42" y="325" font-size="9.5" font-weight="700" fill="#8a6d00">→ 이 Lab 이 사용하는 수준 — 조치가 필요하면 OBO 승인 요청</text>
+  <text x="42" y="338" font-size="8.7" fill="#7a6200">단, 이 Lab 은 Container Apps Contributor 역할을 직접 부여해 무인 완화까지 수행합니다</text>
 
   <rect x="525" y="180" width="505" height="176" rx="10" fill="#ffffff" stroke="#d13438" stroke-width="1.6" filter="url(#q1)"/>
   <rect x="525" y="180" width="505" height="30" rx="10" fill="#fdecea"/>
@@ -53,8 +53,8 @@
   <rect x="543" y="276" width="469" height="30" rx="5" fill="#fff5f5" stroke="#d13438" stroke-width="0.8"/>
   <text x="557" y="295" font-size="9.5" fill="#a4262c">예: 리소스 그룹에 Container Apps 가 있으면 Container Apps Contributor 자동 부여</text>
   <rect x="543" y="310" width="469" height="34" rx="5" fill="#fff5f5" stroke="#d13438" stroke-width="1"/>
-  <text x="557" y="325" font-size="9.5" font-weight="700" fill="#a4262c">→ 이 Lab 이 사용하는 수준</text>
-  <text x="557" y="338" font-size="8.7" fill="#c05055">에이전트가 사람 개입 없이 완화까지 수행하는 데모를 위해 선택</text>
+  <text x="557" y="325" font-size="9.5" font-weight="700" fill="#a4262c">→ 이 Lab 은 이 수준을 사용하지 않습니다</text>
+  <text x="557" y="338" font-size="8.7" fill="#c05055">허용 범위를 넓히는 대신 필요한 역할 하나만 직접 부여하는 쪽을 선택했습니다</text>
 
   <!-- 매트릭스 -->
   <rect x="10" y="374" width="1020" height="176" rx="10" fill="#ffffff" stroke="#5c2d91" stroke-width="1.4" filter="url(#q1)"/>
