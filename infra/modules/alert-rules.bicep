@@ -4,6 +4,12 @@ param containerAppId string
 @description('Environment name for naming')
 param environmentName string
 
+@description('Location for the scheduled query rule')
+param location string
+
+@description('Log Analytics workspace resource ID — scope for the revision health query')
+param workspaceId string
+
 // ============================================================
 // Action Group (minimal - SRE Agent picks up alerts via managed resources)
 // ============================================================
@@ -63,3 +69,50 @@ resource http5xxAlert 'Microsoft.Insights/metricAlerts@2018-03-01' = {
     ]
   }
 }
+
+// ============================================================
+// Scenario 2 — revision health
+// A separate rule on purpose: the agent's reinvestigation cooldown is per alert
+// rule, so a config-error run gets its own investigation instead of being merged
+// into the 5xx thread.
+// ============================================================
+resource revisionHealthAlert 'Microsoft.Insights/scheduledQueryRules@2023-03-15-preview' = {
+  name: 'alert-revision-unhealthy-${environmentName}'
+  location: location
+  properties: {
+    description: 'Grubify revision cannot serve traffic (port mismatch / unhealthy replica) — triggers SRE Agent investigation'
+    severity: 2
+    enabled: true
+    scopes: [
+      workspaceId
+    ]
+    evaluationFrequency: 'PT5M'
+    windowSize: 'PT10M'
+    criteria: {
+      allOf: [
+        {
+          query: '''
+ContainerAppSystemLogs_CL
+| where ContainerAppName_s startswith "ca-grubify"
+| where Reason_s has "PortMismatch" or Reason_s == "ReplicaUnhealthy" or Reason_s has "Crash"
+| summarize Events = count() by ContainerAppName_s, RevisionName_s, Reason_s
+'''
+          timeAggregation: 'Count'
+          operator: 'GreaterThan'
+          threshold: 2
+          failingPeriods: {
+            numberOfEvaluationPeriods: 1
+            minFailingPeriodsToAlert: 1
+          }
+        }
+      ]
+    }
+    autoMitigate: true
+    actions: {
+      actionGroups: [
+        actionGroup.id
+      ]
+    }
+  }
+}
+

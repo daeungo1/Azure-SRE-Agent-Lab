@@ -265,12 +265,15 @@ bash scripts/post-provision.sh --status
 | # | 시나리오 | 대상 | 소요 | GitHub 필요 |
 |:--:|---|---|:--:|:--:|
 | 0 | **포털 투어** — 설정·Builder·Capabilities 둘러보기 | 전체 | 10분 | ❌ |
-| 1 | 앱 장애 발생 → 에이전트가 로그 기반 조사·완화 | IT 운영 | 20분 | ❌ |
+| 1 | 앱 장애(메모리 누수) → 에이전트가 로그 기반 조사·완화 | IT 운영 | 20분 | ❌ |
+| 1-B | **배포 설정 오류**(포트 불일치) → 리비전 기동 실패 조사 | IT 운영 · DevOps | 20분 | ❌ |
 | 2 | 동일 장애 → 소스 코드에서 근본 원인 발견 + GitHub 이슈 생성 | 개발자 + IT | 20분 | ✅ |
 | 3 | 고객 이슈 트리아지 → 분류·라벨·코멘트 자동화 | 워크플로 자동화 | 10분 | ✅ |
 | 4 | **가치 측정** — Operations Hub · Live Reports 로 효과 확인 | 의사결정자 | 10분 | ❌ |
 
 > 시간이 부족하면 **0 → 1 → 4** 순서만으로도 완결된 스토리가 됩니다 (GitHub 불필요, 약 40분).
+> 시나리오 1 과 1-B 는 **근본 원인의 종류가 다릅니다** — 앞은 코드·용량 문제, 뒤는 배포 설정 오류입니다.
+> 둘을 이어서 보여주면 "에이전트가 증상이 아니라 **원인을** 본다"는 점이 분명해집니다.
 
 ### 시나리오 0 — 포털 투어 (GitHub 불필요)
 
@@ -284,7 +287,7 @@ bash scripts/post-provision.sh --status
 | 3 | **Builder ▸ Agent Canvas** | `incident-handler` 와 연결된 도구 19종 | 도메인별 전문 에이전트를 직접 만든다 |
 | 4 | **Builder ▸ Incident response plans** | `grubify-http-errors` → Autonomous | 사람 개입 없이 라우팅된다 |
 | 5 | **Capabilities** | Built-in / 코드 실행 / 지식 / MCP 도구 목록 | 커넥터 없이도 Azure 진단은 바로 된다 |
-| 6 | **Settings ▸ Managed resources** | 대상 리소스 그룹과 **권한 수준** | 이 Lab 은 쓰기 가능(Privileged) — 그래서 완화까지 한다 |
+| 6 | **Settings ▸ Basics / Managed resources** | 대상 리소스 그룹과 **권한 수준 · Agent mode** | 표시는 Reader 지만 관리 ID 에 쓰기 역할을 준 상태 — 그래서 완화까지 한다 |
 | 7 | **Favorites ▸ Team onboarding** | 최초 온보딩 대화 | `/learn` 으로 재시작 가능 |
 
 그런 다음 **새 채팅**에서 가볍게 질문해 보세요 (채팅은 영어만 지원):
@@ -415,9 +418,74 @@ Thursday-Sunday is Team Beta. Escalation path: on-call → team lead → VP Engi
 Who is on call today, and what should they check first if the cart API fails again?
 ```
 
+### 시나리오 1-B — 배포 설정 오류 (GitHub 불필요)
+
+시나리오 1 과 **같은 증상(HTTP 5xx), 다른 원인**입니다.
+"에이전트가 증상이 아니라 원인을 보는가" 를 확인하는 시나리오입니다.
+
+```bash
+# 1) 인그레스를 앱이 듣지 않는 포트로 돌린다 → 전 요청 503
+bash scripts/break-app-config.sh break
+
+# 2) 경고 임계값을 넘도록 트래픽을 준다 (약 90건)
+for i in $(seq 1 90); do curl -s -o /dev/null "$APP_URL/api/fooditems"; sleep 0.7; done
+
+# 3) 포털에서 조사 스레드를 연다 → 끝나면 상태 확인
+bash scripts/break-app-config.sh status
+```
+
+| 볼 것 | 기대 |
+|---|---|
+| 경고 | `alert-revision-unhealthy-sre-lab` (Sev2) 발화 |
+| 조사 | 시스템 로그의 `Pending:PortMismatch` 를 근거로 제시 |
+| 변별 | **"NOT OOM this time"** — 과거 메모리 누수 인시던트와 구분 |
+| 조치 | `targetPort` 를 8080 으로 정렬 (Autonomous) |
+
+> 에이전트가 스스로 복구하지 않았다면 `bash scripts/break-app-config.sh restore` 로 되돌립니다.
+> 실측 결과는 [6.8](#68-시나리오-1-b--인그레스-포트-불일치-2026-08-20) 에 있습니다.
+
 ---
 
 ## 6. E2E 실행 결과
+
+> 이 저장소의 결과는 **주장이 아니라 채점 결과**입니다.
+> 장애를 주입하기 전에 정답(Ground truth)을 적어 두고, 에이전트의 결론을 아래 기준으로 채점했습니다.
+> **에이전트가 틀린 부분도 그대로 기록합니다.**
+
+### 6.0 평가 방법
+
+**시간 지표**
+
+| 지표 | 계산 |
+|---|---|
+| 탐지 지연 | 경고 발화 − 장애 주입 |
+| 인수 지연 | 조사 스레드 생성 − 경고 발화 |
+| 근본 원인 도달 | 원인 확정 − 스레드 생성 |
+
+**RCA 점수 (10점)**
+
+| 항목 | 배점 | 기준 |
+|---|:--:|---|
+| 영향 범위 | 2 | 리소스·엔드포인트·리비전을 정확히 특정 |
+| 직접 원인 | 3 | Ground truth 와 일치 |
+| 증거 | 2 | 로그·설정·메트릭 근거 제시 |
+| 완화책 | 2 | 최소 범위이고 되돌릴 수 있음 |
+| 불확실성 | 1 | 확인 못 한 부분을 구분해 표시 |
+
+판정: ✅ Pass(8~10) · ⚠️ Partial(5~7) · ❌ Fail(0~4)
+
+### 6.1 한눈에 보기
+
+| 시나리오 | 장애 신호 | 탐지 | 인수 | 원인 도달 | 조치 | 점수 | 판정 |
+|---|---|--:|--:|--:|---|--:|---|
+| **1 — 메모리 누수 → OOM** | HTTP 5xx 급증 | 3분 | 54초 | 4분 25초 | 재시작 + 1Gi→2Gi | **10/10** | ✅ Pass |
+| **1-B — 인그레스 포트 불일치** | 전 요청 503 | 2분 52초 | 49초 | **80초** | targetPort 9090→8080 | **8/10** | ✅ Pass |
+
+두 시나리오는 **증상이 같고(5xx) 원인이 다릅니다.** 1-B 조사에서 에이전트가 남긴 문장이 이 Lab 의 핵심입니다.
+
+> *"Root cause identified: Port mismatch, **NOT OOM this time**. … different root cause than previous incidents."*
+
+
 
 > **실행일:** 2026-08-19 · **리전:** `eastus2` · **시나리오:** 1 (IT 운영, GitHub 미연동)
 > 모든 타임스탬프는 **UTC** 기준입니다.
@@ -560,6 +628,91 @@ GET  frontend /                  → HTTP 200 (700ms)
 
 추가로 subagent 생성 PUT 이 **비동기(202)** 라 연속 호출 시 일시적으로 400 이 나는 현상이 있어,
 `post-provision.sh` 의 subagent 생성에 **재시도 로직**을 넣었습니다.
+
+### 6.8 시나리오 1-B — 인그레스 포트 불일치 (2026-08-20)
+
+> **실행일:** 2026-08-20 · **리전:** `eastus2` · **모드:** Autonomous
+> 시나리오 1 과 **증상은 같지만(HTTP 5xx) 원인이 다른** 장애입니다.
+
+#### Ground truth
+
+인그레스의 `targetPort` 를 `8080` → `9090` 으로 바꿉니다.
+앱은 그대로 8080 에서 듣고 있으므로 **모든 요청이 엣지에서 실패**합니다.
+컨테이너 자체는 정상이라, 에이전트가 "앱이 죽었다"고 오판하지 않는지까지 확인합니다.
+
+```bash
+bash scripts/break-app-config.sh break     # 주입
+bash scripts/break-app-config.sh restore   # 복구
+```
+
+#### 타임라인
+
+| 시각(UTC) | 이벤트 | Δ |
+|---|---|--:|
+| 05:48:57 | `targetPort` 8080 → 9090 **주입** | — |
+| 05:49:39 | 첫 503 확인 (부하 90건 전부 503) | +42초 |
+| 05:51:49 | 경고 `alert-revision-unhealthy-sre-lab` (Sev2) **발화** | +2분 52초 |
+| 05:52:38 | 에이전트 **인수** — 조사 스레드 생성 | +49초 |
+| 05:53:27 | 팀 메모리 검색 — 과거 OOM 인시던트 6건 회수 | +49초 |
+| 05:54:08 | **근본 원인 확정** | +80초 |
+| 05:54:53 | **자율 조치** — `targetPort` 9090 → 8080 | +45초 |
+| 05:55:22 | 복구 검증 시작 | |
+| 05:53:32 | *(별도)* 5xx 메트릭 경고 발화 → 두 번째 조사 스레드 | |
+
+#### 에이전트 분석
+
+| 항목 | 결과 |
+|---|---|
+| **영향 범위** | `ca-grubify-huvqg3bjooyw6`, 리비전 `--0000005`, 요청 67건 5xx — 정확 |
+| **직접 원인** | *"The TargetPort 9090 does not match the listening port 8080"* — **정확** |
+| **증거** | `Pending:PortMismatch` 시스템 로그, `ReplicaUnhealthy`(startup probe: connection refused), 컨테이너 콘솔의 바인딩 로그, 메모리·CPU 정상(1~2%) |
+| **완화책** | `targetPort` 를 8080 으로 정렬 — 최소 범위이고 되돌릴 수 있음 |
+| **오판 구분** | *"No OOM this time — different root cause than previous incidents"* — 과거 인시던트에 끌려가지 않음 |
+
+**잘못된 주장 (감점 사유)**
+
+에이전트는 원인을 **"새 리비전이 앱의 리슨 포트를 바꿨는데 인그레스를 안 맞췄다"** 로 서술했습니다.
+실제로는 반대입니다 — **앱은 계속 8080 이었고, 바뀐 것은 인그레스 설정**입니다. 인과의 방향을 뒤집었습니다.
+
+원인은 **이 Lab 이 남긴 흔적**이었습니다. 첫 주입 시도에서 `ASPNETCORE_URLS=http://+:9090` 을 설정했다가
+효과가 없어 되돌렸는데(6.9 참고), 그 리비전 이력이 남아 에이전트가 "앱이 9090 을 듣다가 8080 으로 바뀌었다"고
+추론할 근거를 만들었습니다. **조치는 정확했지만 서사는 틀렸습니다.**
+
+#### 점수
+
+| 영향 | 원인 | 증거 | 완화 | 불확실성 | 합계 | 판정 |
+|--:|--:|--:|--:|--:|--:|---|
+| 2 | 3 | 2 | 2 | **-1** | **8/10** | ✅ Pass |
+
+> 불확실성 항목에서 감점했습니다. 인과 방향을 **단정**했고, 리비전 이력과 인그레스 변경 중
+> 무엇이 원인인지 확인하지 못했다는 표시를 하지 않았습니다.
+
+#### 조치 주체 검증
+
+```text
+2026-08-20T05:49:02Z  containerApps/write  admin@MngEnvMCAP359144.onmicrosoft.com   ← 사람(장애 주입)
+2026-08-20T05:54:53Z  containerApps/write  25b6a2dc-...(id-sre-huvqg3bjooyw6)       ← 에이전트(자율 복구)
+```
+
+복구 결과: `targetPort` 8080, 리비전 `--0000005` **Healthy**, `GET /api/fooditems` **HTTP 200**.
+
+### 6.9 시나리오를 만들며 실패한 것
+
+참고용으로 남깁니다. **처음 설계한 주입 방법은 동작하지 않았습니다.**
+
+| 시도 | 결과 |
+|---|---|
+| `ASPNETCORE_URLS=http://+:9090` 으로 변경 | ❌ 앱이 그대로 8080 을 바인딩 — 레플리카 정상, HTTP 200 |
+| 인그레스 `targetPort` 를 9090 으로 변경 | ✅ 전 요청 503 |
+
+이 이미지는 환경 변수와 무관하게 8080 에 바인딩합니다.
+그리고 **실패한 시도가 남긴 리비전 이력이 위 6.8 의 오판을 유발했습니다** —
+장애 주입 Lab 에서 *증거 위생(evidence hygiene)* 이 중요하다는 실제 사례입니다.
+
+또 하나: 이 앱은 **Application Insights 요청 계측이 없어** `AppRequests` 테이블이 비어 있습니다.
+두 번째 조사에서 에이전트가 이를 스스로 발견하고
+*"App Insights and Log Analytics returned zero rows — need to sanity-check the data sources"* 라고 말한 뒤
+Container Apps 진단 도구로 경로를 바꿔 조사를 완료했습니다. 데이터 소스가 비어도 **멈추지 않고 우회**합니다.
 
 ---
 

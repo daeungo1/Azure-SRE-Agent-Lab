@@ -77,6 +77,8 @@ module alertRules 'modules/alert-rules.bicep' = {
   params: {
     containerAppId: containerApp.outputs.containerAppId
     environmentName: environmentName
+    location: location
+    workspaceId: monitoring.outputs.logAnalyticsWorkspaceId
   }
 }
 

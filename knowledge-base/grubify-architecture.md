@@ -57,18 +57,30 @@ done
 ## Source Code
 
 - **GitHub repository:** [github.com/dm-chelupati/grubify](https://github.com/dm-chelupati/grubify)
-- **Language:** Node.js
-- **Container image:** `ghcr.io/dm-chelupati/grubify:latest`
+- **Language / runtime:** C# — ASP.NET Core (.NET), served by Kestrel
+- **Container image:** built from source by the lab's post-provision step and pushed to the
+  lab ACR as `grubify-api:latest` (frontend: `grubify-frontend:latest`)
 
-### Key Files
+### Known code locations
 
-| File | Purpose |
+| Location | Purpose |
 |------|---------|
-| `server.js` | Main application entry point |
-| `routes/api.js` | API route handlers (menu, orders) |
-| `routes/admin.js` | Admin endpoints including chaos mode |
-| `middleware/errorHandler.js` | Error handling middleware |
-| `Dockerfile` | Container build definition |
+| `Controllers/CartController.cs` | Cart endpoints — `AddItemToCart` holds cart state in memory with no eviction (see failure mode below) |
+
+---
+
+## Runtime configuration that must stay consistent
+
+| Setting | Value | Why it matters |
+|---|---|---|
+| Ingress `targetPort` | `8080` | Ingress forwards to this container port |
+| `ASPNETCORE_URLS` | `http://+:8080` | Kestrel listen port — **must match `targetPort`** |
+| `ASPNETCORE_ENVIRONMENT` | `Production` | |
+
+If `ASPNETCORE_URLS` and the ingress `targetPort` disagree, the replica starts but never becomes
+ready. `ContainerAppSystemLogs_CL` records `Pending:PortMismatch` and `ReplicaUnhealthy`, and the
+revision cannot serve traffic. Compare the env var on the failing revision with the ingress
+`targetPort` before looking anywhere else.
 
 ---
 
