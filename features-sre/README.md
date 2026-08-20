@@ -250,15 +250,19 @@ bash scripts/post-provision.sh --retry
 | 사후 | `session-wrapup-memory` 훅이 교훈을 팀 메모리에 저장 |
 | 평시 | `daily-grubify-health` · `nightly-reliability-scan` 이 다음 장애를 예방 |
 
-### 처음 보는 사람에게 설명하는 순서
+### 포털에서 확인하는 순서
 
-1. **Operations Hub** — 지난 인시던트와 지표를 먼저 보여줌 (결과물부터)
-2. **Agent Canvas** — 누가 무엇을 담당하는지
-3. **Skill Builder** — `grubify-oom-triage` 를 열어 "에이전트가 읽는 런북" 확인
-4. **Hooks** — `pre-write-evidence-gate` 로 통제 방식 설명
-5. **Automation** — 장애가 없을 때도 도는 3개 작업
-6. **Response Plans** — Autonomous 와 Review 비교
-7. **장애 주입** — 앞의 1~6이 실제로 맞물리는 것을 시연
+적용한 결과를 직접 둘러보실 때는 아래 순서가 가장 빨리 이해됩니다.
+
+| 순서 | 포털 위치 | 무엇을 확인하나 |
+|:--:|---|---|
+| 1 | **Operations Hub** | 지금까지 처리된 인시던트와 지표 — 결과물부터 |
+| 2 | **Builder ▸ Agent Canvas** | 어떤 에이전트가 무엇을 담당하는지 |
+| 3 | **Capabilities ▸ Skill Builder** | `grubify-oom-triage` — 에이전트가 따르는 진단 절차 |
+| 4 | **Capabilities ▸ Hooks** | `pre-write-evidence-gate` — 조치 전 근거를 요구하는 통제 |
+| 5 | **Automation** | 장애가 없는 날에도 돌아가는 3개 작업 |
+| 6 | **Builder ▸ Incident response plans** | Autonomous 와 Review 의 차이 |
+| 7 | [장애 주입 시나리오](../README.md#5-실습-시나리오) | 1~6 이 한 번의 장애에서 실제로 맞물리는 과정 |
 
 ---
 
@@ -429,6 +433,6 @@ $h  = @{ Authorization = "Bearer $(az account get-access-token --resource https:
 bash scripts/break-app.sh "<Grubify API URL>" 200 0.5
 ```
 
-이 Lab 의 E2E 실행 이력이 남아 있어 Operations Hub 에는 인시던트 1건과 관련 지표가 표시됩니다.
-시연 전에 한 번 더 실행하면 최신 데이터로 갱신됩니다 →
+이 저장소의 E2E 실행 이력이 남아 있어 Operations Hub 에는 인시던트 1건과 관련 지표가 표시됩니다.
+위 명령을 다시 실행하면 최신 데이터로 갱신되며, 반복 실행 시 주의할 점은 여기에 정리되어 있습니다 →
 [README — 7. Lab 마무리와 반복 시연](../README.md#7-lab-마무리와-반복-시연)
