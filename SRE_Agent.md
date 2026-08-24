@@ -698,7 +698,32 @@ Azure Policy 로 이 토글 자체를 제한해 담당자가 임의로 VNet 밖�
 | Confluence · SharePoint · 사내 RCA DB | ④ |
 
 자주 바뀌는 문서를 파일로 올리면 사본이 낡고, **낡은 문서는 그대로 틀린 답의 근거**가 됩니다.
+### MCP 는 지식의 형태를 가리지 않습니다
 
+①②③ 이 **문서**만 다룬다면, ④ 는 문서가 아닌 지식까지 받습니다.
+
+<p align="center">
+  <img src="docs/sre-agent-knowledge-backends-ko.svg" alt="MCP 를 공통 인터페이스로 벡터 검색, 그래프 DB, 전문 검색, 문서 시스템을 붙이는 구조와, 원시 질의 도구 대신 작업 단위 도구를 권장한다는 내용을 담은 다이어그램입니다." width="100%"/>
+</p>
+
+| 지식 형태 | 대표 시스템 | 잘 답하는 질문 |
+|---|---|---|
+| 벡터 · 하이브리드 검색 | Azure AI Search | "이럴 땐 어떻게 하나" |
+| 그래프 · 관계 탐색 | Neo4j · Cosmos DB Gremlin · CMDB | "무엇이 영향을 받나" |
+| 전문 검색 · 로그 | Elasticsearch · Splunk | "이 문자열이 언제 나왔나" |
+| 문서 · 업무 시스템 | Confluence · SharePoint | "과거 기록은" |
+
+- **이미 만든 RAG 인덱스는 다시 만들지 마세요** — MCP 로 연결하면 사본이 생기지 않고 청킹·랭킹 정책을 조직이 계속 통제합니다
+- **Azure 리소스 간 관계는 이미 있습니다** — 에이전트는 **Resource Graph** 를 커넥터 없이 씁니다. 그래프 DB 는 *Azure 밖의 관계*(사내 CMDB · 서비스 오너 · 호출 관계)에 씁니다
+- 그래프 DB 는 Kusto 와 달리 **스키마 자동 학습이 없습니다** — 스키마 문서 한 장을 ① 로 올리고, 원시 질의 대신 작업 단위 도구를 노출하세요
+
+```text
+❌ run_cypher(query)
+✅ get_blast_radius(id) · find_incidents_by_component(id)
+```
+
+> **핵심** — 붙일 수 있느냐는 이미 해결된 문제입니다.
+> **무엇을 어떤 단위로 검색 가능하게 만들지**가 조사 품질을 가릅니다.
 ### MCP 구성 시 확인할 것
 
 <p align="center">

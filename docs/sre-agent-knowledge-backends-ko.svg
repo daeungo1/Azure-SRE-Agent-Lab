@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 580" font-family="Segoe UI, Malgun Gothic, 맑은 고딕, -apple-system, sans-serif">
+  <defs>
+    <filter id="b1" x="-4%" y="-8%" width="108%" height="120%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.10"/>
+    </filter>
+    <marker id="ba" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#c19c00"/></marker>
+    <marker id="bb" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#0078d4"/></marker>
+  </defs>
+
+  <rect width="1020" height="580" rx="12" fill="#f7f9fb"/>
+  <text x="510" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#12314e">MCP 는 지식의 형태를 가리지 않습니다</text>
+  <text x="510" y="56" text-anchor="middle" font-size="12" fill="#5a6b7b">제품이 지식 구조를 정하지 않습니다 — 조직이 이미 쓰는 저장소를 그대로 붙입니다</text>
+
+  <!-- 에이전트 -->
+  <rect x="360" y="76" width="300" height="56" rx="10" fill="#e5f1fb" stroke="#0078d4" stroke-width="1.8" filter="url(#b1)"/>
+  <text x="510" y="100" text-anchor="middle" font-size="13" font-weight="700" fill="#005a9e">Azure SRE Agent</text>
+  <text x="510" y="120" text-anchor="middle" font-size="9.3" fill="#33689e">조사 중 필요한 시점에 도구를 호출합니다</text>
+
+  <line x1="510" y1="134" x2="510" y2="152" stroke="#0078d4" stroke-width="1.8" marker-end="url(#bb)"/>
+
+  <!-- MCP 계층 -->
+  <rect x="150" y="158" width="720" height="58" rx="10" fill="#fff8e6" stroke="#c19c00" stroke-width="1.8" filter="url(#b1)"/>
+  <text x="510" y="182" text-anchor="middle" font-size="13" font-weight="700" fill="#8a6d00">MCP — 공통 인터페이스</text>
+  <text x="510" y="203" text-anchor="middle" font-size="9.3" fill="#7a6200">도구 자동 탐색 · 네임스페이스 · 60초 heartbeat · 자동 복구</text>
+
+  <line x1="220" y1="218" x2="140" y2="252" stroke="#c19c00" stroke-width="1.5" marker-end="url(#ba)"/>
+  <line x1="400" y1="218" x2="368" y2="252" stroke="#c19c00" stroke-width="1.5" marker-end="url(#ba)"/>
+  <line x1="620" y1="218" x2="652" y2="252" stroke="#c19c00" stroke-width="1.5" marker-end="url(#ba)"/>
+  <line x1="800" y1="218" x2="880" y2="252" stroke="#c19c00" stroke-width="1.5" marker-end="url(#ba)"/>
+
+  <!-- 백엔드 4종 -->
+  <rect x="16" y="258" width="236" height="150" rx="10" fill="#ffffff" stroke="#008272" stroke-width="1.5" filter="url(#b1)"/>
+  <rect x="16" y="258" width="236" height="28" rx="10" fill="#e6f4f1"/>
+  <rect x="16" y="276" width="236" height="10" fill="#e6f4f1"/>
+  <text x="134" y="278" text-anchor="middle" font-size="11.5" font-weight="700" fill="#006b5d">벡터 · 하이브리드 검색</text>
+  <text x="134" y="304" text-anchor="middle" font-size="10" font-weight="700" fill="#12314e">Azure AI Search</text>
+  <text x="134" y="326" text-anchor="middle" font-size="8.9" fill="#4a6b66">이미 구축한 RAG 인덱스를</text>
+  <text x="134" y="341" text-anchor="middle" font-size="8.9" fill="#4a6b66">그대로 재사용</text>
+  <rect x="30" y="352" width="208" height="44" rx="6" fill="#f2fbf9" stroke="#008272" stroke-width="0.9"/>
+  <text x="134" y="370" text-anchor="middle" font-size="8.6" fill="#4a6b66">청킹 · 임베딩 · 랭킹 정책을</text>
+  <text x="134" y="385" text-anchor="middle" font-size="8.6" fill="#4a6b66">조직이 직접 통제합니다</text>
+
+  <rect x="262" y="258" width="236" height="150" rx="10" fill="#ffffff" stroke="#5c2d91" stroke-width="1.5" filter="url(#b1)"/>
+  <rect x="262" y="258" width="236" height="28" rx="10" fill="#f0eaf8"/>
+  <rect x="262" y="276" width="236" height="10" fill="#f0eaf8"/>
+  <text x="380" y="278" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4a2378">그래프 · 관계 탐색</text>
+  <text x="380" y="304" text-anchor="middle" font-size="10" font-weight="700" fill="#12314e">Graph DB · CMDB</text>
+  <text x="380" y="326" text-anchor="middle" font-size="8.9" fill="#6b5a86">Neo4j · Cosmos DB Gremlin</text>
+  <text x="380" y="341" text-anchor="middle" font-size="8.9" fill="#6b5a86">서비스 의존 관계 · 소유자</text>
+  <rect x="276" y="352" width="208" height="44" rx="6" fill="#faf7fe" stroke="#5c2d91" stroke-width="0.9"/>
+  <text x="380" y="370" text-anchor="middle" font-size="8.6" fill="#6b5a86">"무엇이 영향을 받나"</text>
+  <text x="380" y="385" text-anchor="middle" font-size="8.6" fill="#6b5a86">영향 범위 판정에 강합니다</text>
+
+  <rect x="522" y="258" width="236" height="150" rx="10" fill="#ffffff" stroke="#0078d4" stroke-width="1.5" filter="url(#b1)"/>
+  <rect x="522" y="258" width="236" height="28" rx="10" fill="#e5f1fb"/>
+  <rect x="522" y="276" width="236" height="10" fill="#e5f1fb"/>
+  <text x="640" y="278" text-anchor="middle" font-size="11.5" font-weight="700" fill="#005a9e">전문 검색 · 로그</text>
+  <text x="640" y="304" text-anchor="middle" font-size="10" font-weight="700" fill="#12314e">Elasticsearch · Splunk</text>
+  <text x="640" y="326" text-anchor="middle" font-size="8.9" fill="#33689e">기존 검색 인프라와</text>
+  <text x="640" y="341" text-anchor="middle" font-size="8.9" fill="#33689e">권한 체계를 그대로 사용</text>
+  <rect x="536" y="352" width="208" height="44" rx="6" fill="#f4f9fd" stroke="#0078d4" stroke-width="0.9"/>
+  <text x="640" y="370" text-anchor="middle" font-size="8.6" fill="#33689e">파트너 커넥터로 제공되어</text>
+  <text x="640" y="385" text-anchor="middle" font-size="8.6" fill="#33689e">설정만으로 연결됩니다</text>
+
+  <rect x="768" y="258" width="236" height="150" rx="10" fill="#ffffff" stroke="#c19c00" stroke-width="1.5" filter="url(#b1)"/>
+  <rect x="768" y="258" width="236" height="28" rx="10" fill="#fff8e6"/>
+  <rect x="768" y="276" width="236" height="10" fill="#fff8e6"/>
+  <text x="886" y="278" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8a6d00">문서 · 업무 시스템</text>
+  <text x="886" y="304" text-anchor="middle" font-size="10" font-weight="700" fill="#12314e">Confluence · SharePoint</text>
+  <text x="886" y="326" text-anchor="middle" font-size="8.9" fill="#7a6200">사내 RCA DB · 티켓 시스템</text>
+  <text x="886" y="341" text-anchor="middle" font-size="8.9" fill="#7a6200">원본이 항상 최신</text>
+  <rect x="782" y="352" width="208" height="44" rx="6" fill="#fffdf5" stroke="#c19c00" stroke-width="0.9"/>
+  <text x="886" y="370" text-anchor="middle" font-size="8.6" fill="#7a6200">사본을 만들지 않아</text>
+  <text x="886" y="385" text-anchor="middle" font-size="8.6" fill="#7a6200">최신성 관리 부담이 없습니다</text>
+
+  <!-- 결론 -->
+  <rect x="16" y="424" width="988" height="70" rx="10" fill="#e5f1fb" stroke="#0078d4" stroke-width="1.7" filter="url(#b1)"/>
+  <text x="510" y="450" text-anchor="middle" font-size="13" font-weight="700" fill="#005a9e">붙일 수 있느냐가 아니라, 지식을 어떻게 구성했느냐가 품질을 결정합니다</text>
+  <text x="510" y="472" text-anchor="middle" font-size="10" fill="#33689e">MCP 는 연결 문제를 해결합니다. 무엇을 어떤 단위로 검색 가능하게 만들지는 조직의 설계 영역입니다.</text>
+  <text x="510" y="487" text-anchor="middle" font-size="9" fill="#7d94ab">같은 저장소라도 도구를 어떻게 쪼개 노출하느냐에 따라 조사 결과가 달라집니다.</text>
+
+  <!-- 도구 설계 -->
+  <rect x="16" y="504" width="988" height="60" rx="10" fill="#ffffff" stroke="#a0aab4" stroke-width="1.3"/>
+  <text x="176" y="528" text-anchor="middle" font-size="10.5" font-weight="700" fill="#a4262c">피해야 할 형태</text>
+  <text x="176" y="548" text-anchor="middle" font-size="9" font-family="Consolas, monospace" fill="#a4262c">run_query(raw_query)</text>
+  <text x="510" y="540" text-anchor="middle" font-size="15" font-weight="700" fill="#8a8886">→</text>
+  <text x="760" y="528" text-anchor="middle" font-size="10.5" font-weight="700" fill="#006b5d">권장 형태 — 작업 단위로 감싸기</text>
+  <text x="760" y="548" text-anchor="middle" font-size="9" font-family="Consolas, monospace" fill="#006b5d">get_blast_radius(id) · find_incidents_by_component(id)</text>
+</svg>
