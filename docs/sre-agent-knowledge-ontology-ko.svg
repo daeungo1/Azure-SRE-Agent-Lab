@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 600" font-family="Segoe UI, Malgun Gothic, 맑은 고딕, -apple-system, sans-serif">
+  <defs>
+    <filter id="o1" x="-4%" y="-8%" width="108%" height="120%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.10"/>
+    </filter>
+    <marker id="oa" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#0078d4"/></marker>
+  </defs>
+
+  <rect width="1020" height="600" rx="12" fill="#f7f9fb"/>
+  <text x="510" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#12314e">최소 온톨로지 — 세 가지만 정하면 됩니다</text>
+  <text x="510" y="56" text-anchor="middle" font-size="12" fill="#5a6b7b">새로 만들지 말고 이미 있는 표준을 씁니다 — OpenTelemetry 규약 + Azure 태그</text>
+
+  <!-- 문제 -->
+  <rect x="16" y="76" width="988" height="66" rx="10" fill="#fdecea" stroke="#d13438" stroke-width="1.5" filter="url(#o1)"/>
+  <text x="510" y="100" text-anchor="middle" font-size="12" font-weight="700" fill="#a4262c">문제 — 소스마다 같은 대상을 다른 이름으로 부릅니다</text>
+  <text x="176" y="124" text-anchor="middle" font-size="9.6" font-family="Consolas, monospace" fill="#a4262c">payment-api</text>
+  <text x="176" y="137" text-anchor="middle" font-size="8.4" fill="#c05055">App Insights</text>
+  <text x="404" y="124" text-anchor="middle" font-size="9.6" font-family="Consolas, monospace" fill="#a4262c">PaymentService</text>
+  <text x="404" y="137" text-anchor="middle" font-size="8.4" fill="#c05055">CMDB · GraphDB</text>
+  <text x="632" y="124" text-anchor="middle" font-size="9.6" font-family="Consolas, monospace" fill="#a4262c">svc-pay-prod</text>
+  <text x="632" y="137" text-anchor="middle" font-size="8.4" fill="#c05055">Azure 리소스</text>
+  <text x="860" y="124" text-anchor="middle" font-size="9.6" font-family="Consolas, monospace" fill="#a4262c">결제 API</text>
+  <text x="860" y="137" text-anchor="middle" font-size="8.4" fill="#c05055">런북 문서</text>
+
+  <line x1="510" y1="146" x2="510" y2="164" stroke="#0078d4" stroke-width="1.8" marker-end="url(#oa)"/>
+
+  <!-- 3층 -->
+  <rect x="16" y="170" width="322" height="204" rx="10" fill="#ffffff" stroke="#0078d4" stroke-width="1.6" filter="url(#o1)"/>
+  <rect x="16" y="170" width="322" height="30" rx="10" fill="#e5f1fb"/>
+  <rect x="16" y="190" width="322" height="10" fill="#e5f1fb"/>
+  <text x="177" y="191" text-anchor="middle" font-size="12" font-weight="700" fill="#005a9e">① 식별자 — 무엇을 부르는가</text>
+  <text x="177" y="218" text-anchor="middle" font-size="9.4" fill="#33689e">서비스 하나에 정식 이름 하나</text>
+  <rect x="32" y="230" width="290" height="76" rx="6" fill="#f4f9fd" stroke="#0078d4" stroke-width="0.9"/>
+  <text x="46" y="249" font-size="9.2" font-family="Consolas, monospace" fill="#005a9e">service.namespace</text>
+  <text x="46" y="266" font-size="9.2" font-family="Consolas, monospace" fill="#005a9e">service.name</text>
+  <text x="46" y="283" font-size="9.2" font-family="Consolas, monospace" fill="#005a9e">service.instance.id</text>
+  <text x="46" y="299" font-size="8.4" fill="#7d94ab">세 값의 조합이 전역 유일</text>
+  <text x="177" y="326" text-anchor="middle" font-size="9" font-weight="700" fill="#005a9e">OpenTelemetry 표준 (Stable)</text>
+  <text x="177" y="346" text-anchor="middle" font-size="8.5" fill="#7d94ab">나머지 이름은 전부 별칭으로 매핑합니다</text>
+  <text x="177" y="362" text-anchor="middle" font-size="8.5" fill="#7d94ab">별칭 표 한 장이면 충분합니다</text>
+
+  <rect x="349" y="170" width="322" height="204" rx="10" fill="#ffffff" stroke="#5c2d91" stroke-width="1.6" filter="url(#o1)"/>
+  <rect x="349" y="170" width="322" height="30" rx="10" fill="#f0eaf8"/>
+  <rect x="349" y="190" width="322" height="10" fill="#f0eaf8"/>
+  <text x="510" y="191" text-anchor="middle" font-size="12" font-weight="700" fill="#4a2378">② 관계 — 어떻게 이어지는가</text>
+  <text x="510" y="218" text-anchor="middle" font-size="9.4" fill="#6b5a86">닫힌 소집합으로 고정합니다</text>
+  <rect x="365" y="230" width="290" height="76" rx="6" fill="#faf7fe" stroke="#5c2d91" stroke-width="0.9"/>
+  <text x="379" y="249" font-size="9.2" font-family="Consolas, monospace" fill="#4a2378">depends-on · calls</text>
+  <text x="379" y="266" font-size="9.2" font-family="Consolas, monospace" fill="#4a2378">owned-by · deployed-to</text>
+  <text x="379" y="283" font-size="9.2" font-family="Consolas, monospace" fill="#4a2378">caused-by</text>
+  <text x="379" y="299" font-size="8.4" fill="#8d7fa6">5~7개를 넘기지 않습니다</text>
+  <text x="510" y="326" text-anchor="middle" font-size="9" font-weight="700" fill="#4a2378">호출 관계는 OTel 이 이미 정의</text>
+  <text x="510" y="346" text-anchor="middle" font-size="8.5" font-family="Consolas, monospace" fill="#8d7fa6">service.peer.name</text>
+  <text x="510" y="362" text-anchor="middle" font-size="8.5" fill="#8d7fa6">GraphDB 의 엣지 종류가 곧 이 목록입니다</text>
+
+  <rect x="682" y="170" width="322" height="204" rx="10" fill="#ffffff" stroke="#008272" stroke-width="1.6" filter="url(#o1)"/>
+  <rect x="682" y="170" width="322" height="30" rx="10" fill="#e6f4f1"/>
+  <rect x="682" y="190" width="322" height="10" fill="#e6f4f1"/>
+  <text x="843" y="191" text-anchor="middle" font-size="12" font-weight="700" fill="#006b5d">③ 속성 — 어떻게 판단하는가</text>
+  <text x="843" y="218" text-anchor="middle" font-size="9.4" fill="#4a6b66">심각도·담당·환경을 값으로 고정</text>
+  <rect x="698" y="230" width="290" height="76" rx="6" fill="#f2fbf9" stroke="#008272" stroke-width="0.9"/>
+  <text x="712" y="249" font-size="9.2" font-family="Consolas, monospace" fill="#006b5d">criticality : critical|high|…</text>
+  <text x="712" y="266" font-size="9.2" font-family="Consolas, monospace" fill="#006b5d">opsteam · businessunit</text>
+  <text x="712" y="283" font-size="9.2" font-family="Consolas, monospace" fill="#006b5d">env · sla · businessimpact</text>
+  <text x="712" y="299" font-size="8.4" fill="#7d9a95">태그 값은 대소문자를 구분합니다</text>
+  <text x="843" y="326" text-anchor="middle" font-size="9" font-weight="700" fill="#006b5d">Azure CAF 태그 분류 그대로</text>
+  <text x="843" y="346" text-anchor="middle" font-size="8.5" fill="#7d9a95">에이전트가 우선순위와 에스컬레이션을</text>
+  <text x="843" y="362" text-anchor="middle" font-size="8.5" fill="#7d9a95">스스로 판단할 근거가 됩니다</text>
+
+  <line x1="510" y1="380" x2="510" y2="398" stroke="#0078d4" stroke-width="1.8" marker-end="url(#oa)"/>
+
+  <!-- 어디에 두나 -->
+  <rect x="16" y="404" width="988" height="94" rx="10" fill="#ffffff" stroke="#c19c00" stroke-width="1.5" filter="url(#o1)"/>
+  <text x="510" y="428" text-anchor="middle" font-size="12" font-weight="700" fill="#8a6d00">정한 규칙은 세 곳에 같은 값으로 심습니다</text>
+
+  <rect x="34" y="440" width="306" height="46" rx="6" fill="#fffdf5" stroke="#c19c00" stroke-width="0.9"/>
+  <text x="187" y="459" text-anchor="middle" font-size="10" font-weight="700" fill="#8a6d00">실제 시스템</text>
+  <text x="187" y="476" text-anchor="middle" font-size="8.6" fill="#7a6200">텔레메트리 속성 · Azure 태그 · 그래프 스키마</text>
+
+  <rect x="357" y="440" width="306" height="46" rx="6" fill="#fffdf5" stroke="#c19c00" stroke-width="0.9"/>
+  <text x="510" y="459" text-anchor="middle" font-size="10" font-weight="700" fill="#8a6d00">용어집 문서 한 장</text>
+  <text x="510" y="476" text-anchor="middle" font-size="8.6" fill="#7a6200">Knowledge Sources 에 업로드 — 에이전트가 읽습니다</text>
+
+  <rect x="680" y="440" width="306" height="46" rx="6" fill="#fffdf5" stroke="#c19c00" stroke-width="0.9"/>
+  <text x="833" y="459" text-anchor="middle" font-size="10" font-weight="700" fill="#8a6d00">MCP 도구 시그니처</text>
+  <text x="833" y="476" text-anchor="middle" font-size="8.6" fill="#7a6200">인자 이름과 반환 필드를 같은 어휘로</text>
+
+  <!-- 하지 말 것 -->
+  <rect x="16" y="510" width="988" height="74" rx="10" fill="#f7f9fb" stroke="#a0aab4" stroke-width="1.3"/>
+  <text x="510" y="534" text-anchor="middle" font-size="11.5" font-weight="700" fill="#3d4a57">과하게 만들면 오히려 늦어집니다</text>
+  <text x="255" y="557" text-anchor="middle" font-size="9.4" fill="#a4262c">❌ OWL · RDF 형식 온톨로지</text>
+  <text x="255" y="573" text-anchor="middle" font-size="8.6" fill="#8a8886">SRE 조사에는 표현력이 남습니다</text>
+  <text x="510" y="557" text-anchor="middle" font-size="9.4" fill="#a4262c">❌ 전사 표준화 선행</text>
+  <text x="510" y="573" text-anchor="middle" font-size="8.6" fill="#8a8886">한 도메인에서 시작해 넓힙니다</text>
+  <text x="765" y="557" text-anchor="middle" font-size="9.4" fill="#006b5d">✅ 서비스 20개 · 관계 5종부터</text>
+  <text x="765" y="573" text-anchor="middle" font-size="8.6" fill="#8a8886">쓰면서 부족한 것만 추가합니다</text>
+</svg>

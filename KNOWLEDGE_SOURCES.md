@@ -1,8 +1,9 @@
 # 지식 구성 가이드 — Knowledge Sources
 
 > 사내 지식을 SRE Agent 에 **어떻게 구성할지** 정리한 종합 가이드입니다.
-> 런북·아키텍처 문서·과거 RCA 는 물론, 이미 구축해 둔
-> **벡터 검색(Azure AI Search) · 그래프 지식(GraphDB) · CMDB · 전문 검색**까지 함께 다룹니다.
+> 런북·아키텍처 문서·과거 RCA 같은 문서는 물론,
+> **구조화 데이터(CMDB · 서비스 카탈로그 · 티켓) · 벡터 검색(Azure AI Search) · 그래프 지식(GraphDB)**
+> 까지 함께 다룹니다.
 >
 > 제품 기능 설명은 **[SRE Agent 기능 설명](SRE_Agent.md)**, 실제 적용 결과는 **[Portal 기능](features-sre/README.md)** 을 참고하세요.
 
@@ -24,10 +25,11 @@
 3. [웹 페이지 URL 은 언제 쓰나요](#3-웹-페이지-url-은-언제-쓰나요)
 4. [MCP 커넥터는 어떻게 구성하나요](#4-mcp-커넥터는-어떻게-구성하나요)
 5. [MCP 로는 어떤 형태의 지식이든 붙습니다 — AI Search · GraphDB](#5-mcp-로는-어떤-형태의-지식이든-붙습니다--ai-search--graphdb)
-6. [문서가 수천 건이면 어떻게 하나요](#6-문서가-수천-건이면-어떻게-하나요)
-7. [과거 RCA 는 어떻게 다루나요](#7-과거-rca-는-어떻게-다루나요)
-8. [효과는 어떻게 검증하나요](#8-효과는-어떻게-검증하나요)
-9. [참고 자료](#9-참고-자료)
+6. [소스가 여러 개면 이름이 충돌합니다 — 최소 온톨로지](#6-소스가-여러-개면-이름이-충돌합니다--최소-온톨로지)
+7. [문서가 수천 건이면 어떻게 하나요](#7-문서가-수천-건이면-어떻게-하나요)
+8. [과거 RCA 는 어떻게 다루나요](#8-과거-rca-는-어떻게-다루나요)
+9. [효과는 어떻게 검증하나요](#9-효과는-어떻게-검증하나요)
+10. [참고 자료](#10-참고-자료)
 
 ---
 
@@ -41,11 +43,19 @@
 | 확정된 런북 · 절차서 | 장애 대응 문서, 조직 표준 | ① 파일 업로드 | 색인 → 의미 검색 |
 | 공개 참조 문서 | 벤더 가이드, 표준 문서 | ② 웹 페이지 URL | 색인 → 의미 검색 |
 | 살아 있는 위키 | ADO Wiki, GitHub Wiki | ③ 문서 커넥터 | 색인 → 의미 검색 |
+| **구조화 데이터 (스냅샷)** | 서비스 카탈로그 CSV, 자산 대장 XLSX, 설정 JSON/YAML | ① 파일 업로드 | 색인 → 의미 검색 |
+| **구조화 데이터 (라이브)** | **CMDB · ServiceNow·Jira 티켓 · SQL 테이블** | ④ MCP 서버 | 원본에 질의 |
+| **시계열 · 로그 테이블** | **Azure Data Explorer (Kusto)** | 기본 커넥터 | **스키마 자동 학습** |
 | **벡터 인덱스** | **Azure AI Search** (사내 RAG) | ④ MCP 서버 | 원본에 질의 |
 | **그래프 지식** | **GraphDB** — Neo4j, Cosmos DB Gremlin, CMDB | ④ MCP 서버 | 원본에 질의 |
 | 전문 검색 · 로그 | Elasticsearch, Splunk | ④ MCP 서버 | 원본에 질의 |
 | 문서 · 업무 시스템 | Confluence, SharePoint, 사내 RCA DB | ④ MCP 서버 | 원본에 질의 |
 | 과거 인시던트 기억 | 증상 · 근본 원인 · 해결 단계 | — | **자동 축적** |
+
+> 사내 지식은 Confluence 같은 **문서**만 있는 게 아닙니다.
+> 서비스 카탈로그, 자산 대장, 티켓 이력 같은 **구조화 데이터도 그대로 대상**입니다.
+> 업로드는 `.csv` `.json` `.xlsx` `.yaml` `.xml` 등을 받으며, 라이브로 써야 하면 ④ 로 붙입니다.
+> 둘 중 어느 쪽인지 판단하는 기준은 [5장](#5-mcp-로는-어떤-형태의-지식이든-붙습니다--ai-search--graphdb) 에 있습니다.
 
 마지막 행이 중요합니다. 에이전트는 조사가 끝나면 30분 뒤에 증상·근본 원인·해결 단계·피해야 할 접근을
 **스스로 색인**하고 같은 리소스의 과거 기록을 우선 검색합니다.
@@ -183,8 +193,31 @@
 |---|---|---|
 | **벡터 · 하이브리드 검색** | Azure AI Search | "이럴 땐 어떻게 하나" — 의미가 비슷한 문서 |
 | **그래프 · 관계 탐색** | **GraphDB** — Neo4j · Cosmos DB Gremlin · CMDB | "무엇이 영향을 받나" — 영향 범위·의존 관계 |
+| **구조화 데이터** | CMDB · ServiceNow·Jira · SQL · 서비스 카탈로그 | "이 서비스 오너는 누구인가" — 정확한 값 조회 |
 | **전문 검색 · 로그** | Elasticsearch · Splunk | "이 문자열이 언제 나왔나" |
 | **문서 · 업무 시스템** | Confluence · SharePoint · 사내 RCA DB | "이 장애의 과거 기록은" |
+
+### 구조화 데이터 — 업로드할까, 질의할까
+
+서비스 카탈로그, 자산 대장, 티켓 이력 같은 **표 형태 지식**은 두 경로 모두 가능합니다.
+업로드는 `.csv` `.json` `.xlsx` `.yaml` `.xml` 을 받으므로 대장 파일을 그대로 올려도 색인됩니다.
+
+그러나 **성격이 다릅니다.**
+
+| | ① 업로드 (스냅샷) | ④ MCP (라이브) |
+|---|---|---|
+| 조회 방식 | 청크를 **의미로** 찾음 | 조건으로 **정확히** 찾음 |
+| 정확도 | 행 수가 많으면 떨어짐 | 행 수와 무관 |
+| 최신성 | 다시 올려야 함 | 항상 최신 |
+| 적합 | 거의 안 바뀌는 수십~수백 행 | 계속 바뀌거나 수천 행 이상 |
+
+중요한 건 첫 줄입니다. CSV 를 업로드하면 **행이 아니라 청크로 쪠개져 임베딩**됩니다.
+그래서 *"결제 서비스 오너가 누구냐"* 처럼 **한 값을 정확히 짚어야 하는 질문**에는 약합니다.
+대장이 크거나 조회 정확도가 중요하면 ④ 로 붙이세요.
+
+> 시계열·로그 테이블이 **Azure Data Explorer(Kusto)** 에 있다면 MCP 를 만들 필요가 없습니다.
+> 기본 커넥터가 있고, **스키마를 자동으로 학습**해 질의를 직접 생성합니다.
+> 이런 자동 학습은 Kusto 에만 있고 GraphDB·SQL 에는 없습니다 → [6장](#6-소스가-여러-개면-이름이-충돌합니다--최소-온톨로지)
 
 ### 이미 만든 RAG 인덱스를 다시 만들 필요가 없습니다
 
@@ -238,7 +271,104 @@
 
 ---
 
-## 6. 문서가 수천 건이면 어떻게 하나요
+## 6. 소스가 여러 개면 이름이 충돌합니다 — 최소 온톨로지
+
+앞장대로 여러 소스를 붙이면 공통으로 겉도는 문제가 있습니다.
+**같은 대상을 소스마다 다른 이름으로 부릅니다.** 제품 문서에도 제한 사항으로 명시된 내용입니다.
+
+> 여러 서비스가 같은 원격 분석 이름을 쓰면 **서로 다른 데이터를 혼동**할 수 있습니다.
+> — [알아두어야 할 제한 사항](SRE_Agent.md#11-알아두어야-할-제한-사항은-무엇인가요)
+
+문서만 붙일 때는 드러나지 않지만, **GraphDB · CMDB · AI Search 를 함께 붙이는 순간**
+에이전트가 "이 둘이 같은 것인가"를 판단해야 하며, 여기서 근거 연결이 끊깁니다.
+
+### 형식 온톨로지는 필요 없습니다
+
+결론부터 말씀드리면 **OWL·RDF 같은 형식 온톨로지는 SRE 조사에 과잉니다.**
+다만 **최소한의 공통 어휘는 반드시 필요하고**, 그것도 새로 만들 필요가 없습니다 —
+이미 표준이 있습니다.
+
+<p align="center">
+  <img src="docs/sre-agent-knowledge-ontology-ko.svg" alt="최소 온톨로지를 세 층으로 정리한 다이어그램입니다. 위쪽에는 같은 결제 서비스를 App Insights 는 payment-api, CMDB 는 PaymentService, Azure 는 svc-pay-prod, 런북은 결제 API 로 부른다는 문제가 있고, 아래에 식별자·관계·속성 세 층이 있습니다. 식별자는 OpenTelemetry 의 service.namespace 와 service.name, service.instance.id 를 쓰고, 관계는 depends-on · calls · owned-by 같은 닫힌 소집합으로 고정하며, 속성은 Azure 태그 분류의 criticality 와 opsteam, env 를 씁니다. 아래에는 정한 규칙을 실제 시스템·용어집 문서·MCP 도구 시그니처 세 곳에 같은 값으로 심으라는 안내와, OWL · RDF 형식 온톨로지나 전사 표준화 선행은 피하고 서비스 20개·관계 5종부터 시작하라는 권고가 적혀 있습니다." width="100%"/>
+</p>
+
+### 정해야 할 것은 세 가지뿐입니다
+
+**① 식별자 — 무엇을 무엇이라 부를 것인가**
+
+[OpenTelemetry 시맨틱 규약](https://opentelemetry.io/docs/specs/semconv/registry/attributes/service/)이 이미 표준을 정의해 두었고, 세 속성 모두 **Stable** 입니다.
+
+| 속성 | 의미 |
+|---|---|
+| `service.namespace` | 서비스 그룹 — 보통 소유 팀 |
+| `service.name` | 논리적 이름 — 수평 확장된 모든 인스턴스가 동일 |
+| `service.instance.id` | 인스턴스 구분 |
+
+세 값의 조합이 **전역 유일**하도록 규약에 명시되어 있습니다.
+이걸 정식 이름으로 삼고 **나머지는 전부 별칭으로 매핑**하면 됩니다. 별칭 표 한 장이면 충분합니다.
+
+```text
+Shop/payment-api   ← 정식 이름
+  aliases: PaymentService, svc-pay-prod, 결제 API
+```
+
+**② 관계 — 어떻게 이어지는가**
+
+관계 종류는 **닫힌 소집합**으로 고정합니다. 5~7개를 넘기면 사람도 에이전트도 일관성을 잃습니다.
+
+```text
+depends-on · calls · owned-by · deployed-to · caused-by
+```
+
+호출 관계는 OTel 이 `service.peer.name` 으로 이미 정의합니다 — 텔레메트리에서 **의존 그래프를 자동으로 도출**할 수 있는 근거가 됩니다.
+이 목록이 곷 **GraphDB 에지의 종류**가 되고, [5장](#5-mcp-로는-어떤-형태의-지식이든-붙습니다--ai-search--graphdb)에서 말한
+작업 단위 도구(`get_blast_radius`)가 달리는 기반이 됩니다.
+
+**③ 속성 — 어떻게 판단할 것인가**
+
+심각도·담당·환경은 [Azure CAF 태그 분류](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/resource-tagging)를 그대로 씁니다.
+
+| 분류 | 예 |
+|---|---|
+| 기능 | `app` · `tier` · `env` · `region` |
+| 분류체계 | `criticality` · `sla` · `confidentiality` |
+| 소유 | `opsteam` · `businessunit` |
+| 목적 | `businessimpact` · `businessprocess` |
+
+이 값들이 있어야 에이전트가 **우선순위와 에스컬레이션을 스스로 판단**합니다.
+장애가 `criticality: critical` 인지 `low` 인지를 모르면 모든 인시던트가 같은 무게가 됩니다.
+
+> ⚠️ 태그 **이름은 대소문자를 구분하지 않지만 값은 구분합니다.**
+> `env: Production` 과 `env: production` 은 다른 값으로 집계됩니다. 대소문자 규칙을 먼저 고정하세요.
+
+### 정한 규칙은 세 곳에 같은 값으로 심습니다
+
+문서에만 적어 두면 아무것도 바뀌지 않습니다.
+
+| 위치 | 무엇을 |
+|---|---|
+| **실제 시스템** | 텔레메트리 속성 · Azure 태그 · GraphDB 스키마 |
+| **용어집 문서 한 장** | ① 로 업로드 — 노드 종류 · 관계 종류 · 별칭 표 · 예시 질의 |
+| **MCP 도구 시그니처** | 인자 이름과 반환 필드를 같은 어휘로 |
+
+두 번째가 핵심입니다. GraphDB 에는 Kusto 같은 **스키마 자동 학습이 없으므로**,
+용어집을 지식 문서로 올려두는 것이 사실상 에이전트에게 스키마를 알려 주는 유일한 방법입니다.
+
+### 어느 수준까지 만들까요
+
+| 단계 | 범위 | 판단 |
+|---|---|---|
+| 시작 | 서비스 20개 · 관계 5종 · 태그 4종 | 이 정도면 영향 범위 질문에 답합니다 |
+| 확장 | 도메인별로 한 개씩 | 부족한 것만 추가합니다 |
+| 과잉 | 수백 개 클래스 · 형식 추론 | 유지보수가 조사 가치를 넘어섭니다 |
+
+> **순서 권고** — 온톨로지를 먼저 완성하고 시작하지 마세요.
+> [9장](#9-효과는-어떻게-검증하나요)의 검증을 돌리면 어떤 질문에서 연결이 끊기는지가 드러나고,
+> **그 빈칸만 채우는 것**이 가장 빠릅니다.
+
+---
+
+## 7. 문서가 수천 건이면 어떻게 하나요
 
 ### 계층 깊이는 문제가 아닙니다
 
@@ -294,7 +424,7 @@ What knowledge documents do you have?
 
 ---
 
-## 7. 과거 RCA 는 어떻게 다루나요
+## 8. 과거 RCA 는 어떻게 다루나요
 
 과거 RCA 는 런북과 성격이 다릅니다. **원본을 통째로 넣는 것이 최선이 아닙니다.**
 
@@ -316,7 +446,7 @@ What knowledge documents do you have?
 
 ---
 
-## 8. 효과는 어떻게 검증하나요
+## 9. 효과는 어떻게 검증하나요
 
 전사 이관 전에 **한 도메인으로 먼저 측정**하는 것을 권합니다.
 
@@ -334,7 +464,7 @@ What knowledge documents do you have?
 
 ---
 
-## 9. 참고 자료
+## 10. 참고 자료
 
 - [메모리와 지식 관리](https://learn.microsoft.com/azure/sre-agent/memory)
 - [지식 문서 업로드](https://learn.microsoft.com/azure/sre-agent/upload-knowledge-document)
@@ -345,4 +475,6 @@ What knowledge documents do you have?
 - [사용자 지정 에이전트](https://learn.microsoft.com/azure/sre-agent/sub-agents)
 - [Azure AI Search — 벡터 검색](https://learn.microsoft.com/azure/search/vector-search-overview)
 - [Azure Cosmos DB for Apache Gremlin](https://learn.microsoft.com/azure/cosmos-db/gremlin/introduction)
+- [OpenTelemetry — 서비스 시맨틱 규약](https://opentelemetry.io/docs/specs/semconv/registry/attributes/service/)
+- [Azure CAF — 태그 전략](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/resource-tagging)
 - [Azure MCP Center — 검증된 MCP 서버](https://mcp.azure.com)
