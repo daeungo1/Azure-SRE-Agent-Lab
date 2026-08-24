@@ -177,7 +177,7 @@ Agent Hooks 는 실행 흐름의 특정 시점에 조직의 규칙을 끼워 넣
 
 기본 에이전트만으로 부족한 영역은 **다섯 가지 확장 수단**으로 채웁니다.
 <p align="center">
-  <img src="docs/sre-agent-extensibility-ko.svg" alt="기본 에이전트를 확장하는 수단을 세 묶음으로 정리한 다이어그램입니다. 무엇을 아는가에는 상황에 맞게 자동 호출되는 Skills 와 Knowledge Sources 가, 누가 조사하는가에는 담당자가 직접 호출하는 Custom agents 와 인시던트를 배분하는 Response Plans 가, 어떻게 행동하는가에는 실행 시점에 개입하는 Agent Hooks 와 Python tools, MCP servers 가 들어 있습니다. 아래에는 동시 활성 스킬 최대 5개, 도구 최대 80개, 기술 자료 파일 인스턴스당 1,000개라는 용량 제한이 적혀 있습니다." width="100%"/>
+  <img src="docs/sre-agent-extensibility-ko.svg" alt="기본 에이전트를 확장하는 수단을 세 묶음으로 정리한 다이어그램입니다. 무엇을 아는가에는 상황에 맞게 자동 호출되는 Skills 와 Knowledge Sources 가, 누가 조사하는가에는 담당자가 직접 호출하는 Custom agents 와 인시던트를 배분하는 Response Plans 가, 어떻게 행동하는가에는 실행 시점에 개입하는 Agent Hooks 와 Python tools, MCP servers 가 들어 있습니다. 아래에는 동시 활성 스킬 최대 5개, 도구 최대 80개, 기술 자료 파일 파일당 16MB라는 용량 제한이 적혀 있습니다." width="100%"/>
 </p>
 
 > 출처: [스킬](https://learn.microsoft.com/azure/sre-agent/skills) · [사용자 지정 에이전트](https://learn.microsoft.com/azure/sre-agent/sub-agents) · [Agent Hooks](https://learn.microsoft.com/azure/sre-agent/agent-hooks)

@@ -67,5 +67,5 @@
   <text x="510" y="396" text-anchor="middle" font-size="10" fill="#5a6b7b">에이전트 하나가 쓰는 도구 (기본 + MCP)</text>
   <text x="510" y="414" text-anchor="middle" font-size="13" font-weight="700" fill="#12314e">최대 80개</text>
   <text x="765" y="396" text-anchor="middle" font-size="10" fill="#5a6b7b">기술 자료 파일</text>
-  <text x="765" y="414" text-anchor="middle" font-size="13" font-weight="700" fill="#12314e">인스턴스당 1,000개 · 파일당 50MB</text>
+  <text x="765" y="414" text-anchor="middle" font-size="13" font-weight="700" fill="#12314e">파일당 16MB · 업로드당 100MB</text>
 </svg>
