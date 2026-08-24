@@ -163,6 +163,9 @@ Response Plan 은 **어떤 인시던트를, 누가, 어느 수준까지** 처리
 | `grubify-slo.md` | SLO · 에러 예산 · RAG(정상/주의/위험) 판정 규칙 |
 | `escalation-policy.md` | 자율 허용 범위, 사람 승인 필수 항목, 에스컬레이션 트리거 |
 
+> 이 Lab 은 파일 업로드만 쓰지만, 제품은 **웹 페이지 URL · 문서 커넥터 · MCP 서버**로도 지식을 붙입니다.
+> 사내 문서가 많고 계층이 복잡한 환경의 설계안은 [지식 구성 가이드](../KNOWLEDGE_SOURCES.md) 를 보세요.
+
 ### Connectors — 로그를 매번 찾지 않게 하기
 
 에이전트는 커넥터 없이도 Log Analytics 를 질의합니다 — Resource Graph 로 워크스페이스를 **매번 찾아서**

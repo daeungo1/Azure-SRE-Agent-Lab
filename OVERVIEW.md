@@ -284,6 +284,7 @@ Azure CLI · Kusto 쿼리 · Python 스크립트를 절차서에 붙일 수 있�
 | 시나리오별 결과를 보고 싶다 | [시나리오 가이드](guides/README.md) |
 | 직접 배포해 보고 싶다 | [Lab 실습](README.md) |
 | 우리 조직 방식으로 구성하고 싶다 | [Portal 기능](features-sre/README.md) |
+| 사내 문서·과거 RCA 를 연결하고 싶다 | [지식 구성 가이드](KNOWLEDGE_SOURCES.md) |
 
 ---
 

@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 520" font-family="Segoe UI, Malgun Gothic, 맑은 고딕, -apple-system, sans-serif">
+  <defs>
+    <filter id="d1" x="-4%" y="-8%" width="108%" height="120%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.10"/>
+    </filter>
+    <marker id="dy" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#008272"/></marker>
+    <marker id="dn" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#8a8886"/></marker>
+  </defs>
+
+  <rect width="1020" height="520" rx="12" fill="#f7f9fb"/>
+  <text x="510" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#12314e">어떤 경로로 붙일지 고르는 기준</text>
+  <text x="510" y="56" text-anchor="middle" font-size="12" fill="#5a6b7b">문서 하나하나가 아니라 <tspan font-weight="700">문서 묶음 단위</tspan>로 판단합니다</text>
+
+  <!-- Q1 -->
+  <rect x="330" y="78" width="360" height="52" rx="8" fill="#ffffff" stroke="#0078d4" stroke-width="1.6" filter="url(#d1)"/>
+  <text x="510" y="100" text-anchor="middle" font-size="12" font-weight="700" fill="#005a9e">Q1. 원본이 계속 바뀌나요?</text>
+  <text x="510" y="119" text-anchor="middle" font-size="9" fill="#33689e">위키 · 저장소처럼 팀이 계속 고치는 문서인가</text>
+
+  <path d="M510 130 L510 150 L240 150 L240 168" fill="none" stroke="#008272" stroke-width="1.6" marker-end="url(#dy)"/>
+  <text x="360" y="145" text-anchor="middle" font-size="10" font-weight="700" fill="#006b5d">예</text>
+  <path d="M510 130 L510 150 L790 150 L790 168" fill="none" stroke="#8a8886" stroke-width="1.6" marker-end="url(#dn)"/>
+  <text x="660" y="145" text-anchor="middle" font-size="10" font-weight="700" fill="#605e5c">아니오</text>
+
+  <!-- Q2 좌 -->
+  <rect x="60" y="174" width="360" height="52" rx="8" fill="#ffffff" stroke="#5c2d91" stroke-width="1.5" filter="url(#d1)"/>
+  <text x="240" y="196" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4a2378">Q2. ADO Wiki · GitHub 에 있나요?</text>
+  <text x="240" y="215" text-anchor="middle" font-size="9" fill="#6b5a86">제품이 기본 제공하는 문서 커넥터 대상인가</text>
+
+  <path d="M240 226 L240 244 L140 244 L140 268" fill="none" stroke="#008272" stroke-width="1.6" marker-end="url(#dy)"/>
+  <text x="176" y="240" text-anchor="middle" font-size="10" font-weight="700" fill="#006b5d">예</text>
+  <path d="M240 226 L240 244 L350 244 L350 268" fill="none" stroke="#8a8886" stroke-width="1.6" marker-end="url(#dn)"/>
+  <text x="312" y="240" text-anchor="middle" font-size="10" font-weight="700" fill="#605e5c">아니오</text>
+
+  <rect x="24" y="274" width="232" height="80" rx="9" fill="#f0eaf8" stroke="#5c2d91" stroke-width="1.6"/>
+  <text x="140" y="300" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4a2378">③ 문서 커넥터</text>
+  <text x="140" y="321" text-anchor="middle" font-size="9" fill="#6b5a86">24시간마다 자동 재크롤</text>
+  <text x="140" y="338" text-anchor="middle" font-size="9" fill="#6b5a86">pageId 로 서브트리 범위 지정</text>
+
+  <rect x="272" y="274" width="232" height="80" rx="9" fill="#fff8e6" stroke="#c19c00" stroke-width="1.6"/>
+  <text x="388" y="300" text-anchor="middle" font-size="12.5" font-weight="700" fill="#8a6d00">④ MCP 서버</text>
+  <text x="388" y="321" text-anchor="middle" font-size="9" fill="#7a6200">Confluence · SharePoint · 사내 RCA DB</text>
+  <text x="388" y="338" text-anchor="middle" font-size="9" fill="#7a6200">원본의 검색 API 를 그대로 활용</text>
+
+  <!-- Q3 우 -->
+  <rect x="610" y="174" width="360" height="52" rx="8" fill="#ffffff" stroke="#0078d4" stroke-width="1.5" filter="url(#d1)"/>
+  <text x="790" y="196" text-anchor="middle" font-size="11.5" font-weight="700" fill="#005a9e">Q3. 인증 없이 열리는 URL 인가요?</text>
+  <text x="790" y="215" text-anchor="middle" font-size="9" fill="#33689e">에이전트가 그대로 가져올 수 있는 페이지인가</text>
+
+  <path d="M790 226 L790 244 L690 244 L690 268" fill="none" stroke="#008272" stroke-width="1.6" marker-end="url(#dy)"/>
+  <text x="726" y="240" text-anchor="middle" font-size="10" font-weight="700" fill="#006b5d">예</text>
+  <path d="M790 226 L790 244 L900 244 L900 268" fill="none" stroke="#8a8886" stroke-width="1.6" marker-end="url(#dn)"/>
+  <text x="862" y="240" text-anchor="middle" font-size="10" font-weight="700" fill="#605e5c">아니오</text>
+
+  <rect x="574" y="274" width="232" height="80" rx="9" fill="#e5f1fb" stroke="#0078d4" stroke-width="1.6"/>
+  <text x="690" y="300" text-anchor="middle" font-size="12.5" font-weight="700" fill="#005a9e">② 웹 페이지 URL</text>
+  <text x="690" y="321" text-anchor="middle" font-size="9" fill="#33689e">공개 벤더 문서 · 표준 가이드</text>
+  <text x="690" y="338" text-anchor="middle" font-size="9" fill="#33689e">건수가 적을 때만 실용적</text>
+
+  <rect x="822" y="274" width="182" height="80" rx="9" fill="#e6f4f1" stroke="#008272" stroke-width="1.6"/>
+  <text x="913" y="300" text-anchor="middle" font-size="12.5" font-weight="700" fill="#006b5d">① 파일 업로드</text>
+  <text x="913" y="321" text-anchor="middle" font-size="9" fill="#4a6b66">확정된 런북 · 절차서</text>
+  <text x="913" y="338" text-anchor="middle" font-size="9" fill="#4a6b66">파일명에 도메인 접두어</text>
+
+  <!-- 하단 원칙 -->
+  <rect x="16" y="374" width="988" height="130" rx="10" fill="#ffffff" stroke="#a0aab4" stroke-width="1.3"/>
+  <text x="510" y="400" text-anchor="middle" font-size="12" font-weight="700" fill="#3d4a57">어느 경로를 고르든 함께 지키는 세 가지</text>
+
+  <rect x="34" y="412" width="306" height="76" rx="7" fill="#f7f9fb" stroke="#c8d0d8" stroke-width="1"/>
+  <text x="187" y="434" text-anchor="middle" font-size="10.5" font-weight="700" fill="#12314e">전부 넣지 않는다</text>
+  <text x="187" y="454" text-anchor="middle" font-size="8.8" fill="#5a6b7b">오래된 문서 하나가 틀린 답의 근거가 됩니다.</text>
+  <text x="187" y="470" text-anchor="middle" font-size="8.8" fill="#5a6b7b">분기별로 검토하고 폐기 문서는 제거합니다.</text>
+
+  <rect x="357" y="412" width="306" height="76" rx="7" fill="#f7f9fb" stroke="#c8d0d8" stroke-width="1"/>
+  <text x="510" y="434" text-anchor="middle" font-size="10.5" font-weight="700" fill="#12314e">이름이 곧 계층이다</text>
+  <text x="510" y="454" text-anchor="middle" font-size="8.8" fill="#5a6b7b">업로드는 폴더 구조를 잃고 동명 파일이 버려집니다.</text>
+  <text x="510" y="470" text-anchor="middle" font-size="8.8" fill="#5a6b7b">payments-dns-runbook.md 처럼 접두어를 붙입니다.</text>
+
+  <rect x="680" y="412" width="306" height="76" rx="7" fill="#f7f9fb" stroke="#c8d0d8" stroke-width="1"/>
+  <text x="833" y="434" text-anchor="middle" font-size="10.5" font-weight="700" fill="#12314e">한 도메인으로 먼저 잰다</text>
+  <text x="833" y="454" text-anchor="middle" font-size="8.8" fill="#5a6b7b">과거 인시던트 10~20건을 정답지로 고정하고</text>
+  <text x="833" y="470" text-anchor="middle" font-size="8.8" fill="#5a6b7b">올바른 문서를 인용하는지 채점합니다.</text>
+</svg>

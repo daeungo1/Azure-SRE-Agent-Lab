@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 540" font-family="Segoe UI, Malgun Gothic, 맑은 고딕, -apple-system, sans-serif">
+  <defs>
+    <filter id="m1" x="-4%" y="-8%" width="108%" height="120%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.10"/>
+    </filter>
+    <marker id="ma" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#c19c00"/></marker>
+    <marker id="mb" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7 Z" fill="#0078d4"/></marker>
+  </defs>
+
+  <rect width="1020" height="540" rx="12" fill="#f7f9fb"/>
+  <text x="510" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#12314e">MCP 커넥터로 사내 지식 시스템 붙이기</text>
+  <text x="510" y="56" text-anchor="middle" font-size="12" fill="#5a6b7b">Builder ▸ Connectors ▸ MCP ▸ MCP server (User provided connector)</text>
+
+  <!-- 3단계 마법사 -->
+  <rect x="16" y="78" width="988" height="64" rx="10" fill="#ffffff" stroke="#0078d4" stroke-width="1.5" filter="url(#m1)"/>
+  <circle cx="72" cy="110" r="13" fill="#0078d4"/>
+  <text x="72" y="115" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">1</text>
+  <text x="96" y="106" font-size="11" font-weight="700" fill="#005a9e">Choose a connector</text>
+  <text x="96" y="122" font-size="8.8" fill="#7d94ab">Telemetry · Notification · MCP · Incidents · Deployment · Other</text>
+
+  <circle cx="410" cy="110" r="13" fill="#0078d4"/>
+  <text x="410" y="115" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">2</text>
+  <text x="434" y="106" font-size="11" font-weight="700" fill="#005a9e">Set up connector</text>
+  <text x="434" y="122" font-size="8.8" fill="#7d94ab">전송 방식 · 엔드포인트 · 인증 정보</text>
+
+  <circle cx="726" cy="110" r="13" fill="#0078d4"/>
+  <text x="726" y="115" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">3</text>
+  <text x="750" y="106" font-size="11" font-weight="700" fill="#005a9e">Review + add</text>
+  <text x="750" y="122" font-size="8.8" fill="#7d94ab">연결 후 Select tools 로 노출할 도구 선택</text>
+
+  <line x1="510" y1="146" x2="510" y2="164" stroke="#0078d4" stroke-width="1.6" marker-end="url(#mb)"/>
+
+  <!-- 전송 방식 2종 -->
+  <rect x="16" y="170" width="486" height="164" rx="10" fill="#ffffff" stroke="#c19c00" stroke-width="1.6" filter="url(#m1)"/>
+  <rect x="16" y="170" width="486" height="30" rx="10" fill="#fff8e6"/>
+  <rect x="16" y="190" width="486" height="10" fill="#fff8e6"/>
+  <text x="259" y="191" text-anchor="middle" font-size="12" font-weight="700" fill="#8a6d00">Streamable-HTTP — 원격 서비스</text>
+  <text x="259" y="220" text-anchor="middle" font-size="10" fill="#7a6200">사내 위키 · 문서 검색 API 를 URL 로 연결</text>
+  <rect x="34" y="232" width="450" height="30" rx="5" fill="#fffdf5" stroke="#c19c00" stroke-width="0.9"/>
+  <text x="48" y="251" font-size="9.3" fill="#7a6200">인증: Bearer 토큰 · 사용자 지정 헤더 · OAuth</text>
+  <rect x="34" y="268" width="450" height="30" rx="5" fill="#fffdf5" stroke="#c19c00" stroke-width="0.9"/>
+  <text x="48" y="287" font-size="9.3" fill="#7a6200">OAuth 를 쓰려면 <tspan font-weight="700">공개 HTTPS 엔드포인트</tspan>여야 합니다</text>
+  <text x="259" y="320" text-anchor="middle" font-size="9" fill="#9a8330">사내망 전용 시스템은 토큰·헤더 인증으로 노출 경로를 따로 준비해야 합니다</text>
+
+  <rect x="518" y="170" width="486" height="164" rx="10" fill="#ffffff" stroke="#5c2d91" stroke-width="1.6" filter="url(#m1)"/>
+  <rect x="518" y="170" width="486" height="30" rx="10" fill="#f0eaf8"/>
+  <rect x="518" y="190" width="486" height="10" fill="#f0eaf8"/>
+  <text x="761" y="191" text-anchor="middle" font-size="12" font-weight="700" fill="#4a2378">stdio — 에이전트 안에서 실행</text>
+  <text x="761" y="220" text-anchor="middle" font-size="10" fill="#6b5a86">MCP 서버를 프로세스로 띄워 수명 주기를 에이전트가 관리</text>
+  <rect x="536" y="232" width="450" height="30" rx="5" fill="#faf7fe" stroke="#5c2d91" stroke-width="0.9"/>
+  <text x="550" y="251" font-size="9.3" fill="#6b5a86">런타임: npx · node (Node 20) · python (3.12) · dotnet (.NET 9)</text>
+  <rect x="536" y="268" width="450" height="30" rx="5" fill="#faf7fe" stroke="#5c2d91" stroke-width="0.9"/>
+  <text x="550" y="287" font-size="9.3" fill="#6b5a86">Azure 리소스 접근은 <tspan font-weight="700">관리 ID</tspan> 사용 가능</text>
+  <text x="761" y="320" text-anchor="middle" font-size="9" fill="#8d7fa6">Docker 컨테이너는 지원하지 않습니다 — 사전 설치된 런타임만 사용</text>
+
+  <line x1="259" y1="338" x2="440" y2="362" stroke="#c19c00" stroke-width="1.5" marker-end="url(#ma)"/>
+  <line x1="761" y1="338" x2="580" y2="362" stroke="#c19c00" stroke-width="1.5" marker-end="url(#ma)"/>
+
+  <!-- 연결 이후 동작 -->
+  <rect x="200" y="368" width="620" height="72" rx="10" fill="#e5f1fb" stroke="#0078d4" stroke-width="1.7" filter="url(#m1)"/>
+  <text x="510" y="394" text-anchor="middle" font-size="12.5" font-weight="700" fill="#005a9e">연결되면 도구를 자동 탐색합니다</text>
+  <text x="510" y="415" text-anchor="middle" font-size="9.5" fill="#33689e">이름은 <tspan font-family="Consolas, monospace">서버명_도구명</tspan> 으로 네임스페이스가 붙어 충돌하지 않습니다</text>
+  <text x="510" y="432" text-anchor="middle" font-size="9" fill="#7d94ab">60초마다 heartbeat · 일시 장애는 자동 복구 · 새 도구는 5분 내 자동 반영</text>
+
+  <!-- 도구 예산 -->
+  <rect x="16" y="454" width="988" height="72" rx="10" fill="#fff8e6" stroke="#c19c00" stroke-width="1.4"/>
+  <text x="510" y="478" text-anchor="middle" font-size="11.5" font-weight="700" fill="#8a6d00">도구 예산 — 에이전트 하나당 80개 (기본 도구 + MCP 합산)</text>
+
+  <rect x="240" y="490" width="540" height="14" rx="7" fill="#ffffff" stroke="#c8d0d8" stroke-width="1"/>
+  <rect x="241" y="491" width="378" height="12" rx="6" fill="#0078d4"/>
+  <rect x="619" y="491" width="108" height="12" fill="#c19c00"/>
+  <rect x="727" y="491" width="52" height="12" rx="6" fill="#d13438"/>
+  <text x="430" y="519" text-anchor="middle" font-size="8.6" fill="#7a6200">0~56 여유</text>
+  <text x="673" y="519" text-anchor="middle" font-size="8.6" fill="#7a6200">57~72 주의</text>
+  <text x="800" y="519" text-anchor="middle" font-size="8.6" fill="#7a6200">73~80 한계</text>
+  <text x="140" y="500" text-anchor="middle" font-size="9" fill="#7a6200">지식용 MCP 도구가</text>
+  <text x="140" y="514" text-anchor="middle" font-size="9" fill="#7a6200">조사용 도구 자리를 잠식합니다</text>
+  <text x="900" y="500" text-anchor="middle" font-size="9" fill="#7a6200">필요한 도구만 선택하거나</text>
+  <text x="900" y="514" text-anchor="middle" font-size="9" fill="#7a6200">전문 Custom agent 로 분리</text>
+</svg>

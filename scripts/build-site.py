@@ -30,6 +30,7 @@ TAB_LAB = "Lab 실습"
 TAB_SCENARIOS = "시나리오"
 TAB_E2E = "E2E 결과"
 TAB_PORTAL = "Portal 기능"
+TAB_KNOWLEDGE = "지식 구성"
 TAB_OPS = "Lab 마무리"
 
 # README.md section number -> (tab, output directory, url slug)
@@ -176,6 +177,12 @@ def build_pages() -> list[Page]:
     portal_md = (REPO / "features-sre" / "README.md").read_text(encoding="utf-8")
     pages.append(Page(out="portal/index.md", title="포털 기능 구성", body=drop_toc(portal_md), tab=TAB_PORTAL))
 
+    # Knowledge sources design guide.
+    knowledge_md = (REPO / "KNOWLEDGE_SOURCES.md").read_text(encoding="utf-8")
+    pages.append(
+        Page(out="knowledge/index.md", title="지식 구성 가이드", body=drop_toc(knowledge_md), tab=TAB_KNOWLEDGE)
+    )
+
     # Scenario guides — one file per scenario, already numbered on disk.
     for guide in sorted((REPO / "guides").glob("*.md")):
         body = guide.read_text(encoding="utf-8")
@@ -287,7 +294,7 @@ def rewrite(page: Page, anchor_index: dict[str, str], svgs: set[str]) -> str:
 
 def write_nav(pages: list[Page]) -> str:
     lines = ["", "nav:"]
-    order = [None, TAB_FEATURES, TAB_LAB, TAB_SCENARIOS, TAB_E2E, TAB_PORTAL, TAB_OPS]
+    order = [None, TAB_FEATURES, TAB_LAB, TAB_SCENARIOS, TAB_E2E, TAB_PORTAL, TAB_KNOWLEDGE, TAB_OPS]
     for tab in order:
         members = [p for p in pages if p.tab == tab]
         if not members:
